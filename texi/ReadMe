@@ -1,43 +1,19 @@
-Texi
+Texi (K1 and K3)
 
-Dieses Directory enthaelt die portable Version der im Projekt Tex-I 
-erstellten Komponentenbeschreibungs- und Diagnose-Sprachen fuer Babylon. 
+This is the Component Description and Diagnosis implementation as described in
+chapter 4 of the babylon book: The AI Workbench BABYLON.
 
-Von dem zugrundeliegenden Objektsystem werden die DEFWHOPPER und CONTINUE-WHOPPER 
-Moeglichkeiten fuer die Tasks&agendas Knowledge Base erwartet. 
-Sie sind in der Flavors- und MCS-Implementierung vorhanden.
+On the Macintosh load the knowledge bases as usual from the Babylon Load-kb 
+menu entry.
 
-Zu den Knowledge Bases existieren jeweils Beispielswissensbasen, 
-die die wesentlichen Eigenschaften beispielhaft nutzen. 
-K1 ist dabei hierarchisch aufgebaut aus:
+Otherwise do:
 
-unit-kb, tasks&agendas, top-down-refine.
+(load "texi/configs/k1.cl") or
+(load "texi/configs/k3.cl").
 
-Alle Wissensbasen enthalten eine cerror Konstruktion, die eventuell dazu auffordert, 
-fehlende Wissensbasen zu laden, und den Export und Import von Wissensbasen behandelt. 
-
-Auf dem Mac kann man damit jede Wissensbasis aus K1 oder K3 direkt mit 
-Load-KB aus dem Babylon-Menu laden, 
-ohne  die benoetigten Wissensbasen vorher geladen zu haben.
-Fehlende Wissensbasen sollten dann nach Aufforderung 
-mittels Load-KB aus dem Babylon-Menu 
-(falls man einen Editor-Buffer fuer die Wissensbasis will) 
-oder Load ... aus dem Eval-Menu 
-(falls man keinen Editor-Buffer fuer die Wissensbasis will)
-geladen und dann mittels Continue fortgefahren werden. 
-
-Auf der SUN unter LUCID verfahre man wie folgt:
-
-Man editiere die Form
-
-(unless (find-translation "texi^" 'source)
-  (defbabylon-translation "texi^"
-    <directory fuer texi-Sources> [<directory fuer texi-Binaries>])
-
-in den Moduldateien k1 bzw. k3 im Directory configs und lade sie.
-Die Beispielswissensbasen muessen extra geladen werden.
+There is a sample file (xyz-ex.cl) associated to each knowledge base 
+which should be opened in an editor buffer and evaluated form by form.
 
 
-
-Mai 1989 Juergen Walther
+Mai 1994 Juergen Walther
 
