@@ -17,12 +17,10 @@
   :bug-tracker "https://github.com/thephoeron/babylon/issues"
   :license "MIT"
   :version (:read-file-form "VERSION")
-  :depends-on ()
+  :depends-on (fmcs)
   :serial t
   :components ((:file "packages")
                (:module tty)
-               (:module fmcs
-                :components ())
                (:module kernel
                 :components ((:file "require")
                              (:file "babtrans")
