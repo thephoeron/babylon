@@ -18,7 +18,7 @@
 (defun make-local-pathname (bab-path host type)
   (declare (ignore host))
   (let ((true-type (case type
-                     (source "cl")
+                     (source "lisp")
                      (bin   #+:EXCL "fasl"
 			    #+:CMU  "cmu"
 			    #+:AKCL "o"

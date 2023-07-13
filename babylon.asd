@@ -18,7 +18,7 @@
   :license "MIT"
   :version (:read-file-form "VERSION")
   :depends-on (fmcs)
-  :serial nil
+  :serial t
   :components ((:file "packages")
                (:module tty
                 :components ((:module basic
@@ -196,6 +196,41 @@
                                                          (:file "ksources")
                                                          (:file "tasks")))))))
                (:file "babylon")))
+
+(defsystem babylon/examples
+  :description "Examples for the BABYLON system."
+  :author '("\"the Phoeron\" Colin J.E. Lupton <thephoeron@protonmail.com>"
+            "Jürgen Walther <juergen.walther@gmd.de>")
+  :maintainer "\"the Phoeron\" Colin J.E. Lupton <thephoeron@protonmail.com>"
+  :mailto "thephoeron@protonmail.com"
+  :homepage "https://thephoeron.github.io/babylon/"
+  :source-control (:git "https://github.com/thephoeron/babylon.git")
+  :bug-tracker "https://github.com/thephoeron/babylon/issues"
+  :license "MIT"
+  :version (:read-file-form "VERSION")
+  :depends-on (babylon)
+  :serial t
+  :components ((:module samples
+                :components ((:module configs
+                              :components ((:file "time")
+                                           (:file "adderc")
+                                           (:file "animalsc")
+                                           (:file "extrac")
+                                           (:file "puzzlec")
+                                           (:file "reactorc")
+                                           (:file "trafficc")
+                                           (:file "urlaubc")))
+                             (:module axsets
+                              :components ((:file "cons-ax")
+                                           (:file "set-ax")))
+                             (:module kbs
+                              :components ((:file "adder")
+                                           (:file "animals")
+                                           (:file "extra")
+                                           (:file "puzzle")
+                                           (:file "reactor")
+                                           (:file "traffic")
+                                           (:file "urlaub")))))))
 
 (defsystem babylon/test
   :description "Test suite for the BABYLON system."
