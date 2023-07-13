@@ -32,7 +32,7 @@
   "> ")
 
 (defun load-user-babylon-init-file ()
-  (load (merge-pathnames "bab-init.cl" (user-homedir-pathname))
+  (load (merge-pathnames ".babylon" (user-homedir-pathname))
 	:verbose nil :if-does-not-exist nil))
 
 (defun get-babylon-default-pathname (&optional (type 'system))
