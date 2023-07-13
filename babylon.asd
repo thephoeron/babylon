@@ -20,31 +20,6 @@
   :depends-on (fmcs)
   :serial t
   :components ((:file "packages")
-               (:module tty
-                :components ((:module basic
-                              :components ((:file "tty-menu")
-                                           (:file "t-dialog")
-                                           (:file "b-txscw")
-                                           (:file "b-mixin")))
-                             (:module mini
-                              :components ((:file "mitem")
-                                           (:file "mloop")
-                                           (:file "m-mixin")
-                                           (:file "sys-core")
-                                           (:file "mbabylon")))
-                             (:module cmds
-                              :components ((:file "common-e")
-                                           (:file "frame-e")
-                                           (:file "consat-e")
-                                           (:file "rule-e")
-                                           (:file "prolog-e")
-                                           (:file "common-g")
-                                           (:file "frame-g")
-                                           (:file "consat-g")
-                                           (:file "rule-g")
-                                           (:file "prolog-g")))
-                             (:file "extens")
-                             (:file "customs")))
                (:module kernel
                 :components ((:file "require")
                              (:file "babtrans")
@@ -141,6 +116,31 @@
                                                          (:file "rstrbase")
                                                          (:file "nc-proc")
                                                          (:file "nc-mixin")))))))
+               (:module tty
+                :components ((:module basic
+                              :components ((:file "tty-menu")
+                                           (:file "t-dialog")
+                                           (:file "b-txscw")
+                                           (:file "b-mixin")))
+                             (:module mini
+                              :components ((:file "mitem")
+                                           (:file "mloop")
+                                           (:file "m-mixin")
+                                           (:file "sys-core")
+                                           (:file "mbabylon")))
+                             (:module cmds
+                              :components ((:file "common-e")
+                                           (:file "frame-e")
+                                           (:file "consat-e")
+                                           (:file "rule-e")
+                                           (:file "prolog-e")
+                                           (:file "common-g")
+                                           (:file "frame-g")
+                                           (:file "consat-g")
+                                           (:file "rule-g")
+                                           (:file "prolog-g")))
+                             (:file "extens")
+                             (:file "customs")))
                (:module texi
                 :components ((:module configs
                               :components ((:file "textrans")

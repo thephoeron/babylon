@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (bab-require 'textrans))
 
 (def-kb-configuration k1c

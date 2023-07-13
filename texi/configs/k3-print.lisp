@@ -6,7 +6,7 @@
 ;;; adopted to non SYMBOLICS machines for BABYLON 2.1 by Juergen Walther 10.5.89
 
 
-(eval-when (eval compile load)   
+(eval-when (:execute :compile-toplevel :load-toplevel)   
   (bab-require 'normal-constraint-mixin)
   (bab-provide 'normal-constraint-mixin))
 

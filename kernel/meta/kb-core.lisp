@@ -126,7 +126,7 @@ removes the name of the kb from the list of known kbs."
 generates an instance of the flavor kb-configuration and assigns it to kb-name.
 the generated kb is automatically made current."
   
-    `(eval-when (compile load eval)
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
        (or (find-package ',kb-name) (make-package ',kb-name :use '()))
 ;       (in-package 'user :use (list (or (find-package ',kb-name)
 ;				(make-package ',kb-name))))
@@ -234,7 +234,7 @@ is used instead of creating a new one. defaults are taken from *default-procs*,
   "makes kb with name kb-name current. if the external representation
 of a kb is distributed over several files this form may insure that
 the right kb is current when any of the files is evaluated."
-  `(eval-when (compile load eval)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
      ;(in-package "BABYLON" :use (list (or (find-package ',kb-name)
      ;                                  (make-package ',kb-name))))
      (in-package "BABYLON")

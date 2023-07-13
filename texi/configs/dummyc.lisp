@@ -5,7 +5,7 @@
 
 ;;; a configuration, to be used by kbs, which are to be used by other kbs only
 
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (bab-require 'textrans))
 
 (def-kb-configuration dummyc

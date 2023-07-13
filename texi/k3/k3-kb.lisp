@@ -7,10 +7,10 @@
 ;; __________________________________________________________________________
 ;;; make sure the k3-add-ons are loaded
 
-(eval-when (eval compile load)   
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (bab-require 'k3-misc)      ; miscellaneous stuff
   (bab-provide 'k3-misc)
-  (bab-require 'k3-print)	
+  (bab-require 'k3-print)
   (bab-provide 'k3-print))    ; printing stuff
 ;; __________________________________________________________________________
 

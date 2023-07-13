@@ -2,7 +2,7 @@
 
 (in-package "BABYLON")
 
-(defvar *babylon-version* "2.3")
+(defvar *babylon-version* (asdf:component-version (asdf:find-system :babylon)))
 
 (defvar *babylon* nil)
 	 

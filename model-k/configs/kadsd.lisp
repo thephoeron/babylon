@@ -4,7 +4,7 @@
 
 ;;; load model-k specific translations
 
-(eval-when (eval compile load)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (bab-require 'mktrans))
 
 ;;; the kads dummy interface configuration

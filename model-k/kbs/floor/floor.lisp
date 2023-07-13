@@ -16,7 +16,7 @@
 #-:MCL 
 (defvar *babylon-kbs* "model-k^kbs>floor>")
 
-(eval-when (eval load compile)
+(eval-when (:execute :compile-toplevel :load-toplevel)
   (unless (member 'KADS *known-knowledge-bases*)
     (let ((working-directory *babylon-kbs*))
       (setf *babylon-kbs* (transform-pathstring "model-k^kbs>kads>kads" 'source))

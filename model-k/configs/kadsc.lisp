@@ -2,7 +2,7 @@
 
 (in-package "BABYLON")
 
-(eval-when (eval load compile)
+(eval-when (:execute :load-toplevel :compile-toplevel)
   (bab-require 'mktrans))
 
 ;;; the kads configuration
