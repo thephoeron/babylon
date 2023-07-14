@@ -25,10 +25,7 @@
 	   ()
   (:required-instance-variables
    meta-processor rules-tried rules-used justification-list)
-  (:documentation "This is the rule-explain-mixin.
-The rule-explain-mixin provides the explanation facilities for the
-rule-interpreter."))
-
+  (:documentation "This is the rule-explain-mixin. The rule-explain-mixin provides the explanation facilities for the rule-interpreter."))
 
 (def$method (rule-explain-mixin :get-status) (term)
   "Provides a list of justificandes for term."
@@ -37,7 +34,6 @@ rule-interpreter."))
 		(if (equal justificand term)
 		    (list (justification-justificans a-justification)))))
 	  justification-list))
-
 
 (def$method (rule-explain-mixin :get-last-status) (term)
   "Get last status for term."
@@ -95,20 +91,13 @@ rule-interpreter."))
 			       a-justificans)))))
 		justificantes))))
 
-
-
-
 ;;
 ;;methodendefinitionen, die die schnittstelle des regelprozessors
 ;;zur wissensbasis definiert. sie besteht im wesentlichen aus leistungen,
 ;;die fuer die erklaerungskomponente wichtig sind.
 
-
-
-
 (def$method (rule-explain-mixin :explain-results) ()
   "Explain all the results of rule evaluation."
-;  ($send meta-processor :send-explanation-window :expose)
   ($send self :how))
 
 (def$method (rule-explain-mixin :why) (fact current-rule rule-set fact-type)
@@ -118,38 +107,32 @@ rule-interpreter."))
     (:ACTION   ($send self :explain-action fact current-rule rule-set))
     (t (baberror (getentry fact-type-error-fstr rule-io-table)))))
 
-
 (def$method (rule-explain-mixin :explain-fact) (fact)
   "Explain a facts status."
   (let ((status-string-list ($send self :translate-status-into-string fact)))
     (dolist (a-string status-string-list t)
       ($send meta-processor :send-explanation-window :format " ~A" a-string))))
 
-
-
-
 (def$method (rule-explain-mixin :explain-premise) (fact current-rule rule-set)
-  "Explain a premisse."
+  "Explain a premise."
   (let ((left-hand-side  (rule-left-hand-side current-rule))
-	(right-hand-side (rule-right-hand-side current-rule))
-	(known-facts ($send self :get-true-facts))
-	(all-numbered-facts (make-numbered-facts ($send self :get-all-facts)))
-	(negated-conditions nil)
-	(known-conditions nil)
-	(numbered-facts nil))
+	      (right-hand-side (rule-right-hand-side current-rule))
+	      (known-facts ($send self :get-true-facts))
+	      (all-numbered-facts (make-numbered-facts ($send self :get-all-facts)))
+	      (negated-conditions nil)
+	      (known-conditions nil)
+	      (numbered-facts nil))
     (setq negated-conditions
-	  (mapcan #'(lambda (a-condition)
-		      (if (is-negated-term a-condition)
-			  (list (get-positive-term a-condition))))
-		  (get-rule-conditions left-hand-side)))
+	        (mapcan #'(lambda (a-condition)
+		                  (if (is-negated-term a-condition)
+		      	              (list (get-positive-term a-condition))))
+		        (get-rule-conditions left-hand-side)))
     (setq known-conditions
-	  (mapcan #'(lambda (a-condition)
-		      (let ((condition-status
-			      ($send self :recall-without-asking a-condition)))
-			(if (and condition-status
-				 (not (IS-UNDETERMINED condition-status)))
-			    (list a-condition))))
-		  (get-rule-conditions left-hand-side)))
+	        (mapcan #'(lambda (a-condition)
+		                  (let ((condition-status ($send self :recall-without-asking a-condition)))
+		      	            (if (and condition-status (not (IS-UNDETERMINED condition-status)))
+		      	                (list a-condition))))
+		        (get-rule-conditions left-hand-side)))
     ;; This would print all known facts
 ;        (cond (known-facts
 ;	       (setq numbered-facts (make-numbered-facts known-facts))
@@ -206,18 +189,15 @@ rule-interpreter."))
     (if (or known-conditions all-numbered-facts)
 	($send self :ask-for-how numbered-facts all-numbered-facts)
 	($send meta-processor :type-end-to-continue
-	       (getentry type-end-to-continue-str babylon-io-table) ))
-    ))
-
+	       (getentry type-end-to-continue-str babylon-io-table)))))
 
 (def$method (rule-explain-mixin :explain-action) (fact current-rule rule-set)
   "Explain an action."
   fact      ;; for the compiler
   (let ((left-hand-side (rule-left-hand-side current-rule))
-	(right-hand-side (rule-right-hand-side current-rule))
-	(numbered-facts nil)
-	(all-numbered-facts
-	  (make-numbered-facts ($send self :get-all-facts))))
+	      (right-hand-side (rule-right-hand-side current-rule))
+	      (numbered-facts nil)
+	      (all-numbered-facts (make-numbered-facts ($send self :get-all-facts))))
     ($send meta-processor :send-explanation-window :format
 	  (getentry evaluation-msg-fstr rule-io-table)
 	  (rule-set-name rule-set)
@@ -244,7 +224,6 @@ rule-interpreter."))
         ($send meta-processor :type-end-to-continue       ;;; hier um rueckschalten
 	       (getentry type-end-to-continue-str babylon-io-table)))   ;; zu verhindrn
     ))
-
 
 (defun make-facts-choice (numbered-facts &optional (item-len *item-width*))
   (declare (list numbered-facts) (fixnum item-len))
@@ -372,9 +351,9 @@ rule-interpreter."))
 
 
 
+;; method requires ted-interface
 (def$method (rule-explain-mixin :how-ultimately) (fact)
   "Provides how ultimately explanations using the ted."
-  ;; method requires ted-interface
   (when rules-used
     ($send self :send-if-handles :display-term-tree
            fact
@@ -519,4 +498,3 @@ rule-interpreter."))
                  (cons root-name (rest string-tree))))))
 
 ;;; eof
-

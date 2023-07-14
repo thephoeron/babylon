@@ -2,6 +2,15 @@
 
 Jürgen Walther's modular, configurable, hybrid knowledge engineering systems framework for Common Lisp, restored from the CMU AI Repository, powered by the Flavors Meta-Class System (FMCS) for Demonic Metaprogramming.
 
+## Supported Platforms
+
+BABYLON compiles, loads, and runs on the following platforms:
+
+- LispWorks 8.0.1 (64-bit, macOS)
+
+BABYLON fails to compile, load, or run for deeply mysterious, inexplicable, and wholly implementation-specific reasons on the following platforms:
+
+- SBCL 2.3.4 (64-bit, macOS)
 ## Authors
 
 - "the Phoeron" Colin J.E. Lupton

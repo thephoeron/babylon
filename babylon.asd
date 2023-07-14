@@ -20,6 +20,9 @@
   :depends-on (fmcs)
   :serial t
   :components ((:file "packages")
+               (:module extens
+                :pathname "tty"
+                :components ((:file "extens")))
                (:module kernel
                 :components ((:file "require")
                              (:file "babtrans")
@@ -117,7 +120,8 @@
                                                          (:file "nc-proc")
                                                          (:file "nc-mixin")))))))
                (:module tty
-                :components ((:module basic
+                :components ((:file "customs")
+                             (:module basic
                               :components ((:file "tty-menu")
                                            (:file "t-dialog")
                                            (:file "b-txscw")
@@ -138,9 +142,8 @@
                                            (:file "frame-g")
                                            (:file "consat-g")
                                            (:file "rule-g")
-                                           (:file "prolog-g")))
-                             (:file "extens")
-                             (:file "customs")))
+                                           (:file "prolog-g")))))
+               #+nil
                (:module texi
                 :components ((:module configs
                               :components ((:file "textrans")
@@ -166,6 +169,7 @@
                              (:module k3
                               :components ((:file "k3-kb")
                                            (:file "k3-kb-ex")))))
+               #+nil
                (:module model-k
                 :components ((:module configs
                               :components ((:file "d-interf")
