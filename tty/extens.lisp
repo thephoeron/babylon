@@ -13,6 +13,40 @@
 ;;  AUTHOR:  E. Gross
 ;;  DATE:    January 1989
 
+;; Some crap from make-sun.lisp
+
+(defvar *bab-host* "")
+
+(setf *recompile* t)
+
+;;------------------------------------------------------------------------ 
+
+(defun make-local-pathname (bab-path host type)
+  (declare (ignore host))
+  (let ((true-type (case type
+                     (source "lisp")
+                     (bin   #+:EXCL "fasl"
+			    #+:CMU  "cmu"
+			    #+:AKCL "o"
+			    #+:CLISP "fas"
+			    #-(or :EXCL :CMU :AKCL :CLISP) "bin" )
+                     (t      (string-downcase type)))))
+    (merge-pathnames (substitute #\/ #\> bab-path)
+                     (concatenate 'string "/foo." true-type))))
+
+(setf *trans-path-fkt*  #'make-local-pathname)
+
+
+(defbabylon-translation "babhome^"  (directory-namestring (asdf:system-source-directory :babylon)))
+(defbabylon-translation "fmcs^"     "babhome^fmcs>")
+(defbabylon-translation "tty^"      "babhome^tty>")
+
+(defbabylon-translation "basic-interface-mixin" "b-interf")
+(defbabylon-translation "mini-interface-mixin"  "m-interf")
+
+(setq *babylon-module-search-path*
+      '("tty^modules>" "modules^" "configs^"))
+
 ;;-----------------------------------------------------------------
 ;;              system dependencies
 ;;-----------------------------------------------------------------

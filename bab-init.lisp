@@ -20,6 +20,7 @@
 
 #+:MCL(eval-enqueue `(in-package "BABYLON"))
 
+(babylon-hello)
 
 ;;; eof
 

@@ -17,16 +17,19 @@
   :bug-tracker "https://github.com/thephoeron/babylon/issues"
   :license "MIT"
   :version (:read-file-form "VERSION")
-  :depends-on (fmcs)
+  :depends-on (fmcs
+               (:feature :sbcl fare-quasiquote-extras))
   :serial t
   :components ((:file "packages")
+               (:module metakernel
+                :pathname "kernel"
+                :components ((:file "require")
+                             (:file "babtrans")))
                (:module extens
                 :pathname "tty"
                 :components ((:file "extens")))
                (:module kernel
-                :components ((:file "require")
-                             (:file "babtrans")
-                             (:module common
+                :components ((:module common
                               :components ((:file "vars")
                                            (:file "c-fns")
                                            (:file "p-core")))
@@ -120,8 +123,7 @@
                                                          (:file "nc-proc")
                                                          (:file "nc-mixin")))))))
                (:module tty
-                :components ((:file "customs")
-                             (:module basic
+                :components ((:module basic
                               :components ((:file "tty-menu")
                                            (:file "t-dialog")
                                            (:file "b-txscw")
@@ -142,7 +144,8 @@
                                            (:file "frame-g")
                                            (:file "consat-g")
                                            (:file "rule-g")
-                                           (:file "prolog-g")))))
+                                           (:file "prolog-g")))
+                             (:file "customs")))
                #+nil
                (:module texi
                 :components ((:module configs
@@ -199,7 +202,8 @@
                                                          (:file "mclasses")
                                                          (:file "ksources")
                                                          (:file "tasks")))))))
-               (:file "babylon")))
+               (:file "babylon")
+               (:file "bab-init")))
 
 (defsystem babylon/examples
   :description "Examples for the BABYLON system."

@@ -152,3 +152,10 @@
            #:constrained-p
            #:unconstrained
            #:satisfy))
+
+(in-package :babylon)
+
+;; Use FARE-QUASIQUOTE's readtable for SBCL
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
