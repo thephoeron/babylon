@@ -3,18 +3,18 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
-
 ;; AUTHOR:   F. di P R I M I O, J. W A L T H E R
-
-
 
 ;;  ted required
 ;;
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;-----------------------------------------------------------------------------
 ;;                   FLAVOR RULE-EXPLAIN-MIXIN
@@ -91,7 +91,6 @@
 			       a-justificans)))))
 		justificantes))))
 
-;;
 ;;methodendefinitionen, die die schnittstelle des regelprozessors
 ;;zur wissensbasis definiert. sie besteht im wesentlichen aus leistungen,
 ;;die fuer die erklaerungskomponente wichtig sind.
@@ -136,7 +135,7 @@
     ;; This would print all known facts
 ;        (cond (known-facts
 ;	       (setq numbered-facts (make-numbered-facts known-facts))
-;	       ($send meta-processor :send-explanation-window :format 
+;	       ($send meta-processor :send-explanation-window :format
 ;                 "~%~1TIt is already established that:")
 ;               ($send self :print-numbered-facts numbered-facts)))
     (cond (known-conditions
@@ -145,10 +144,10 @@
     ($send meta-processor :send-explanation-window :format
 	  (getentry evaluation-msg-fstr rule-io-table)
 	  (rule-set-name rule-set)
-	  (rule-name current-rule))	
+	  (rule-name current-rule))
     ;; This prints the known premises
     (cond (known-conditions
-	   ($send meta-processor :send-explanation-window :format 
+	   ($send meta-processor :send-explanation-window :format
 			 (getentry already-established-msg-str rule-io-table))
 	   ($send self :print-numbered-facts numbered-facts)))
     
@@ -167,18 +166,18 @@
 		  (setq c (get-positive-term c)))
 	      (cond ((and (member c negated-conditions :test #'equal)
 			  (not (equal c fact)))
-		     ($send meta-processor :send-explanation-window :format 
+		     ($send meta-processor :send-explanation-window :format
 			   (getentry is-false-msg-fstr rule-io-table)
 			   (get-junctor left-hand-side)
 			   c))
 		    ((or (equal c fact)
-			 (member c known-conditions :test #'equal))) 
-		    (t ($send meta-processor :send-explanation-window :format 
+			 (member c known-conditions :test #'equal)))
+		    (t ($send meta-processor :send-explanation-window :format
 			     (getentry is-true-msg-fstr rule-io-table)
 			     (get-junctor left-hand-side)
 			     c))))
 	  (get-rule-conditions left-hand-side))
-    ($send meta-processor :send-explanation-window :format 
+    ($send meta-processor :send-explanation-window :format
 	  (getentry then-msg-fstr rule-io-table)
 	  (get-action-type right-hand-side))
     (mapc #'(lambda (a)
@@ -205,7 +204,7 @@
     (cond ((get-rule-conditions left-hand-side)
 	   ($send meta-processor :send-explanation-window :format
 		 (getentry since-msg-fstr rule-io-table)
-		 (get-junctor left-hand-side)) 
+		 (get-junctor left-hand-side))
 	   (mapc #'(lambda (c)
 		     ($send meta-processor
 			    :send-explanation-window :format  " ~S" c))
@@ -236,20 +235,17 @@
               :value ,(second numbered-fact))
             (make-facts-choice (rest numbered-facts) item-len)))))
 
-
-(def$method (rule-explain-mixin :print-numbered-facts) (numbered-facts)	       
+(def$method (rule-explain-mixin :print-numbered-facts) (numbered-facts)
   (mapc #'(lambda (f)
             ($send meta-processor :send-explanation-window :format
                    " ~S ~S" (first f) (second f)))
         numbered-facts))
-
 
 (defun make-numbered-facts (facts &aux (fact-counter 0))
   (mapcar #'(lambda (f)
               (list (setq fact-counter (1+ fact-counter))
                     f))
           facts))
-
 
 (defun generate-how-menu-items (true-facts all-facts unprovable-facts)
   (declare (ignore unprovable-facts))
@@ -281,8 +277,6 @@
      :value PRINT-RULE
      :documentation ,(getentry print-rule-item-str rule-io-table))))
 
-
-
 (def$method (rule-explain-mixin :ask-for-how)
   (numbered-facts all-numbered-facts &optional unprovable-facts)
   "Make Selection menu and explain selected facts."
@@ -297,7 +291,7 @@
             (HOW (do ((fact ($send self :which-fact numbered-facts)
                             ($send self :which-fact numbered-facts)))
                      ((null fact) t)
-                   ($send self :explain-fact fact)))		
+                   ($send self :explain-fact fact)))
             (HOW-ALL (do ((fact ($send self :which-fact all-numbered-facts)
                                 ($send self :which-fact all-numbered-facts)))
                          ((null fact) t)
@@ -311,8 +305,7 @@
             (PRINT-RULE ($send self  :print-rule))
             (t (return nil))))
     (go A)))
-		
-				
+
 (def$method (rule-explain-mixin :which-fact)
   (numbered-facts &optional (item-len *item-width*))
   (prog (choice menu)
@@ -328,7 +321,6 @@
       (if (null choice) (go A)))
     (return choice)))
 
-
 (def$method (rule-explain-mixin :how) (&optional (facts nil))
   "Provides how explanations."
   (let ((numbered-facts
@@ -341,15 +333,11 @@
            ($send meta-processor :send-explanation-window :format
                   (getentry results-header-msg-str rule-io-table))
            ($send self :print-numbered-facts numbered-facts))
-          (t ($send meta-processor :send-explanation-window :format 
+          (t ($send meta-processor :send-explanation-window :format
                     (getentry no-positive-results-msg-str rule-io-table))))
     ($send self :ask-for-how numbered-facts all-numbered-facts unprovable-facts)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;  ted-interface ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
 
 ;; method requires ted-interface
 (def$method (rule-explain-mixin :how-ultimately) (fact)
@@ -365,7 +353,6 @@
     ($send meta-processor :type-end-to-continue
            (getentry type-end-to-continue-str babylon-io-table))))
 
-
 (def$method (rule-explain-mixin :why-not) (fact)
   "Provides why not explanations using the ted."
   ;; method requires ted-interface
@@ -374,9 +361,7 @@
            `(NIL . ,(REMOVE-DOUBLES (mapcar #'second rules-tried)))
            self)))
 
-;;;;;;;;   This computes a string list tree for the ted
-
-
+;; This computes a string list tree for the ted
 
 (def$method (rule-explain-mixin :get-input-type) (term)
   "internal method."
@@ -395,7 +380,6 @@
            (if rule-sets-where-term-is-action
              rule-sets-where-term-is-action
              `((,(getentry input-spec-str rule-io-table)))))))))
-
 
 (def$method (rule-explain-mixin :compute-tree) (term rule-set)
   "internal method."
@@ -424,7 +408,6 @@
             (,(FROM-LIST-TO-STRING (get-positive-term term)) . ,next-nodes))
           `(,(FROM-LIST-TO-STRING term) . ,next-nodes))))))
 
-
 (def$method (rule-explain-mixin :display-term-tree) (a-term rule-set)
   "Internal method."
   (let* ((string-tree ($send self :compute-tree a-term rule-set))
@@ -441,7 +424,6 @@
                               ": "
                               root-name)
                  (cons root-name (rest string-tree))))))
-
 
 (def$method (rule-explain-mixin :compute-why-not-tree)
   (term rule-set trace-base)
@@ -480,7 +462,6 @@
                      (funcall trace-base :get-last-status-identifier term))
             . ,next-nodes))))))
 
-
 (def$method (rule-explain-mixin :display-unprovable-term-tree)
   (a-term rule-set trace-base)
   "internal method."
@@ -496,5 +477,8 @@
            (cons (concatenate 'string
                               (getentry rule-ted-str rule-io-table) ": " root-name)
                  (cons root-name (rest string-tree))))))
+
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof

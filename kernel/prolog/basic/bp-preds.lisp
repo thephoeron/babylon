@@ -3,14 +3,14 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; DATE:     uralt
-;; AUTHORS:  Eckehard Gross 
+;; AUTHORS:  Eckehard Gross
 
 ;; This file depends on:  common>*
 ;;                        prolog>basic>axioms
@@ -23,8 +23,11 @@
 ;;           the selector of this method is held on the property list
 ;;           of the predicate using the indicator PROLOG-METHOD
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;--------------------------------------------------------------------------
-;;                  FLAVOR BASIC-GOALBOX 
+;;                  FLAVOR BASIC-GOALBOX
 ;;--------------------------------------------------------------------------
 
 
@@ -80,7 +83,7 @@ method for user defined predicates."))
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE GOALS WITH USER DEFINED PREDICATES 
+;;               METHODS TO PROVE GOALS WITH USER DEFINED PREDICATES
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-normal) (mode)
@@ -96,7 +99,7 @@ method for user defined predicates."))
 		       (t (go B)))))
 	
      A (cond ((first clauses)
-	      (setq next-clause 
+	      (setq next-clause
 		    ($send prolog-processor :trans-unify goal (first clauses)))
 	      (case (clause-type next-clause)
 		(rule ($send self :generate-subgoals (body next-clause))
@@ -108,7 +111,7 @@ method for user defined predicates."))
 	
      B (case ($send self :prove-subgoals mode)
 	 (succ 	(return 'succ))
-	 (fail  (normal-reset)	       
+	 (fail  (normal-reset)
 		(setf clauses (cdr clauses))
 		(setf subgoals nil)
 		(setq mode 'try)
@@ -138,7 +141,7 @@ method for user defined predicates."))
 (def$method (basic-goalbox :prove-subgoals) (mode)
   "provides first or next proof of all subgoals of the goal
 giving a proof of the goal itself using the last unifying rule."
-  (prog ((ngoal nil) (pgoal nil))	
+  (prog ((ngoal nil) (pgoal nil))
      A  (case ($send curr-subgoal :prove-goal mode)
 	  (succ  (cond ((setq ngoal ($send curr-subgoal :next-goal))
 			(setf curr-subgoal ngoal)
@@ -157,7 +160,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               PROVE-TOP, ABORT 
+;;               PROVE-TOP, ABORT
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-top) (mode)
@@ -186,7 +189,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SOME BASIC SYSTEM PREDICATES 
+;;               METHODS TO PROVE SOME BASIC SYSTEM PREDICATES
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-cut) (mode)
@@ -213,11 +216,11 @@ giving a proof of the goal itself using the last unifying rule."
   (let ((gl goal) res)
     (setf goal (deref (cadr goal)))
     (cond ((varcell-p goal)
-	   ($send prolog-processor :babylon-format 
+	   ($send prolog-processor :babylon-format
 		 (getentry not-instant-fstr prolog-io-table)
 		 (subst-prolog-vars goal 'ext))
 	   (setq res 'error))
-	  (t (setq res ($send self :prove-goal mode)))) 
+	  (t (setq res ($send self :prove-goal mode))))
     (setf goal gl)
     res))
 
@@ -226,7 +229,7 @@ giving a proof of the goal itself using the last unifying rule."
   (let ((gl goal) res)
     (setf goal (deref goal))
     (cond ((varcell-p goal)
-	   ($send prolog-processor :babylon-format 
+	   ($send prolog-processor :babylon-format
 		 (getentry not-instant-fstr prolog-io-table)
 		 (subst-prolog-vars goal 'ext))
 	   (setq res 'error))
@@ -238,7 +241,7 @@ giving a proof of the goal itself using the last unifying rule."
   "proves system predicate callpred."
   (let ((gl goal)(pred (deref (second goal))) res)
     (cond ((or (null pred)(varcell-p pred))
-	   ($send prolog-processor :babylon-format 
+	   ($send prolog-processor :babylon-format
 		 (getentry illegal-pred-fstr prolog-io-table)
 		 (subst-prolog-vars goal 'ext))
 	   (setq res 'error))
@@ -251,7 +254,7 @@ giving a proof of the goal itself using the last unifying rule."
   "proves a goal whose predicate is an instantiated varaible."
   (let ((gl goal)(pred (deref (first goal))) res)
     (cond ((varcell-p pred)
-	   ($send prolog-processor :babylon-format 
+	   ($send prolog-processor :babylon-format
 		 (getentry illegal-pred-fstr prolog-io-table)
 		 (subst-prolog-vars goal 'ext))
 	   (setq res 'error))
@@ -270,7 +273,7 @@ giving a proof of the goal itself using the last unifying rule."
 	    (prepare-reset)
 	    (if result
 		'succ
-		'fail)))		 
+		'fail)))
     (retry 'fail)))
 
 (def$method (basic-goalbox :prove-is) (mode)
@@ -282,7 +285,7 @@ giving a proof of the goal itself using the last unifying rule."
 	    (if ($send prolog-processor
 			      :unify (deref (second goal)) clauses)
 		'succ
-		'fail)))	   
+		'fail)))
     (retry (normal-reset)
 	   'fail)))
 
@@ -306,7 +309,7 @@ giving a proof of the goal itself using the last unifying rule."
 (defprolog-method lisp :prove-lisp)
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SYSTEM PREDICATES AND/OR ET AL 
+;;               METHODS TO PROVE SYSTEM PREDICATES AND/OR ET AL
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-and) (mode)
@@ -319,7 +322,7 @@ giving a proof of the goal itself using the last unifying rule."
 		   (return 'succ)))
 	  (retry (if (rest goal)
 		     nil
-		     (return 'fail)))) 
+		     (return 'fail))))
 	
 	(case ($send self :prove-subgoals mode)
 	  (succ	(return 'succ))
@@ -343,7 +346,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 (def$method (basic-goalbox :prove-or) (mode)
   "proves system predicate or."
-  (prog ()	
+  (prog ()
         (case mode
 	  (try (prepare-reset)
 	       (setf clauses (rest goal))
@@ -351,13 +354,13 @@ giving a proof of the goal itself using the last unifying rule."
 	  (retry (go B)))
 	
      A  (cond ((null clauses)(return 'fail))
-	      (t nil))	
+	      (t nil))
 	($send curr-subgoal :set-goal (first clauses))
 	
      B  (case ($send curr-subgoal :prove-goal mode)
 	  (succ	(return 'succ))
-	  ((fail cfail)			
-	   (normal-reset)	       
+	  ((fail cfail)
+	   (normal-reset)
 	   (setf clauses (cdr clauses))
 	   (setq mode 'try)
 	   (go A))
@@ -366,7 +369,7 @@ giving a proof of the goal itself using the last unifying rule."
 	       (return 'cfail))
 	  (error (return 'error)))))
 
-(def$method (basic-goalbox :prove-not) (mode)  
+(def$method (basic-goalbox :prove-not) (mode)
   "proofs system predicate not."
   (case mode
     (try (prepare-reset)
@@ -409,7 +412,6 @@ giving a proof of the goal itself using the last unifying rule."
 	 (prepare-reset)
 	 ($send self :generate-subgoals
 	       `(,(second goal) (cut) ,@(rest (rest goal))))))
-  
   (case ($send self :prove-subgoals mode)
     (succ  'succ)
     (fail (normal-reset)
@@ -419,7 +421,6 @@ giving a proof of the goal itself using the last unifying rule."
 	 (setf subgoals nil)
 	 'cfail)
     (error  'error)))
-
 
 (def$method (basic-goalbox :prove-repeat) (mode)
   "proves system predicate repeat."
@@ -431,14 +432,13 @@ giving a proof of the goal itself using the last unifying rule."
 	   'succ)))
 
 
-(def$method (basic-goalbox :prove-bagof) (mode) 
+(def$method (basic-goalbox :prove-bagof) (mode)
   "proves system predicate bagof."
   (prog ((mod mode) (var (second goal)))
-	
         (case mod
 	  (try (prepare-reset)
 	       (setf clauses nil)
-	       ($send self :generate-subgoal (third goal)))	  
+	       ($send self :generate-subgoal (third goal)))
 	  (retry (normal-reset)
 		 (return 'fail)))
 	
@@ -446,14 +446,14 @@ giving a proof of the goal itself using the last unifying rule."
 	   (succ (setf clauses (cons (subst-prolog-vars var 'normal) clauses))
 		 (setq mod 'retry)
 		 (go A))
-	   ((fail cfail)		
+	   ((fail cfail)
 	    (cond (($send prolog-processor
 			 :unify
 			 (deref (fourth goal))
 			 (nreverse clauses))
 		   (setf subgoals nil)
 		   (return 'succ))
-		  (t (normal-reset)  
+		  (t (normal-reset)
 		     (setf subgoals nil)
 		     (return 'fail))))
 	   (error (return 'error)))))
@@ -463,7 +463,7 @@ giving a proof of the goal itself using the last unifying rule."
 (defprolog-method or     :prove-or)
 
 (defprolog-method not    :prove-not)
-  
+
 (defprolog-method once   :prove-once)
 
 (defprolog-method cond   :prove-cond)
@@ -474,7 +474,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SYSTEM PREDICATES FOR COMPARING 
+;;               METHODS TO PROVE SYSTEM PREDICATES FOR COMPARING
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-equal) (mode)
@@ -540,7 +540,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SYSTEM PREDICATES FOR READ/WRITE 
+;;               METHODS TO PROVE SYSTEM PREDICATES FOR READ/WRITE
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-read) (mode)
@@ -580,7 +580,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SYSTEM PREDICATES FOR TYPE CHECKING 
+;;               METHODS TO PROVE SYSTEM PREDICATES FOR TYPE CHECKING
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-type) (mode)
@@ -610,7 +610,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO PROVE SYSTEM PREDICATES FOR CLAUSE MANAGEMENT 
+;;               METHODS TO PROVE SYSTEM PREDICATES FOR CLAUSE MANAGEMENT
 ;;---------------------------------------------------------------------------
 
 (def$method (basic-goalbox :prove-asserta) (mode)
@@ -621,7 +621,7 @@ giving a proof of the goal itself using the last unifying rule."
 		(pred (pred (head clause)))
 		(axiom-set nil))
 	   (cond ((is-var pred)
-		  ($send prolog-processor :babylon-format 
+		  ($send prolog-processor :babylon-format
 			(getentry wrong-argument-fstr prolog-io-table)
 			(subst-prolog-vars (second goal) 'normal)
 			'asserta)
@@ -642,7 +642,7 @@ giving a proof of the goal itself using the last unifying rule."
 		    (pred (pred (head clause)))
 		    (axiom-set nil))
 	       (cond ((is-var pred)
-		      ($send prolog-processor :babylon-format 
+		      ($send prolog-processor :babylon-format
 			    (getentry wrong-argument-fstr prolog-io-table)
 			    (subst-prolog-vars (second goal) 'normal)
 			    'assertz)
@@ -672,7 +672,7 @@ giving a proof of the goal itself using the last unifying rule."
 			  ($send prolog-processor :select-axiom-set pred))
 		    (prepare-side-reset)
 		    (prolog-assert clause axiom-set #'nconc)
-		    (setf clauses (list clause axiom-set))	
+		    (setf clauses (list clause axiom-set))
 		    'succ))))
     (retry (side-reset)
 	   (rem-clause (first clauses) (second clauses))
@@ -684,7 +684,7 @@ giving a proof of the goal itself using the last unifying rule."
 
 (def$method (basic-goalbox :prove-retract) (mode)
   "proves system predicate retract."
-  (prog (clause pred axiom-set next-clause)	
+  (prog (clause pred axiom-set next-clause)
 	
         (case mode
 	  (try   (prepare-reset)
@@ -698,7 +698,7 @@ giving a proof of the goal itself using the last unifying rule."
 			(return 'error)))
 		 (setq pred (pred (head clause)))
 		 (setq axiom-set
-		       ($send prolog-processor :find-axiom-set pred))	
+		       ($send prolog-processor :find-axiom-set pred))
 		 (if (null axiom-set)
 		     (return 'fail))
 		 (setf clauses (get pred axiom-set)))
@@ -741,10 +741,10 @@ giving a proof of the goal itself using the last unifying rule."
 
 (def$method (basic-goalbox :prove-clause) (mode)
   "proves system predicate clause."
-  (prog (clause pred axiom-set next-clause)	
+  (prog (clause pred axiom-set next-clause)
 	
         (case mode
-	  (try (prepare-reset) 	       
+	  (try (prepare-reset)
 	       (setq clause
 		     (check-for-clause (subst-prolog-vars (second goal) 'int)))
 	       (cond ((null clause)
@@ -757,7 +757,7 @@ giving a proof of the goal itself using the last unifying rule."
 	       (if (null axiom-set)
 		   (return 'fail)
 		   (setf clauses (get pred axiom-set))))
-	  (retry (normal-reset)		 
+	  (retry (normal-reset)
 		 (setq clause
 		       (check-for-clause (subst-prolog-vars (second goal) 'int)))
 		 (setq pred (pred (head clause)))
@@ -766,7 +766,7 @@ giving a proof of the goal itself using the last unifying rule."
 		 (setq mode 'try)))
 	
      A (cond ((first clauses)
-	      (setq next-clause 
+	      (setq next-clause
 		    ($send prolog-processor
 				  :clause-trans-unify clause (first clauses)))
 	      (cond ((null next-clause)
@@ -787,3 +787,5 @@ giving a proof of the goal itself using the last unifying rule."
 
 (defprolog-method clause  :prove-clause)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
