@@ -21,6 +21,9 @@
 ;; contents: a mixin making the facilities of basic-rule-processor available
 ;;           for a knowledge base.
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;-----------------------------------------------------------------------------
 ;;                   FLAVOR BASIC-RULE-MIXIN
 ;;-----------------------------------------------------------------------------
@@ -34,7 +37,6 @@
   (:required-instance-variables kb-name procs system-trace system-trace-window language)
   (:documentation "this mixin makes the facilities of basic-rule-processor available.")) 
 
-
 (def$method (basic-rule-mixin :after :init) (&rest plist)
   "Create rule processor."
   (declare (ignore plist))
@@ -45,10 +47,9 @@
   "Make an instance of basic-rule-processor and associate it with kb."
   (setf rule-processor (make-$instance 'basic-rule-processor 
                                        :meta-processor self
-                                       :alternate-meta-processor				      
+                                       :alternate-meta-processor
                                        (make-$instance 'kb-stub
                                                        :meta-processor self))))
-
 
 (def$method (basic-rule-mixin :set-up-rule-cmds) ()
   (let ((table (get 'cmd-table ($send self :language))))
@@ -56,7 +57,6 @@
       ($send self :add-sub-operations
 	     :top (gethash 'rule table)
 	     :rule (gethash 'rule-commands table)))))
-
 
 ;;--------------------------------------------------------------------------
 ;;                  RULE SET CONSTRUCTION (CONSTRUCTORS)
@@ -74,8 +74,7 @@
 		  (CHECK-RULE-SYNTAX a-rule where))
 	      (rule-set-rules a-rule-set)))))
 
-
-(def$method (basic-rule-mixin :add-to-rules) (a-rule-set)	
+(def$method (basic-rule-mixin :add-to-rules) (a-rule-set)
   "Add a rule set to rules."
   (let ((previous-set (assoc (first a-rule-set) rules)))
     (cond ((null rules)
@@ -85,8 +84,6 @@
 	   (setf rules (nconc rules `(,a-rule-set))))
 	  (t (setf (rest previous-set) (rest a-rule-set))))))
 
-
-
 (defmacro DEFRULE-SET (rule-set-name &rest rules)
   `(and (current-kb-typep 'basic-rule-mixin)
 	(send-kb :add-to-rules '(,rule-set-name . ,rules))
@@ -95,12 +92,10 @@
 (defmacro RULE-SET (rule-set-name &rest rules)
   `(DEFRULE-SET ,rule-set-name . ,rules))
 
-
 (defmacro HYPOTHESES (&rest hypotheses)
   `(and (current-kb-typep 'basic-rule-mixin)
 	(send-kb :set-hypotheses ',hypotheses)
 	`(HYPOTHESES DEFINED FOR ,(send-kb :kb-name))))
-
 
 ;;--------------------------------------------------------------------------
 ;;                  PRINTING RESULTS 
@@ -118,19 +113,18 @@
 ;;                  EXPLAINING EVALUATION 
 ;;--------------------------------------------------------------------------
 
-(defrequest rule-meta-reference		
+(defrequest rule-meta-reference
 	    :prolog  :eval-rule-meta-reference-for-prolog)
 
-(defun is-rule-meta-predicate (x)	
+(defun is-rule-meta-predicate (x)
   (member x *rule-meta-predicates*))
 
-(defmacro rule-reference-type (request)	
+(defmacro rule-reference-type (request)
   `(if (and (listp ,request)
 	    (is-rule-meta-predicate (first ,request)))
        'RULE-META-REFERENCE))
 
 (assign-typefkt 'rule-reference-type 'basic-rule-mixin)
-
 
 (def$method (basic-rule-mixin :eval-rule-meta-reference-for-prolog) (request mode)
   (when system-trace
@@ -154,7 +148,7 @@
 			      (cons `(DEFRULE-SET . ,($send rule-processor
 							    :get-rule-set
 							    a-rule-set-name))
-				    rule-set-defs)))		    
+				    rule-set-defs)))
 		      (if (CONTAINS-VARS (second request))
 			  (dolist (a-rule-set-def (nreverse rule-set-defs) (nreverse clauses))
 			    (setf clauses
@@ -179,13 +173,12 @@
 
 (def$method (basic-rule-mixin :find-implications)
 	   (&optional (rule-set-name nil)
-	    (control-structure :DO-ALL)		      		      
+	    (control-structure :DO-ALL)
 	    (condition T)
 	    (bindings nil))
   "Find implications (forward evaluation)."
   ($send rule-processor :start-forward
 	rule-set-name control-structure condition bindings))
-
 
 (defun find-implications (&optional
 			     (rule-set-name nil)
@@ -201,7 +194,6 @@
                                                  (rule-set-name nil)
                                                  (bindings nil))
   "Test hypotheses (backward evaluation)."
-
   (if (not list-of-hypotheses)
     (setq list-of-hypotheses hypotheses))
   (if (not (integerp number-of-hypotheses-to-verify))
@@ -221,7 +213,6 @@
          rule-set-name
          bindings))
 
-
 (defun test-hypotheses (&optional (number-of-hypotheses-to-verify 1.)
 			(list-of-hypotheses nil)
 			(rule-set-name nil)
@@ -231,7 +222,6 @@
 	   list-of-hypotheses 
 	   rule-set-name
 	   bindings))
-
 
 (def$method (basic-rule-mixin :obtain) (number-of-hypotheses-to-verify
 				 goal-specification
@@ -252,7 +242,6 @@
 	rule-set-name
 	bindings))
 
-
 (defun obtain (number-of-hypotheses-to-verify goal-specification
 	       &optional (rule-set-name nil) (bindings nil))
   (send-kb :obtain
@@ -260,7 +249,6 @@
 	   goal-specification
 	   rule-set-name
 	   bindings))
-
 
 ;;--------------------------------------------------------------------------
 ;;                  CONFLICT RESOLUTION 
@@ -294,7 +282,6 @@ interpreter is reset."
 		  "~{~%      ~S~}" (get-rule-actions (rule-right-hand-side rule)))
     ($send window :format "~%")))
 
-
 (def$method (basic-rule-mixin :select-rule-set-name) ()
   (let ((rule-set-names ($send rule-processor :get-rule-set-names)))
     (cond ((null (rest rule-set-names)) (first rule-set-names))
@@ -304,8 +291,6 @@ interpreter is reset."
 		   (rule-set ($send self :choose-from-menu items label)
 			     ($send self :choose-from-menu items label)))
 		  ((not (null rule-set)) rule-set))))))
-
-
 
 (def$method (basic-rule-mixin :select-list-rule) (&optional window)
   (let ((rule-set-name ($send self :select-rule-set-name)))
@@ -335,7 +320,9 @@ interpreter is reset."
 ;;                  AUX STUFF 
 ;;--------------------------------------------------------------------------
 
-
 (defun send-rule (selector &rest args)
   "Send to current rule-processor."
   (lexpr-$send (send-kb :rule-processor) selector args))
+
+#+sbcl
+(named-readtables:in-readtable :standard)
