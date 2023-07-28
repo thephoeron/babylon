@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -17,6 +17,9 @@
 ;; -fstr        Format String
 ;; -item        Single Menu Item
 ;; -item-list   Item Lists for Menus
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (defbabylon-table babylon-io-table english)
@@ -145,13 +148,13 @@
     ))
 
 
-(defbabylon-entry star-str babylon-io-table english 
+(defbabylon-entry star-str babylon-io-table english
   (make-string 71 :initial-element #\*))
 
 (defbabylon-entry no-select-str babylon-io-table english
   "no selection")
 
-(defbabylon-entry mult-choose-header-str babylon-io-table english   
+(defbabylon-entry mult-choose-header-str babylon-io-table english
   "Select Several Items")
 
 (defbabylon-entry illegal-choice-fstr babylon-io-table english
@@ -160,7 +163,7 @@
 (defbabylon-entry unknown-operation-fstr babylon-io-table english
   "~S Unknown Operation for ~S")
 
-(defbabylon-entry restart-kb-fstr babylon-io-table english 
+(defbabylon-entry restart-kb-fstr babylon-io-table english
   "Restart KB ~S")
 
 (defbabylon-entry notify-on-select-fstr babylon-io-table english
@@ -189,3 +192,5 @@
 (defbabylon-entry kb-of-wrong-type-str babylon-io-table english
   "Current KB of wrong type")
 
+#+sbcl
+(named-readtables:in-readtable :standard)

@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -18,6 +18,9 @@
 ;; -item        Single Menu Item
 ;; -item-list   Item Lists for Menus
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 (defbabylon-table babylon-io-table german)
 
@@ -29,10 +32,10 @@
   "[Druecke ~:C zur Fortsetzung] ")
 
 
-(defbabylon-entry select-to-confirm-str babylon-io-table german 
+(defbabylon-entry select-to-confirm-str babylon-io-table german
   "[Selektiere zur Bestaetigung] ")
 
-(defbabylon-entry select-to-continue-str babylon-io-table german 
+(defbabylon-entry select-to-continue-str babylon-io-table german
   "[Selektiere zur Fortsetzung] ")
 
 
@@ -62,7 +65,7 @@
 
 (defbabylon-entry run-loop-str babylon-io-table german
     " Gib Nachrichten via Lisp Listener ein")
-					
+
 (defbabylon-entry file-name-with-default-fstr babylon-io-table  german
   "Gib Dateinamen an [Standard ~A]: ")
 
@@ -142,7 +145,7 @@
     (u . unknown)
     (? . help)
     (h . help)
-    (hilfe . help)   
+    (hilfe . help)
     (anfordern . prompt)
     (p . prompt)
     ))
@@ -151,29 +154,29 @@
 (defbabylon-entry star-str babylon-io-table german
   (make-string-of-length 71 "*"))
 
-(defbabylon-entry no-select-str babylon-io-table german 
+(defbabylon-entry no-select-str babylon-io-table german
   "Keine Auswahl")
 
-(defbabylon-entry mult-choose-header-str babylon-io-table german 
+(defbabylon-entry mult-choose-header-str babylon-io-table german
   "Waehle mehrere Eintraege aus")
 
-(defbabylon-entry illegal-choice-fstr babylon-io-table german 
+(defbabylon-entry illegal-choice-fstr babylon-io-table german
   "Unzulaessige Auswahl")
 
-(defbabylon-entry unknown-operation-fstr babylon-io-table german 
+(defbabylon-entry unknown-operation-fstr babylon-io-table german
   "~S unbekannte Operation fuer ~S")
 
 (defbabylon-entry restart-kb-fstr babylon-io-table german
   "Restart WB ~S")
 
-(defbabylon-entry notify-on-select-fstr babylon-io-table german 
+(defbabylon-entry notify-on-select-fstr babylon-io-table german
   "~&===> Aktuelle WB: ~S~%~A")
 
 
-(defbabylon-entry use-kb-fstr babylon-io-table german 
+(defbabylon-entry use-kb-fstr babylon-io-table german
   "Werde die Wissensbasis ~S benutzen, die nicht aktuell ist. In Ordnung? ")
 
-(defbabylon-entry unwanted-kb-fstr babylon-io-table german 
+(defbabylon-entry unwanted-kb-fstr babylon-io-table german
   "~S unerwuenscht")
 
 
@@ -184,10 +187,12 @@
 (defbabylon-entry kb-exists-fstr babylon-io-table german
   "Eine Wissensbasis ~S vom Typ ~S existiert bereits.~%Soll sie verwendet werden? ")
 
-(defbabylon-entry enter-file-fstr babylon-io-table  german 
+(defbabylon-entry enter-file-fstr babylon-io-table  german
   "Geben Sie einen Dateinamen ein: ")
 
 
-(defbabylon-entry kb-of-wrong-type-str babylon-io-table german 
+(defbabylon-entry kb-of-wrong-type-str babylon-io-table german
   "Aktuelle WB vom falschen Typ")
 
+#+sbcl
+(named-readtables:in-readtable :standard)

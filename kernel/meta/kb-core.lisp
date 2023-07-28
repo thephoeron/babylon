@@ -1,9 +1,9 @@
 ;;; -*- Mode: LISP; Package: BABYLON; Syntax: Common-lisp; Base: 10 -*-
 
 (in-package "BABYLON")
- 
+
 ;;           Copyright   1988, 1987, 1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,6 +13,9 @@
 
 
 ;; CONTENTS: the base flavor for knowledge bases
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 ;;-----------------------------------------------------------------------
@@ -32,7 +35,7 @@ which are global and not exclusively handled by one of the special
 processors."))
 
 ;;-----------------------------------------------------------------------
-;;              KNOWLEDGE BASE CONFIGURATION CONSTRUCTOR 
+;;              KNOWLEDGE BASE CONFIGURATION CONSTRUCTOR
 ;;-----------------------------------------------------------------------
 
 (defun filter-options (key options)
@@ -48,21 +51,21 @@ are: (:special . special-mixins) (:procs . processor-mixins) (:interface . inter
 which determine the special,processor and interface mixins to be included in the flavor.
 No defaults are used if these options are not specified.
 All other options are passed to the defflavor form."
-  
+
   (let ((special-mixins (rest (assoc :special options)))
-	(proc-mixins (rest (assoc :procs options))) 
+	(proc-mixins (rest (assoc :procs options)))
 	(interface-mixins (rest (assoc :interface options)))
         (rest-options (filter-options :special
 			(filter-options :interface
 			  (filter-options :procs options)))))
     (dolist (flavor (append proc-mixins interface-mixins special-mixins))
 	   (or (flavorp flavor) (bab-require flavor)))
-    
+
     `(progn
-      
+
        (dolist (flavor (append ',proc-mixins ',interface-mixins ',special-mixins))
 	 (or (flavorp flavor) (bab-require flavor)))
-       
+
        (def$flavor ,flavor-name  ()
 		  (,@special-mixins
 		   ,@interface-mixins
@@ -71,7 +74,7 @@ All other options are passed to the defflavor form."
 		   kb-processor-core)
 	 :settable-instance-variables
 	 ,@rest-options)
-       
+
        (def$method (,flavor-name  :get-type) (request)
 	 (or ,@(mapcan #'(lambda (proc-mixin)
 			   (let ((fkt (get proc-mixin :typefkt)))
@@ -82,10 +85,10 @@ All other options are passed to the defflavor form."
        ',flavor-name)))
 
 ;;-----------------------------------------------------------------------
-;;              KNOWLEDGE BASE INSTANCE CONSTRUCTOR 
+;;              KNOWLEDGE BASE INSTANCE CONSTRUCTOR
 ;;-----------------------------------------------------------------------
 
-	
+
 (def$method (kb-processor-core :make-yourself-known) ()
   "internal method.
 adds the the name of the kb to the list of known kbs."
@@ -94,7 +97,7 @@ adds the the name of the kb to the list of known kbs."
 
 (def$method (kb-processor-core :make-yourself-unknown) ()
   "internal method.
-removes the name of the kb from the list of known kbs."  
+removes the name of the kb from the list of known kbs."
   (setf *known-knowledge-bases*
 	(remove kb-name *known-knowledge-bases*)))
 
@@ -125,7 +128,7 @@ removes the name of the kb from the list of known kbs."
   "knowledge base instance constructor.
 generates an instance of the flavor kb-configuration and assigns it to kb-name.
 the generated kb is automatically made current."
-  
+
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (or (find-package ',kb-name) (make-package ',kb-name :use '()))
 ;       (in-package 'user :use (list (or (find-package ',kb-name)
@@ -133,9 +136,9 @@ the generated kb is automatically made current."
 ;       (unuse-package ',kb-name :user)
        (or (flavorp ',kb-configuration) (bab-require ',kb-configuration))
        (unless (use-old-kb? ',kb-name)
-	 (setq ,kb-name 
-	       (make-window-or-instance ',kb-configuration 
-					:kb-name ',kb-name			    
+	 (setq ,kb-name
+	       (make-window-or-instance ',kb-configuration
+					:kb-name ',kb-name
 					,@init-plist))
 	 ($send ,kb-name :store-deklaration
 		'(def-kb-instance ,kb-name ,kb-configuration ,@init-plist))
@@ -171,7 +174,7 @@ the generated kb is automatically made current."
 (defmacro knowledge-base (kb-name &rest init-plist)
   "knowledge base constructor.
 generates eventually a kb configuration named PROCESSOR-FOR-<kb-name> and
-makes an instance of this configuration. init-plist is searched for values 
+makes an instance of this configuration. init-plist is searched for values
 of the keys :special, :procs and :interface. these are used to build the
 :special, :procs and :interface options of the def-kb-configuration form.
 if one of the values is missing defaults are used instead. if no values
@@ -182,7 +185,7 @@ is used instead of creating a new one. defaults are taken from *default-procs*,
   (cond ((or (member :procs init-plist)
 	     (member :interface init-plist)
 	     (member :special init-plist))
-	 (let ((kb-configuration (intern (format nil "PROCESSOR-FOR-~S" kb-name)))    
+	 (let ((kb-configuration (intern (format nil "PROCESSOR-FOR-~S" kb-name)))
 	       (special-mixins (get-special-mixins-to-include init-plist))
 	       (proc-mixins (get-proc-mixins-to-include init-plist))
 	       (interface-mixins (get-interface-mixins-to-include init-plist))
@@ -204,7 +207,7 @@ is used instead of creating a new one. defaults are taken from *default-procs*,
 
 
 ;;-----------------------------------------------------------------------
-;;                 INSTRUCTIONS CONSTRUCTOR 
+;;                 INSTRUCTIONS CONSTRUCTOR
 ;;-----------------------------------------------------------------------
 
 (defmacro instructions (&rest instructions)
@@ -215,7 +218,7 @@ is used instead of creating a new one. defaults are taken from *default-procs*,
 
 
 ;;-----------------------------------------------------------------------
-;;                 UTILITY FUNCTIONS 
+;;                 UTILITY FUNCTIONS
 ;;-----------------------------------------------------------------------
 
 
@@ -239,7 +242,7 @@ the right kb is current when any of the files is evaluated."
      ;                                  (make-package ',kb-name))))
      (in-package "BABYLON")
      (use-package (list (or (find-package ',kb-name)
-                            (make-package ',kb-name))) 
+                            (make-package ',kb-name)))
                   "BABYLON")
      (search-for-kb ',kb-name)))
 
@@ -288,8 +291,8 @@ it is called by :select-kb which is used normally to activate a kb."
 ;;-----------------------------------------------------------------------
 
 (def$method (kb-processor-core :kill-kb) ()
-  "makes the kb unaccessable. 
-if the kb was current one of the remaining known kbs is made current." 
+  "makes the kb unaccessable.
+if the kb was current one of the remaining known kbs is made current."
   ($send self :make-yourself-unknown)
   (setf (symbol-value kb-name) nil)
   (if (current-p self)
@@ -323,7 +326,7 @@ if the kb was current one of the remaining known kbs is made current."
   (format stream (getentry state-of-kb-fstr babylon-io-table) kb-name)
   (mapc #'(lambda (proc)
 	    ($send proc :send-if-handles :kb-inform stream))
-	procs)    
+	procs)
   (format stream "~%")
   kb-name)
 
@@ -333,7 +336,7 @@ if the kb was current one of the remaining known kbs is made current."
 
 ;;-----------------------------------------------------------------------
 ;;             STARTING THE KNOWLEDGE BASE
-;;-----------------------------------------------------------------------  
+;;-----------------------------------------------------------------------
 
 
 (def$method (kb-processor-core  :start)
@@ -344,10 +347,10 @@ where *current-knowledge-base* is bound to the kb and *language* to its language
 which is used by the functiom stop-kb-execution."
   (let ((*current-knowledge-base* self)
 	(*language* ($send self :language)))
-    ;; Dies ist notwendig weil innerhalb der "procs" 
+    ;; Dies ist notwendig weil innerhalb der "procs"
     ;; auf die globalen Variablen referiert wird.
     ($send self :initialize)
-    (catch 'knowledge-base-stop-tag	    
+    (catch 'knowledge-base-stop-tag
       ($send self :start-execution list-of-instructions))))
 
 (def$method (kb-processor-core  :start-kb)
@@ -362,7 +365,7 @@ which is used by the functiom stop-kb-execution."
 
 (def$method (kb-processor-core :start-execution)
 	   (&optional (list-of-instructions nil))
-  "evaluates the instructions provided by the parameter list-of-instructions 
+  "evaluates the instructions provided by the parameter list-of-instructions
 or those from the slot instructions within a progn form with self bound to the kb."
   (let (($self self))
     (declare (special $self))
@@ -385,9 +388,9 @@ or those from the slot instructions within a progn form with self bound to the k
 
 (def$method (kb-processor-core :start-kb-confirmed) ()
   "asks whether to start the kb starting it eventually."
-  (when (lexpr-$send self :confirm 
+  (when (lexpr-$send self :confirm
 		    (format nil (getentry start-fstr babylon-io-table)
-			    ($send self :kb-name))	 
+			    ($send self :kb-name))
 		    ($send self :global-trace-status))
     ($send self :babylon-format
 		  (getentry starting-kb-fstr babylon-io-table) kb-name)
@@ -396,7 +399,7 @@ or those from the slot instructions within a progn form with self bound to the k
 
 
 
-;;----------------------------------------------------------------------- 
+;;-----------------------------------------------------------------------
 
 
 (defun reset-knowledge-base ()
@@ -410,3 +413,6 @@ or those from the slot instructions within a progn form with self bound to the k
 (defun call-kb (&optional (kb *current-knowledge-base*))
   "selects kb."
   ($send kb :select-kb))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

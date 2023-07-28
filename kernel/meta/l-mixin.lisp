@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHORS:  Franco di Primio, Eckehard Gross, Juergen Walther
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (def$flavor lisp-mixin
@@ -21,7 +24,7 @@ It provides all the facilities to use Lisp functions in the context
 of a knowledge base."))
 
 
-(defrequest lisp-form			
+(defrequest lisp-form
 	    :remember :eval-lisp
 	    :store    :eval-lisp
 	    :recall   :eval-lisp
@@ -61,5 +64,8 @@ of a knowledge base."))
 	  (if (is-variable result) ;; gives a list of clauses as result
 	      (dolist (a-value call-result (nreverse clauses))
 		(setf clauses (cons `((,fn ,@args ,a-value)) clauses)))
-	      ;; else T or NIL 
+	      ;; else T or NIL
 	      (not (null (member result call-result))))))))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHORS:  Franco di Primio, Eckehard Gross, Juergen Walther
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 
@@ -30,7 +33,7 @@ processors to be mixed into one knowledge base."))
 (def$method (meta-processor-core :send-system-trace-window)
 	    (selector &rest args)
   (lexpr-$send system-trace-window selector args))
-				
+
 ;;--------------------------------------------------------------------------
 ;;                    EVALUATION OF REQUESTS
 ;;--------------------------------------------------------------------------
@@ -70,7 +73,7 @@ processors to be mixed into one knowledge base."))
   'why)
 
 ;;--------------------------------------------------------------------------
- 
+
 (def$method (meta-processor-core :toggle-system-trace) ()
   "Toggles system trace mode."
   (setf system-trace (if system-trace nil t)))
@@ -84,3 +87,6 @@ processors to be mixed into one knowledge base."))
   (if system-trace
       (format nil (getentry trace-on-fstr  babylon-io-table) "System")
       (format nil (getentry trace-off-fstr babylon-io-table) "System")))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

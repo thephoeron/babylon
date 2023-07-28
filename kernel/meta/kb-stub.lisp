@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,6 +11,9 @@
 
 
 ;; AUTHORS:  Franco di Primio, Eckehard Gross, Juergen Walther
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (def$flavor kb-stub
@@ -40,5 +43,7 @@ the role of meta-processor."))
 #+:FMCS(def$method (kb-stub :default-handler) (message)
 	(lexpr-$send meta-processor (first message) (rest message)))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof
