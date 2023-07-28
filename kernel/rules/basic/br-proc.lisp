@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -17,9 +17,11 @@
 ;;                        rules>basic>rules
 ;;                        rules>basic>br-inter
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;-----------------------------------------------------------------------------
-;;                   FLAVOR BASIC-RULE-PROCESSOR 
+;;                   FLAVOR BASIC-RULE-PROCESSOR
 ;;-----------------------------------------------------------------------------
 
 (def$flavor basic-rule-processor
@@ -27,7 +29,6 @@
 	   (rule-interpreter)
   (:documentation "This flavor provides the functionality of rule-interpreter
 and the standard methods for processors."))
-
 
 (def$method (basic-rule-processor :reset-proc) ()
   "Reset the processor to initial state."
@@ -41,9 +42,9 @@ and the standard methods for processors."))
   "Print statistics about rules and rulesets on <stream>."
   ($send self :rule-statistics stream))
 
-
 #-:FMCS(compile-$flavor-$methods basic-rule-processor)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

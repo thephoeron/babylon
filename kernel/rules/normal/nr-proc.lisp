@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,6 +11,8 @@
 
 ;; AUTHOR:   F. di P R I M I O, J. W A L T H E R
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;; ************** RULE-PROCESSOR *****************
 
@@ -25,9 +27,9 @@ mixins, the user is wanting to be available. The available mixins include
 the rule-trace-mixin for tracing, rule-explain-mixin for explanations
 and rule-develop-mixin for development support."))
 
-
 #-:FMCS(compile-$flavor-$methods normal-rule-processor)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

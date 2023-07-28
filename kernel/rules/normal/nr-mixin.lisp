@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,6 +11,9 @@
 
 
 ;; AUTHORS:  Franco di Primio, Eckehard Gross, Juergen Walther
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (def$flavor normal-rule-mixin
@@ -21,7 +24,7 @@
 
 (def$method (normal-rule-mixin :generate-rule-processor) ()
   "generates a prolog-processor binding it to the instance variable prolog-processor."
-  (setf rule-processor (make-$instance 'normal-rule-processor 
+  (setf rule-processor (make-$instance 'normal-rule-processor
 				      :meta-processor self
 				      :alternate-meta-processor
 				      (make-$instance 'kb-stub
@@ -54,7 +57,7 @@
 
 
 ;;--------------------------------------------------------------------------
-;;                  FOR HANDLING RULES 
+;;                  FOR HANDLING RULES
 ;;--------------------------------------------------------------------------
 
 
@@ -69,7 +72,7 @@
 
 
 ;;--------------------------------------------------------------------------
-;;                  EXPLAINING RESULTS 
+;;                  EXPLAINING RESULTS
 ;;--------------------------------------------------------------------------
 
 (def$method (normal-rule-mixin :explain-results) ()
@@ -79,10 +82,12 @@ Actually only the results of rule processor actions are explained."
 
 
 (defun explain-results (&rest ignore)
-  "Explain results.  
+  "Explain results.
 Actually only the results of rule processor actions are explained."
   (declare (ignore ignore))
   (send-kb :explain-results))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

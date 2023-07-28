@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -31,26 +31,25 @@
 ;;           $TRUE     :BACKWARD                   :true
 ;;           $AND      :FORWARD                    :and-forward
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;-----------------------------------------------------------------------------
 ;;                     AUXILARY FUNCTIONS
 ;;-----------------------------------------------------------------------------
-
 
 (defmacro defjunctor (name rule-interpreter-method mode)
   "Associates operators in rules with mode and method for execution."
   `(progn (setf (get ',name ',mode) ',rule-interpreter-method)
 	  ',name))
 
-
 (defun standard-conflict-resolution (list-of-rules goal processor)
   "Defines the standard conflict resolution strategy."
   (declare (ignore goal processor))
   list-of-rules)
 
-
 (defun stop-execution (&optional (result 'done))
   (throw 'rule-interpreter-stop-tag result))
-
 
 (defun is-undetermined-or-null (value)
   "Returns t if value is nil or undetermined, nil otherwise."
@@ -58,7 +57,7 @@
 	(t nil)))
 
 ;;-----------------------------------------------------------------------------
-;;                   RULE INTERPRETER 
+;;                   RULE INTERPRETER
 ;;-----------------------------------------------------------------------------
 
 (def$flavor rule-interpreter
@@ -73,20 +72,16 @@
 oriented programming.  It uses flavor  rule-base for handling rules  and
 flavor data-base as the dynamic data base.  Rule-base and data-base only
 provide the functionality needed for rule-interpreter.  Data-base  rests
-on other processors via meta-processor to store and retrieve data.")
-  )
-
+on other processors via meta-processor to store and retrieve data."))
 
 (def$method (rule-interpreter :before :reset-proc) ()
   "Reset rule interpreter to initial state."
   (setf rhs-one-shot-list nil)
   (setf	conflict-resolution #'standard-conflict-resolution))
 
-
 ;;-----------------------------------------------------------------------------
 ;;             METHOD TO EVALUATE A SINGLE RULE
 ;;-----------------------------------------------------------------------------
-
 
 (defun get-op-def (symbol index)
   "Retrieves selector-names attached with operators which may appear in rules."
@@ -96,13 +91,11 @@ on other processors via meta-processor to store and retrieve data.")
 	       symbol index)
 	fn)))
 
-
 (defmacro testif (rule left-hand-side rule-set mode)
   `($send self (get-op-def (get-junctor ,left-hand-side) ,mode)
 		 ,rule
 		 (get-rule-conditions ,left-hand-side)
 		 ,rule-set))
-
 
 (defmacro usethen (rule right-hand-side rule-set mode)
   `($send self (get-op-def (get-action-type ,right-hand-side) ,mode)
@@ -110,11 +103,8 @@ on other processors via meta-processor to store and retrieve data.")
 		 (get-rule-actions ,right-hand-side)
 		 ,rule-set))
 
-
-
 (defmacro instantiate-pattern (alist pattern)
   `(sublis ,alist ,pattern))
-
 
 (def$method (rule-interpreter :try-rule) (rule rule-set mode)
   "Internal method."
@@ -140,12 +130,10 @@ on other processors via meta-processor to store and retrieve data.")
 		 (setq result use-result)
 		 ($send self :add-rule-used
 		       `(,(rule-set-name rule-set) ,rule-instance)))))))))
-	       
 
-
-;;----------------------------------------------------------------------------- 
+;;-----------------------------------------------------------------------------
 ;;                 BACKWARD CHAINING EVALUATION METHODS
-;;----------------------------------------------------------------------------- 
+;;-----------------------------------------------------------------------------
 
 (def$method (rule-interpreter :test-hypotheses) (verification-limit
                                                  hypotheses
@@ -167,12 +155,12 @@ Hypotheses are given explicitly."
                     (first hypotheses) nil rule-set)
              ($send self :add-hypotheses-verified (first hypotheses))
              (decf verification-limit)))
-      (setq hypotheses (rest hypotheses))	     
+      (setq hypotheses (rest hypotheses))
       (go loop)
       exit
       (return ($send self :hypotheses-verified)))))
 
-;;----------------------------------------------------------------------------- 
+;;-----------------------------------------------------------------------------
 
 (def$method (rule-interpreter :obtain) (verification-limit
                                         goal-specification
@@ -198,7 +186,7 @@ Hypotheses are given implicitly."
     ($send self :test-hypotheses
            verification-limit goals rule-set bindings)))
 
-;;----------------------------------------------------------------------------- 
+;;-----------------------------------------------------------------------------
 
 (def$method (rule-interpreter :in-then-part) (fact rule-set current-rule)
   "Defines a different name for method :inthen of rule-base.
@@ -209,7 +197,6 @@ which should not be traced."
   (declare (ignore current-rule))
   ($send self :inthen fact rule-set))
 
-
 (def$method (rule-interpreter :verify-hypothesis)
 	   (hypothesis rule rule-set)
   "Defines a different name for method :verify.
@@ -217,18 +204,16 @@ This method is  used as  the primary  method of  a before  demon used to
 trace verification of hypotheses. :verify is called recursively"
   ($send self :verify hypothesis rule rule-set))
 
-
-  
 (def$method (rule-interpreter :verify) (fact current-rule rule-set)
   "Internal method.
 a modified version of WINSTONS VERIFY."
-  (prog (data-base-answer relevant1 relevant2 (SUCCESS t) (FAILURE nil))	
+  (prog (data-base-answer relevant1 relevant2 (SUCCESS t) (FAILURE nil))
 	(cond ((is-negated-term fact)
 	       (setq fact (get-positive-term fact))
 	       (setq SUCCESS nil)
-	       (setq FAILURE t)))	
+	       (setq FAILURE t)))
      RECALL
-	(setq data-base-answer ($send self :recall fact))	
+	(setq data-base-answer ($send self :recall fact))
 	(cond ((IS-UNDETERMINED data-base-answer)
 	       (if ($send self :is-unprovable fact rule-set)
 		   (return FAILURE)
@@ -241,31 +226,26 @@ a modified version of WINSTONS VERIFY."
 		       fact
 		       self))
 	(setq relevant2 relevant1)
-	(cond ((null relevant1)	       ; the fact is an input premise
-	                               ; (still undetermined)
+	(cond ((null relevant1)	       ; the fact is an input premise (still undetermined)
 	       ($send self :ask-user
 		     fact current-rule rule-set failure :PREMISE)
 	       (go RECALL)))
-	
-     FORWARD ;; try forward rules with fact in right-hand-side	
-	(cond ((null relevant1) (go BACKWARD)))	
+     FORWARD ;; try forward rules with fact in right-hand-side
+	(cond ((null relevant1) (go BACKWARD)))
 	(cond (($send self :try-rule (pop relevant1) rule-set 'FORWARD)
 	       (return SUCCESS)))
 	(go FORWARD)
-	
-     BACKWARD ;; try backward rules with fact in right-hand-side	
+     BACKWARD ;; try backward rules with fact in right-hand-side
 	(cond ((null relevant2)	       ; mark fact as unprovable in <rule-set>
 	       ($send self :add-unprovable fact rule-set)
-	       (return FAILURE)))	
+	       (return FAILURE)))
 	(cond (($send self :try-rule (pop relevant2) rule-set 'BACKWARD)
 	       (return SUCCESS)))
 	(go BACKWARD)))
 
-
 ;;-----------------------------------------------------------------------------
 ;;             METHODS FOR JUNCTORS WITH BACKWARD CHAINING
 ;;-----------------------------------------------------------------------------
- 
 
 (defjunctor $and :and-backward BACKWARD)
 
@@ -283,12 +263,11 @@ a modified version of WINSTONS VERIFY."
   (dolist (condition conditions nil)
     (if ($send self :verify condition rule rule-set) (return t))))
 
-
 ;;-----------------------------------------------------------------------------
 ;;               FORWARD CHAINING EVALUATION
 ;;-----------------------------------------------------------------------------
 
-(def$method (rule-interpreter :start-forward) 
+(def$method (rule-interpreter :start-forward)
 	    (&optional rule-set-name
 		       (control-structure :do-all)
 		       (condition t)
@@ -298,7 +277,6 @@ a modified version of WINSTONS VERIFY."
     ($send self control-structure
 	   (or rule-set-name current-rule-set) condition bindings)))
 
-
 (def$method (rule-interpreter :do-one) (rule-set-name
                                         &optional condition (bindings nil))
   "Internal method. Forward evaluation of a DO-ONE rule."
@@ -307,15 +285,12 @@ a modified version of WINSTONS VERIFY."
          trules next-rule result)
     (setq trules (rule-set-rules rule-set))
     A  (if (null trules) (return result))
-    (setq next-rule (pop trules))	
+    (setq next-rule (pop trules))
     (setq result ($send self :try-rule next-rule rule-set 'FORWARD))
     (if result (return result))
     (go A)))
 
-
-(def$method (rule-interpreter :do-all) (rule-set-name
-                                        &optional condition
-                                        (bindings nil))
+(def$method (rule-interpreter :do-all) (rule-set-name &optional condition (bindings nil))
   "Internal method. Forward evaluation with DO-ALL control strategy."
   (declare (ignore condition))
   (prog ((rule-set ($send self :get-rule-set rule-set-name nil bindings))
@@ -327,10 +302,8 @@ a modified version of WINSTONS VERIFY."
     (if last-result (setq result last-result))
     (go A)))
 
-
-
-(def$method (rule-interpreter :while-one) (rule-set-name 
-                                           &optional (while-condition t) 
+(def$method (rule-interpreter :while-one) (rule-set-name
+                                           &optional (while-condition t)
                                            (bindings nil))
   "Internal method. Forward evaluation with WHILE-ONE control strategy."
   (prog (result last-result)
@@ -340,10 +313,8 @@ a modified version of WINSTONS VERIFY."
                     (t (return result))))
              (t (return result)))))
 
-
-
-(def$method (rule-interpreter :while-all) (rule-set-name 
-                                           &optional (while-condition t) 
+(def$method (rule-interpreter :while-all) (rule-set-name
+                                           &optional (while-condition t)
                                            (bindings nil))
   "Internal method. Forward evaluation with WHILE-ALL control strategy."
   (prog (result last-result)
@@ -353,9 +324,8 @@ a modified version of WINSTONS VERIFY."
                     (t (return result))))
              (t (return result)))))
 
-
 ;;-----------------------------------------------------------------------------
-;;           METHODS FOR JUNCTORS WITH FORWARD CHAINING 
+;;           METHODS FOR JUNCTORS WITH FORWARD CHAINING
 ;;-----------------------------------------------------------------------------
 
 (defjunctor $one-shot :one-shot FORWARD)
@@ -394,9 +364,7 @@ a modified version of WINSTONS VERIFY."
 
 (defjunctor ?and :and-forward-asking-if-undetermined FORWARD)
 
-(def$method (rule-interpreter :and-forward-asking-if-undetermined) (rule 
-                                                                    conditions 
-                                                                    rule-set)
+(def$method (rule-interpreter :and-forward-asking-if-undetermined) (rule conditions rule-set)
   "AND forward with asking if undetermined strategy for rule evaluation.
    Do not ask any questions to the user, if there is any premisse,
    that can be shown to be failing."
@@ -407,7 +375,7 @@ a modified version of WINSTONS VERIFY."
         (setq conditions (reverse conditions-to-ask)
               to-ask nil)
         (return t)))
-    (setq condition (pop conditions)) 
+    (setq condition (pop conditions))
     B
     (setq data-base-answer
           ($send self :recall condition))
@@ -427,19 +395,15 @@ a modified version of WINSTONS VERIFY."
 
 (defjunctor ?or :or-forward-asking-if-undetermined FORWARD)
 
-(def$method (rule-interpreter :or-forward-asking-if-undetermined) (rule 
-                                                                   conditions 
-                                                                   rule-set)
+(def$method (rule-interpreter :or-forward-asking-if-undetermined) (rule conditions rule-set)
   "OR forward with asking if undetermined strategy for rule evaluation."
   (prog (data-base-answer condition conditions-to-ask (to-ask t))
-    
     A  (if (null conditions)
          (if (and to-ask (not (null conditions-to-ask)))
            (setq conditions (reverse conditions-to-ask)
                  to-ask nil)
            (return nil)))
     (setq condition (pop conditions))
-    
     B  (setq data-base-answer
              ($send self :recall condition))
     (cond ((IS-UNDETERMINED data-base-answer)
@@ -450,7 +414,7 @@ a modified version of WINSTONS VERIFY."
                            rule-set
                            (is-negated-term condition)
                            :PREMISE)
-                    (go B))))		
+                    (go B))))
           ((null data-base-answer) (go A))
           (t (return t)))))
 
@@ -463,7 +427,7 @@ a modified version of WINSTONS VERIFY."
   (declare (ignore rule rule-set))
   ($send meta-processor :eval
          `(AND . ,conditions) :RECALL 'rule))
- 
+
 ;;-----------------------------------------------------------------------------
 
 (defjunctor or :variable-or-forward FORWARD)
@@ -474,13 +438,12 @@ a modified version of WINSTONS VERIFY."
   ($send meta-processor :eval
          `(OR . ,conditions) :RECALL 'rule))
 
-
 ;;-----------------------------------------------------------------------------
-;;               METHODS FOR JUNCTORS $TRUE AND $FALSE 
+;;               METHODS FOR JUNCTORS $TRUE AND $FALSE
 ;;-----------------------------------------------------------------------------
-
 
 (defjunctor $true :true FORWARD)
+
 (defjunctor $true :true BACKWARD)
 
 (def$method (rule-interpreter :true) (rule conditions rule-set)
@@ -491,6 +454,7 @@ a modified version of WINSTONS VERIFY."
 ;;-----------------------------------------------------------------------------
 
 (defjunctor $false :false FORWARD)
+
 (defjunctor $false :false BACKWARD)
 
 (def$method (rule-interpreter :false) (rule conditions rule-set)
@@ -499,11 +463,11 @@ a modified version of WINSTONS VERIFY."
   nil)
 
 ;;-----------------------------------------------------------------------------
-;;               METHODS FOR EVALUATION OF RULE CONCLUSIONS 
+;;               METHODS FOR EVALUATION OF RULE CONCLUSIONS
 ;;-----------------------------------------------------------------------------
 
-
 (defjunctor $conclude :conclude FORWARD)
+
 (defjunctor $conclude :conclude BACKWARD)
 
 (def$method (rule-interpreter :conclude) (rule actions rule-set)
@@ -539,6 +503,7 @@ The value of :execute is always true."
         ((not (IS-UNDETERMINED result)) t)
       ($send self :ask-user action rule rule-set nil :ACTION))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

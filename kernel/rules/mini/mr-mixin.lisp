@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1988    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,11 +11,14 @@
 
 ;; AUTHORS:  E. Gross
 ;; DATE:     December 1988
-;;         
+;;
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 ;;-----------------------------------------------------------------------------
-;;                   FLAVOR MINI-RULE-MIXIN 
+;;                   FLAVOR MINI-RULE-MIXIN
 ;;-----------------------------------------------------------------------------
 
 
@@ -29,7 +32,7 @@
 (def$method (mini-rule-mixin  :generate-rule-processor) ()
   "generates an instance of mini-rule-processor."
   (setf rule-processor
-	(make-$instance 'mini-rule-processor 
+	(make-$instance 'mini-rule-processor
 			:meta-processor self
 			:alternate-meta-processor (make-$instance 'kb-stub
 								  :meta-processor self))))
@@ -86,14 +89,14 @@
     (:store
       ($send self :send-rule-trace-window :format "~A[~S ~S]~A~S"
 	     (getentry rule-str rule-io-table)
-	     (trace-element-rule-set-name trace-element) 
+	     (trace-element-rule-set-name trace-element)
 	     (rule-name (trace-element-rule trace-element))
 	     (getentry execute-str rule-io-table)
 	     (trace-element-term trace-element)))
     (:ask-user
      ($send self :send-rule-trace-window :format "~A[~S ~S] ~A ~S"
 	    (getentry sharp-sign-str rule-io-table)
-	    (trace-element-rule-set-name trace-element) 
+	    (trace-element-rule-set-name trace-element)
 	    (rule-name (trace-element-rule trace-element))
 	    (getentry ask-user-str rule-io-table)
 	    (trace-element-term trace-element)))))
@@ -125,7 +128,7 @@
   (dolist (rset-name ($send rule-processor :get-rule-set-names) t)
     ($send rule-processor :mark-rules mode rset-name
 	   ($send rule-processor :get-rule-names rset-name))))
-	  
+
 ;;;---------------------------------------------------------------------------
 
 
@@ -164,7 +167,7 @@
 	     (hide-all ($send rule-processor :mark-rules 'hide rset-name
 			      ($send rule-processor :get-rule-names rset-name)))
 	     (show-all ($send rule-processor :mark-rules 'show rset-name
-			      ($send rule-processor :get-rule-names rset-name)))	
+			      ($send rule-processor :get-rule-names rset-name)))
 	     (toggle   ($send rule-processor :toggle-rules rset-name
 			      ($send self :select-rules-to-toggle rset-name)))
 	     (exit     (return t)))))))
@@ -208,5 +211,7 @@
 	   (lexpr-$send self (first method) (rest method)))
 	  (t ($send self method)))))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1988    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,7 +11,10 @@
 
 ;; AUTHORS:  E. Gross
 ;; DATE:     December 1988
-;;        
+;;
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 ;; contents: a flavor which realizes tracing for the rule processor.
@@ -61,7 +64,7 @@ rule-interpreter."))
 				  :no-select t))
 			    (get-rule-actions right-hand-side))
 		    (format nil
-			    (getentry is-needed-to-show-fstr rule-io-table) 
+			    (getentry is-needed-to-show-fstr rule-io-table)
 			    (from-list-to-string fact)
 			    (get-action-type right-hand-side)))
       ($send meta-processor :choose-from-menu
@@ -109,7 +112,7 @@ rule-interpreter."))
 		      (get-rule-mark (first rlist) rule-set-name trace-indicator))
 		      result))))
 
-	    
+
 (def$method (rule-trace-mixin :mark-rules) (mode rule-set-name rule-name-list)
   (dolist (rule-name rule-name-list t)
     ($send self :mark-rule mode rule-set-name rule-name)))
@@ -191,14 +194,14 @@ rule-interpreter."))
 
 (def$method (rule-trace-mixin :before :in-then-part)
 	    (fact rule-set current-rule)
-  "Trace verification attempt of term within then part."  
+  "Trace verification attempt of term within then part."
   (when rule-trace
       (let ((trace-element (make-trace-element
 			     :term fact
 			     :rule-set-name (rule-set-name rule-set)
 			     :rule current-rule
 			     :mode nil
-			     :keyword :in-then-part)))	
+			     :keyword :in-then-part)))
 	(if (trace-element-to-store trace-element trace-mode trace-indicator)
 	    (setf trace-list (cons trace-element trace-list)))
 	(if (trace-element-to-show trace-element trace-mode trace-indicator)
@@ -208,7 +211,7 @@ rule-interpreter."))
   "Trace rule conclusion of type REMEMBER."
   (when rule-trace
     (let ((trace-element (make-trace-element
-			   :term  action 
+			   :term  action
 			   :rule-set-name (rule-set-name rule-set)
 			   :rule rule
 			   :mode nil
@@ -233,14 +236,14 @@ rule-interpreter."))
       (if (trace-element-to-show trace-element trace-mode trace-indicator)
 	  ($send meta-processor :display-trace-element trace-element)))))
 
-     
+
 (def$method (rule-trace-mixin :before :ask-user)
 	    (action rule rule-set flag type)
   (declare (ignore flag type))
   (when rule-trace
     (let ((trace-element
 	    (make-trace-element
-	      :term action 
+	      :term action
 	      :rule-set-name (rule-set-name rule-set)
 	      :rule rule
 	      :mode nil
@@ -250,38 +253,38 @@ rule-interpreter."))
       (if (trace-element-to-show trace-element trace-mode trace-indicator)
 	  ($send meta-processor :display-trace-element trace-element)))))
 
-   
+
 (def$method (rule-trace-mixin :before :try-rule) (rule rule-set mode)
   "Trace application attempt of rule in rule set rule-set backward or forward mode."
   (when rule-trace
-    (let ((trace-element (make-trace-element 
+    (let ((trace-element (make-trace-element
 			   :term nil
 			   :rule-set-name (rule-set-name rule-set)
-			   :rule rule 
+			   :rule rule
 			   :mode mode
 			   :keyword :try-rule)))
       (if (trace-element-to-store trace-element trace-mode trace-indicator)
 	  (setf trace-list (cons trace-element trace-list)))
       (if (trace-element-to-show trace-element trace-mode trace-indicator)
 	  ($send meta-processor :display-trace-element trace-element)))))
-   
+
 
 (def$method (rule-trace-mixin :before :verify-hypothesis) (hypothesis rule rule-set)
   "trace verification attempt of hypothesis."
-  
+
   (when rule-trace
     (let ((trace-element (make-trace-element
 			   :term hypothesis
 			   :rule-set-name (rule-set-name rule-set)
-			   :rule rule 
+			   :rule rule
 			   :mode nil
 			   :keyword :verify-hypothesis)))
       (if (trace-element-to-store trace-element trace-mode trace-indicator)
 	  (setf trace-list (cons trace-element trace-list)))
       (if (trace-element-to-show trace-element trace-mode trace-indicator)
 	  ($send meta-processor :display-trace-element trace-element)))))
-   
-    
+
 ;;;------------------------------------------------------------------------
 
-
+#+sbcl
+(named-readtables:in-readtable :standard)

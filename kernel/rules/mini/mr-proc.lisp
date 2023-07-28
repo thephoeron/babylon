@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1988    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,13 +11,16 @@
 
 ;; AUTHORS:  E. Gross
 ;; DATE:     December 1988
-;;        
+;;
 
 ;; contents: a flavor combining basic-rule-processor with a component
 ;;           which provides trace facilities.
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;-----------------------------------------------------------------------------
-;;                   FLAVOR MINI-RULE-PROCESSOR 
+;;                   FLAVOR MINI-RULE-PROCESSOR
 ;;-----------------------------------------------------------------------------
 
 (def$flavor mini-rule-processor
@@ -27,5 +30,7 @@
 
 #-:FMCS(compile-$flavor-$methods mini-rule-processor)
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

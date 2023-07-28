@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -16,26 +16,24 @@
 
 ;; contens: a flavor managing the dynamic data base of the rule interpreter.
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;-----------------------------------------------------------------------------
-;;                   FLAVOR DATA-BASE 
+;;                   FLAVOR DATA-BASE
 ;;-----------------------------------------------------------------------------
 
-
-(def$flavor data-base 
+(def$flavor data-base
 	   ((rules-tried nil)
 	    (rules-used nil)
 	    (hypotheses-verified nil)
-	    (justification-list nil))		
+	    (justification-list nil))
 	   (processor-core)
   :settable-instance-variables
   (:documentation "This flavor manages the dynamic data base for the rule-processor.
 It uses facilities of the meta-processor via the flavor processor-core to store and
 retrieve data and it stores basic information for rule-interpreter execution
-and explanation.")
-  )
-
+and explanation."))
 
 (def$method (data-base :reset-data-base) ()
   "Reset dynamic data base to initial state."
@@ -44,11 +42,9 @@ and explanation.")
   (setf hypotheses-verified nil)
   (setf justification-list nil))
 
-
 ;;-----------------------------------------------------------------------------
 ;;                   METHODS TO STORE AND RETRIEVE FACTS
 ;;-----------------------------------------------------------------------------
-
 
 (def$method (data-base :recall) (fact)
   "Recall the status of a (negated) fact."
@@ -57,7 +53,7 @@ and explanation.")
 	   (setq fact (GET-POSITIVE-TERM fact))
 	   (setq success nil)
 	   (setq failure t)))
-    (let ((meta-processor-answer 
+    (let ((meta-processor-answer
 	    ($send meta-processor :eval fact :RECALL 'rule)))
       (if (IS-UNDETERMINED meta-processor-answer)
 	  (UNDETERMINED)
@@ -65,15 +61,14 @@ and explanation.")
 	      success
 	      failure)))))
 
-
-(def$method (data-base :recall-without-asking) (fact) 
+(def$method (data-base :recall-without-asking) (fact)
   "To avoid full evaluation of premises for explanations."
   (let ((success t) (failure nil))
     (cond ((IS-NEGATED-TERM fact)
 	   (setq fact (GET-POSITIVE-TERM fact))
 	   (setq success nil)
 	   (setq failure t)))
-    (let ((meta-processor-answer  
+    (let ((meta-processor-answer
 	    ($send meta-processor :eval fact :RECALL-IMMEDIATE 'rule)))
       (if (IS-UNDETERMINED meta-processor-answer)
 	  (UNDETERMINED)
@@ -96,20 +91,18 @@ and explanation.")
   ($send self :add-direct-deduced action `(,(rule-set-name rule-set) ,rule))
   action)
 
-
 (def$method (data-base :why) (fact current-rule rule-set fact-type)
   "Substitute for true explanations, which are provided by rule-explain-mixin"
   (declare (ignore fact current-rule rule-set fact-type))
   ($send meta-processor :choose-from-menu
 		'((" No Explanation available " :no-select t))))
 
-
 (def$method (data-base :ask-user)
 	   (action rule rule-set flag type)
   ; type :PREMISE or :ACTION
   "Ask user for an undetermined action."
   (let ((answer ($send meta-processor :eval action :ask 'rule flag)))
-    (case answer 
+    (case answer
       (TRUE    ($send self :add-as-positive action) T)
       (FALSE   ($send self :add-as-negative action) NIL)
       (UNKNOWN ($send self :add-as-unknown action) NIL)
@@ -117,31 +110,24 @@ and explanation.")
 	       ($send self :ask-user action rule rule-set flag type))
       (t (baberror (getentry ask-user-wrong-answer-error-str rule-io-table))))))
 
-
 ;;-----------------------------------------------------------------------------
 ;;          METHODS TO STORE HOW INFORMATION WAS GATHERED
 ;;-----------------------------------------------------------------------------
 
-
-
 (def$method (data-base :add-rule-tried) (rule)
   "Add rule to tried rules."
   (setf rules-tried (cons rule rules-tried)))
-
 
 (def$method (data-base :add-rule-used) (rule)
   "Add rule to used rules."
   (if (not (member rule rules-used :test 'equal))
       (setf rules-used (cons rule rules-used))))
 
-
 (def$method (data-base :add-hypotheses-verified) (term)
   "Add term to list of verified hypotheses."
   (setf hypotheses-verified (cons term hypotheses-verified)))
 
-
 ;;-----------------------------------------------------------------------------
-
 
 (defstruct justification
   justificand			; a term
@@ -158,9 +144,8 @@ and explanation.")
 ; :UNKNOWN        <justificans> left unknown after a question
 ; (:UNPROVABLE <rule-set>)
 ;                 <justificans> is unprovable in <rule-set>
-; (:RULE-ACTION (<rule-set> <rule>)) 
+; (:RULE-ACTION (<rule-set> <rule>))
 ;                 <justificans> was an action of (<rule-set> <rule>)
-
 
 (def$method (data-base :add-as-positive) (term)
   "Add term to list of positive terms."
@@ -169,14 +154,12 @@ and explanation.")
 				   :justificans :USER-YES)
 	       justification-list)))
 
-
 (def$method (data-base :add-as-negative) (term)
   "Add term to list of negative terms."
   (setf justification-list
 	(cons (make-justification :justificand term
 				  :justificans :USER-NO)
 	      justification-list)))
-
 
 (def$method (data-base :add-as-unknown) (term)
   "Add term to list of unknown terms."
@@ -185,14 +168,12 @@ and explanation.")
 				  :justificans :UNKNOWN)
 	      justification-list)))
 
-
 (def$method (data-base :add-direct-deduced) (term rule-set-and-rule)
   "Add term to list of directly deduced terms of a given rule of rule set."
   (setf justification-list
 	(cons  (make-justification :justificand term
 				   :justificans `(:RULE-ACTION ,rule-set-and-rule))
 	       justification-list)))
-
 
 (def$method (data-base :add-unprovable) (term rule-set)
   "Add term to list of not provable terms of a given rule set."
@@ -201,10 +182,9 @@ and explanation.")
 				    :justificans `(:UNPROVABLE ,rule-set))
 		justification-list)))
 
-
 ;(def$method (data-base :is-unprovable) (term rule-set)
 ;  "Look up if term is known to be not provable by a given rule set."
-;  (let ((justification (assoc term justification-list :test 'equal))) 
+;  (let ((justification (assoc term justification-list :test 'equal)))
 ;    ;; find last justification
 ;    (if justification
 ;	(and (consp (second justification))
@@ -238,7 +218,6 @@ and explanation.")
 		    (list (justification-justificand a-justification)))))
 	  justification-list))
 
-
 (def$method (data-base :get-unprovable-facts) ()
   "Get all unprovable facts."
   (mapcan #'(lambda (a-justification)
@@ -248,13 +227,11 @@ and explanation.")
 		    (list (justification-justificand  a-justification)))))
 	  justification-list))
 
-
 (def$method (data-base :get-all-facts) ()
   "Get all facts."
   (mapcar #'(lambda (a-justification)
 	      (justification-justificand  a-justification))
 	  justification-list))
-
 
 ;;-----------------------------------------------------------------------------
 
@@ -264,16 +241,18 @@ and explanation.")
       ($send meta-processor :babylon-format
 	    (getentry hypotheses-verified-fstr rule-io-table)
 	    hypotheses-verified)
-      ($send meta-processor :babylon-format 
-	    (getentry no-hypothesis-verified-fstr rule-io-table))))  
+      ($send meta-processor :babylon-format
+	    (getentry no-hypothesis-verified-fstr rule-io-table))))
 
 (def$method (data-base :print-true-facts) ()
-  "Print all true facts on dialog-window." 
+  "Print all true facts on dialog-window."
   (let ((true-facts ($send self :get-true-facts)))
     (if true-facts
-	($send meta-processor :babylon-format 
+	($send meta-processor :babylon-format
 	      (getentry true-facts-fstr rule-io-table)
 	      true-facts)
-	($send meta-processor :babylon-format 
+	($send meta-processor :babylon-format
 	      (getentry no-true-facts-fstr rule-io-table)))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)

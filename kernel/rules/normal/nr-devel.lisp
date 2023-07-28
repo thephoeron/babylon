@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHOR:   F. di P R I M I O, J. W A L T H E R
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 
@@ -30,13 +33,13 @@ It provides the development environment for the rule paradigma."))
 	   (term-list &optional label (max-lines nil))
   (let* ((rest-term-list (if max-lines (nthcdr max-lines term-list)))
 	 (term-choice
-	   ($send meta-processor :choose-from-menu			  
+	   ($send meta-processor :choose-from-menu
 		 (append (mapcar #'(lambda (a-term)
 				     `(,(format nil  "~S" a-term)
 				       :value ,a-term))
 				 (ldiff term-list rest-term-list))
 			 `(("" :no-select t))
-			 (if rest-term-list 
+			 (if rest-term-list
 			     `(("next page" :value next)))  ;;;; !!!!!
 			 `((,(getentry do-nothing-str rule-io-table)
 			    :value do-nothing)))
@@ -72,13 +75,13 @@ It provides the development environment for the rule paradigma."))
 (def$method (rule-develop-mixin :select-rule) (rule-list &optional label (max-lines nil))
   (let* ((rest-rule-list (if max-lines (nthcdr max-lines rule-list)))
 	 (rule-choice
-	   ($send meta-processor :choose-from-menu			  
+	   ($send meta-processor :choose-from-menu
 		 (append (mapcar #'(lambda (a-rule)
 				     `(,(format nil  "~S" (rule-name a-rule))
 				       :value ,a-rule))
 				 (ldiff rule-list rest-rule-list))
 			 `(("" :no-select t))
-			 (if rest-rule-list 
+			 (if rest-rule-list
 			     `(("next page" :value next)))
 			 `((,(getentry do-nothing-str rule-io-table)
 			    :value do-nothing)))
@@ -136,7 +139,7 @@ It provides the development environment for the rule paradigma."))
 		 (go loop)))))
 
 
-;; Dies wird gebraucht damit ein partielles match auch dann gemacht werden 
+;; Dies wird gebraucht damit ein partielles match auch dann gemacht werden
 ;; kann, wenn ein rule-term ein atomarer Freitext ist.
 
 
@@ -172,9 +175,9 @@ It provides the development environment for the rule paradigma."))
   (let ((match-type-choice
 	  (or match-type
 	      ($send meta-processor :choose-from-menu
-		    (getentry match-choose-item-list rule-io-table) 
+		    (getentry match-choose-item-list rule-io-table)
 		    (getentry match-choose-menu-str rule-io-table)))))
-    
+
     (cond ((null match-type-choice)
 	   ($send self :filter-terms terms))
 	  ((eq match-type-choice 'do-nothing) nil)
@@ -191,7 +194,7 @@ It provides the development environment for the rule paradigma."))
 	  ((eq match-type-choice 'filter-second)
 	   (let ((chosen-second-element
 		   ($send self :select-term
-				 (compute-used-slots terms) 
+				 (compute-used-slots terms)
 				 (getentry match-choose-slots-str rule-io-table)
 				 *max-menu-entries*)))
 	     (cond ((not (null chosen-second-element))
@@ -225,9 +228,9 @@ It provides the development environment for the rule paradigma."))
           (if terms-to-inspect
             ($send meta-processor :mult-choose-from-menu
                    (gen-mult-choose-item-list terms-to-inspect)
-                   (format nil (getentry match-choose-term-str rule-io-table) 
+                   (format nil (getentry match-choose-term-str rule-io-table)
                            (length (the list terms-to-inspect))
-                           (first rule-set-choice))))))    
+                           (first rule-set-choice))))))
     (if chosen-terms
       ($send self :display-terms-for-inspection chosen-terms rule-set-choice))
     (cond ((not (null rule-set-name)))
@@ -259,7 +262,7 @@ It provides the development environment for the rule paradigma."))
 	   (if rule-set-choice ($send self :used-terms rule-set-choice)))
 	 (terms-to-inspect
 	   (if used-terms ($send self :filter-terms used-terms))))
-    
+
     (if terms-to-inspect
 	($send self :display-terms-for-inspection2 terms-to-inspect rule-set-choice))
     (cond ((not (null rule-set-name)))
@@ -292,7 +295,7 @@ It provides the development environment for the rule paradigma."))
 					`(,a-rule-body
 					  ,(format nil "       ~S" (rule-name a-rule-body))
 					  (t)))
-				    inif-rules)))		   
+				    inif-rules)))
 		    (if inthen-rules
 			`((- "" nil)
 			  (- ,(getentry used-as-action-str rule-io-table) nil)
@@ -308,7 +311,7 @@ It provides the development environment for the rule paradigma."))
 		 item-list
 		 (format nil (getentry list-rules-for-term-fstr rule-io-table)
 			 a-term))))
-    
+
     (if (not (null chosen-rules))
 	(mapc #'(lambda (a-rule-body)
 		  ;; nicht so verstaendlich
@@ -383,7 +386,7 @@ It provides the development environment for the rule paradigma."))
 	 (term-choice
 	   ($send meta-processor :choose-from-menu
 		 item-list (or label-for-previous-rule "  "))))
-    
+
     (if term-choice
 	(let* ((rule-choice-label
 		 (format nil "~A~A~A "
@@ -410,7 +413,7 @@ It provides the development environment for the rule paradigma."))
 		    spaces-for-item))))))
 
 ;;----------------------------------------------------------------------------------------
-   
+
 ;; Diese Methode ist mehr oder weniger ad hoc fuer TED-Erweiterungen
 ;; definiert worden. (Franco)
 
@@ -439,6 +442,8 @@ It provides the development environment for the rule paradigma."))
       ($send self :display-rule rule-choice rule-set-choice)
       ($send self :print-rule rule-set-choice))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 
 ;;; eof
-

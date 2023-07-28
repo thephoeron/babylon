@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -35,7 +35,7 @@
 	   ()
   :settable-instance-variables
   (:required-instance-variables kb-name procs system-trace system-trace-window language)
-  (:documentation "this mixin makes the facilities of basic-rule-processor available.")) 
+  (:documentation "this mixin makes the facilities of basic-rule-processor available."))
 
 (def$method (basic-rule-mixin :after :init) (&rest plist)
   "Create rule processor."
@@ -45,7 +45,7 @@
 
 (def$method (basic-rule-mixin :generate-rule-processor) ()
   "Make an instance of basic-rule-processor and associate it with kb."
-  (setf rule-processor (make-$instance 'basic-rule-processor 
+  (setf rule-processor (make-$instance 'basic-rule-processor
                                        :meta-processor self
                                        :alternate-meta-processor
                                        (make-$instance 'kb-stub
@@ -98,7 +98,7 @@
 	`(HYPOTHESES DEFINED FOR ,(send-kb :kb-name))))
 
 ;;--------------------------------------------------------------------------
-;;                  PRINTING RESULTS 
+;;                  PRINTING RESULTS
 ;;--------------------------------------------------------------------------
 
 (def$method (basic-rule-mixin :print-hypotheses-verified) ()
@@ -110,7 +110,7 @@
   ($send rule-processor :print-true-facts))
 
 ;;--------------------------------------------------------------------------
-;;                  EXPLAINING EVALUATION 
+;;                  EXPLAINING EVALUATION
 ;;--------------------------------------------------------------------------
 
 (defrequest rule-meta-reference
@@ -219,7 +219,7 @@
 			(bindings nil))
   (send-kb :test-hypotheses
 	   number-of-hypotheses-to-verify
-	   list-of-hypotheses 
+	   list-of-hypotheses
 	   rule-set-name
 	   bindings))
 
@@ -251,7 +251,7 @@
 	   bindings))
 
 ;;--------------------------------------------------------------------------
-;;                  CONFLICT RESOLUTION 
+;;                  CONFLICT RESOLUTION
 ;;--------------------------------------------------------------------------
 
 (def$method (basic-rule-mixin :set-conflict-resolution) (function)
@@ -272,20 +272,20 @@ interpreter is reset."
     (setf window (or window self))
     ($send window :format
 		  "~&~%Rule: ~S of Rule Set: ~S" (rule-name rule) rule-set-name)
-    ($send window :format 
+    ($send window :format
 		  "~%IF    ~S" (get-junctor (rule-left-hand-side rule)))
-    ($send window :format 
+    ($send window :format
 		  "~{~%      ~S~}" (get-rule-conditions (rule-left-hand-side rule)))
-    ($send window :format 
+    ($send window :format
 		  "~%THEN  ~S" (get-action-type (rule-right-hand-side rule)))
-    ($send window :format 
+    ($send window :format
 		  "~{~%      ~S~}" (get-rule-actions (rule-right-hand-side rule)))
     ($send window :format "~%")))
 
 (def$method (basic-rule-mixin :select-rule-set-name) ()
   (let ((rule-set-names ($send rule-processor :get-rule-set-names)))
     (cond ((null (rest rule-set-names)) (first rule-set-names))
-	  (t (do* ((items (append rule-set-names 
+	  (t (do* ((items (append rule-set-names
 				  `(,(getentry exit-menu-item  rule-io-table))))
 		   (label (getentry select-rule-set-str rule-io-table))
 		   (rule-set ($send self :choose-from-menu items label)
@@ -317,7 +317,7 @@ interpreter is reset."
   ($send self :select-list-rule))
 
 ;;--------------------------------------------------------------------------
-;;                  AUX STUFF 
+;;                  AUX STUFF
 ;;--------------------------------------------------------------------------
 
 (defun send-rule (selector &rest args)

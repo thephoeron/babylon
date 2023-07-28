@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,8 +13,11 @@
 
 
 ;;
-;;This is the German version of all the strings and menu-item-lists of 
-;;the rule processor. 
+;;This is the German version of all the strings and menu-item-lists of
+;;the rule processor.
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 
@@ -154,7 +157,7 @@
   " Waehlen Sie einen der Slots: ")
 
 (defbabylon-entry match-choose-term-str rule-io-table german
-  " Es gibt ~S Terme in den ~S Regeln.     
+  " Es gibt ~S Terme in den ~S Regeln.
  ~% Welche moechten Sie inspizieren ?~%     ")
 
 (defbabylon-entry used-as-condition-str  rule-io-table german
@@ -251,7 +254,7 @@
   " Waehle einen der Slots: ")
 
 (defbabylon-entry choose-terms-fstr rule-io-table german
-  " Es gibt ~S Terme in der ~S Regelmenge.     
+  " Es gibt ~S Terme in der ~S Regelmenge.
  ~% Welche wollen Sie untersuchen ?~%     ")
 
 
@@ -438,7 +441,7 @@
 (defbabylon-entry meta-rule-reference-trace-fstr rule-io-table german
   " META -> REGEL-PROZESSOR ~S  ~S")
 
-;;;;;;;;;;; added e.gross 
+;;;;;;;;;;; added e.gross
 
 (defbabylon-entry hypotheses-verified-fstr rule-io-table german
  "~&~%Verifizierte Hypothesen: ~{~%   ~S~} ~%")
@@ -449,7 +452,7 @@
 (defbabylon-entry  true-facts-fstr rule-io-table german
   "~&~%Folgende Aussagen sind wahr: ~{~%   ~S~} ~%")
 
-(defbabylon-entry  no-true-facts-fstr rule-io-table german 
+(defbabylon-entry  no-true-facts-fstr rule-io-table german
   "~&~%Wahre Aussagen waren nicht zu ermitteln. ~%")
 
 
@@ -483,33 +486,33 @@
 ;;;----------------------------------------------------------------
 
 
-(defbabylon-entry mark-menu-title rule-io-table german 
+(defbabylon-entry mark-menu-title rule-io-table german
   " Markiere Regeln der Regelmenge ")
 
-(defbabylon-entry mark-menu-items rule-io-table german 
+(defbabylon-entry mark-menu-items rule-io-table german
   '(("Zeige alle" :value show-all)
     ("Verberge alle" :value hide-all)
     ("Wechsel Markierung" :value toggle
      :documentation "Waehle Regeln aus, deren Auftreten im Trace sich aendern soll")
     ("Exit" :value exit)))
 
-(defbabylon-entry toggle-mark-menu-title rule-io-table german 
-   " Wechsel Markierung fuer Regeln aus ")		  
+(defbabylon-entry toggle-mark-menu-title rule-io-table german
+   " Wechsel Markierung fuer Regeln aus ")
 
-(defbabylon-entry toggle-mark-menu-item rule-io-table german 
+(defbabylon-entry toggle-mark-menu-item rule-io-table german
    '(nil "Mit # markierte Regeln koennen im Trace auftreten" nil))
 
-(defbabylon-entry ask-user-str rule-io-table german 
+(defbabylon-entry ask-user-str rule-io-table german
   "fragt Benutzer nach")
 
-(defbabylon-entry no-entry-str rule-io-table german 
+(defbabylon-entry no-entry-str rule-io-table german
   "Kein Eintrag qualifizierte sich.")
 
 
-(defbabylon-entry option-menu-title rule-io-table german 
+(defbabylon-entry option-menu-title rule-io-table german
  "Waehle Rule Trace Optionen")
 
-(defbabylon-entry option-menu-items rule-io-table german 
+(defbabylon-entry option-menu-items rule-io-table german
   '(("- Exit -" :value exit)
     ("Direkter Trace"
      :value (:set-rule-trace-mode direct)
@@ -525,14 +528,14 @@
      :documentation "Alle Regeln saemtlicher Regelmengen erscheinen im Trace.")
     ("Selektiere Regeln" :value (:select-rules-for-tracing t)
      :documentation "Waehle Regeln aus, die im Trace erscheinen sollen.")
-    ("Aendere Auswahl" :value :select-rules-for-tracing 
+    ("Aendere Auswahl" :value :select-rules-for-tracing
      :documentation "Aendere Auswahl der Regeln, die im Trace erscheinen sollen.")
-    ("  " :no-select t)   
+    ("  " :no-select t)
     ("Vollstaendiger Trace"
      :value (:set-rule-trace-displayer :display-rule-trace)
      :documentation "Zeige bei Regel Trace anzeigen den vollstaendigen Trace.")
     ("Anwenden von Regeln"
-     :value (:set-rule-trace-displayer :display-rules-used) 
+     :value (:set-rule-trace-displayer :display-rules-used)
      :documentation "Zeige bei Regel Trace anzeigen, wann Regeln angewandt wurden.")
     ("Pruefen von Regeln"
      :value (:set-rule-trace-displayer :display-rules-tried)
@@ -541,5 +544,7 @@
     ("Regel Trace anzeigen" :value :call-rule-trace-displayer
      :documentation "Gespeicherten Trace gemaess eingestellter Methode anzeigen.")))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

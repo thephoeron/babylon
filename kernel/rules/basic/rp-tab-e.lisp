@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -12,8 +12,11 @@
 ;; AUTHOR:   J. W A L T H E R
 
 
-;;This is the English version of all the strings and menu-item-lists of 
-;;the rule processor. 
+;;This is the English version of all the strings and menu-item-lists of
+;;the rule processor.
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (defbabylon-table rule-io-table english :size 200)
@@ -155,7 +158,7 @@
   " Choose one of the slots: ")
 
 (defbabylon-entry match-choose-term-str rule-io-table english
-  " There are ~S terms in the ~S rules.     
+  " There are ~S terms in the ~S rules.
  ~% Which ones do you want to inspect ?~%     ")
 
 (defbabylon-entry used-as-condition-str  rule-io-table english
@@ -252,7 +255,7 @@
   " Choose one of the slots: ")
 
 (defbabylon-entry choose-terms-fstr rule-io-table english
-  " There are ~S terms in the ~S rules.     
+  " There are ~S terms in the ~S rules.
  ~% Which ones do you want to display?~%     ")
 
 
@@ -490,7 +493,7 @@
     ("Exit" :value exit)))
 
 (defbabylon-entry toggle-mark-menu-title rule-io-table english
-   " toggle mark for rules from ")		  
+   " toggle mark for rules from ")
 
 (defbabylon-entry toggle-mark-menu-item rule-io-table english
    '(nil "Rules marked by # will occur in trace" nil))
@@ -528,7 +531,7 @@
      :value (:set-rule-trace-displayer :display-rule-trace)
      :documentation "Show complete trace on calling display rule trace.")
     ("Rules Used"
-     :value (:set-rule-trace-displayer :display-rules-used) 
+     :value (:set-rule-trace-displayer :display-rules-used)
      :documentation "Show where rules are used on calling display rule trace.")
     ("Rules Tried"
      :value (:set-rule-trace-displayer :display-rules-tried)
@@ -537,5 +540,7 @@
     ("Display Rule Trace" :value :call-rule-trace-displayer
      :documentation "Display stored rule trace according to the display options set.")))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

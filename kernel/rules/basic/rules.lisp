@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -16,16 +16,17 @@
 
 ;; contens: a handler for rule sets.
 
-;;-----------------------------------------------------------------------------
-;;                   DEFINING RULE SETS 
-;;-----------------------------------------------------------------------------
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
+;;-----------------------------------------------------------------------------
+;;                   DEFINING RULE SETS
+;;-----------------------------------------------------------------------------
 
 ;; Syntax  (VARIABLES not yet documented)
 
-;; (<rule-set-name> {(:VARIABLES ...)} 
+;; (<rule-set-name> {(:VARIABLES ...)}
 ;;    . <rule1> <rule2> ... <ruleN>)
-
 
 (defun rule-set-name (rule-set)
   (first rule-set))
@@ -39,7 +40,7 @@
 
 (defun check-rule-set-variables-specification (variables-specification where)
   (or (every #'is-rule-variable (rest variables-specification))
-      (baberror (getentry rule-variables-error-fstr rule-io-table) 
+      (baberror (getentry rule-variables-error-fstr rule-io-table)
 	     variables-specification
 	     where)))
 
@@ -74,7 +75,7 @@
                                    (get-variables variables-specification))))
                   (get-bindings bindings)))
       (baberror (getentry bindings-spec-error-fstr rule-io-table)
-                bindings 
+                bindings
                 variables-specification
                 rule-set-name)))
 
@@ -82,11 +83,10 @@
   (let ((variables-specification (get-rule-set-variables rule-set)))
     (check-bindings (rule-set-name rule-set) variables-specification bindings)
     (sublis (get-bindings bindings)
-	    (cons (rule-set-name rule-set) (rest (rest rule-set)))))) 
-
+	    (cons (rule-set-name rule-set) (rest (rest rule-set))))))
 
 ;;-----------------------------------------------------------------------------
-;;                   DEFINING RULES 
+;;                   DEFINING RULES
 ;;-----------------------------------------------------------------------------
 
 ;; Syntax
@@ -99,7 +99,6 @@
 ;;               <action1>
 ;;               ...
 ;;               <actionN>))
-
 
 (defun rule-name (rule)
   (first rule))
@@ -136,7 +135,6 @@
 	  (make-lhs-example)
 	  (make-rhs-example)))
 
-
 (defun check-rule-set-syntax (a-rule-set knowledge-base-name)
   (if (not (symbolp (rule-set-name a-rule-set)))
       (baberror (getentry rule-set-name-error-fstr rule-io-table)
@@ -152,7 +150,6 @@
     (mapc #'(lambda (a-rule)
 	      (CHECK-RULE-SYNTAX a-rule where))
 	  (rule-set-rules a-rule-set))))
-
 
 (defun check-rule-syntax (rule &optional (where ""))
   ;; WHERE is a string saying where the rule is
@@ -185,13 +182,12 @@
 	   (mapc #'(lambda (an-error-description)
 		     (format t "~%~A" an-error-description))
 		 (reverse error-descriptions))
-	   (baberror (getentry rule-correct-description-fstr rule-io-table) 
+	   (baberror (getentry rule-correct-description-fstr rule-io-table)
 		  (make-full-rule-example)))
 	  (t t))))
 
-
 ;;-----------------------------------------------------------------------------
-;;                   FLAVOR RULE-BASE 
+;;                   FLAVOR RULE-BASE
 ;;-----------------------------------------------------------------------------
 
 (def$flavor rule-base
@@ -203,20 +199,19 @@
 	   ()
   (:required-instance-variables meta-processor)
   :settable-instance-variables
-  (:documentation "This flavor manages rule sets and rules for the rule interpreter.     
+  (:documentation "This flavor manages rule sets and rules for the rule interpreter.
 One of the rule sets is the current rule set."))
 
 ;
 ;(def$method (rule-base :reset-pointer) ()
 ;  "Reset the rules to the initial state."
 ;  (setf rules ($send meta-processor :rules)))
-;  
+;
 
 (def$method (rule-base :get-rule) (rule-set-name rule-name)
   "Returns the rule for a rule-set-name rule-name combination."
   (assoc rule-name
 	 (rule-set-rules ($send self :get-rule-set rule-set-name rules))))
-
 
 (def$method (rule-base :get-rule-set)
 	   (rule-set-name &optional (rule-sets nil) (bindings nil))
@@ -231,27 +226,22 @@ One of the rule sets is the current rule set."))
 	(baberror (getentry rule-set-not-found-error-fstr rule-io-table)
 	       rule-set-name))))
 
-
 (def$method (rule-base :get-current-rule-set-name) ()
   "Returns the name of the current rule set."
   (rule-set-name current-rule-set))
 
-
 (def$method (rule-base :get-rule-set-names) ()
   "Returns a list of all rule set names."
   (mapcar #'rule-set-name rules))
-
 
 (def$method (rule-base :get-rule-names) (rule-set-name)
   "Returns a list of all rule names of a rule set."
   (mapcar #'rule-name
 	  (rule-set-rules ($send self :get-rule-set rule-set-name))))
 
-
 (def$method (rule-base :add-rule) (rule rule-set)
   "Add a rule to a given rule set."
   (nconc rule-set `(,rule)))
-
 
 (def$method (rule-base :modify-rule) (rule-set-name new-rule)
   "Replace a given rule by a new one."
@@ -262,27 +252,22 @@ One of the rule sets is the current rule set."))
 	(baberror (getentry rule-does-not-exist-error-fstr rule-io-table)
 	       rule-set-name rule-name))))
 
-
 (def$method (rule-base :kill-rule) (rule rule-set)
   "Delete a given rule of a rule set."
   (setf (rest rule-set) (delete rule (rule-set-rules rule-set))))
 
-
 ;(def$method (rule-base :edit-rule-set) (rule-set-name)
 ;  "Edit a given rule set."
-;  (let ((rule-set ($send self :get-rule-set rule-set-name)))  
+;  (let ((rule-set ($send self :get-rule-set rule-set-name)))
 ;    (eval `(EDIT-TEMPORARY ,rule-set-name (PRINT-RULE-SET ',rule-set)))))
-
 
 ;(def$method (rule-base :edit-rule-in-buffer) (rule-set-name rule)
 ;  "Edit a given rule of a rule set."
 ;  (eval `(EDIT-TEMPORARY ,(rule-name rule)
 ;			 (print-rule-for-editing ',rule-set-name ',rule))))
 
-
 ;(defun print-rule-for-editing (rule-set-name rule)
 ;  (babpprint `(MODIFY-RULE ,rule-set-name . ,rule)))
-
 
 (def$method (rule-base :inthen) (term &optional rule-set (test #'EQUAL))
   "Returns a list of all rules, which have term in their action parts."
@@ -294,7 +279,6 @@ One of the rule sets is the current rule set."))
 		     (list rule))))
 	  (rule-set-rules rule-set)))
 
-
 (def$method (rule-base :inif) (term &optional rule-set  (test #'EQUAL))
   "Returns a list of all rules, which have term in their premisse parts."
   (setq rule-set (or rule-set current-rule-set))
@@ -305,10 +289,8 @@ One of the rule sets is the current rule set."))
 		     (list rule))))
 	  (rule-set-rules rule-set)))
 
-
-
 ;;-----------------------------------------------------------------------------
-;;                   FUNCTIONS NEEDED FOR :OBTAIN 
+;;                   FUNCTIONS NEEDED FOR :OBTAIN
 ;;-----------------------------------------------------------------------------
 
 (defun match-first (x y)
@@ -340,12 +322,11 @@ One of the rule sets is the current rule set."))
 	    (rule-set-rules rule-set))))
 
 ;;-----------------------------------------------------------------------------
-;;                   METHODS FOR PRINTING 
+;;                   METHODS FOR PRINTING
 ;;-----------------------------------------------------------------------------
 
 (defun print-rule-set (a-rule-set &optional (stream *standard-output*))
   (babpprint `(DEFRULE-SET . ,a-rule-set) stream))
-
 
 (def$method (rule-base :unparse-rules) (&optional (stream *standard-output*))
   "Lists rules and hypotheses on <stream>."
@@ -356,12 +337,11 @@ One of the rule sets is the current rule set."))
 	   (cond (kb-hypotheses
 		  (babpprint `(hypotheses . ,kb-hypotheses) stream)
 		  (format stream "~2%")))
-	   (mapc #'(lambda (a-rule-set) 
+	   (mapc #'(lambda (a-rule-set)
 		     (print-rule-set a-rule-set)
 		     (format stream "~2%"))
 		 kb-rules)))
     t))
-
 
 (def$method (rule-base :rule-statistics) (&optional (stream *standard-output*))
   "Lists a statistical description of rules and hypotheses on <stream>."
@@ -370,17 +350,17 @@ One of the rule sets is the current rule set."))
     (format stream (getentry rule-sets-header-fstr rule-io-table) (length kb-rules))
     (cond (kb-rules
            (mapc #'(lambda (a-rule-set)
-                     (format stream (getentry rule-set-header-fstr rule-io-table) 
+                     (format stream (getentry rule-set-header-fstr rule-io-table)
                              (first a-rule-set)
                              (length (the list (rest a-rule-set)))))
                  kb-rules)
-           (format stream  (getentry rule-statistics-trailer-str rule-io-table) 
+           (format stream  (getentry rule-statistics-trailer-str rule-io-table)
                    (apply #'+ (mapcar #'(lambda (a-rule-set)
                                           (length (the list (rest a-rule-set))))
                                       kb-rules)))))
     t))
 
-
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-
