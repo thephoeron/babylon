@@ -3,12 +3,15 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;
 ;		Constraint Propagierung
 ;
 
 ;  3.6. 1987  Anpassung an GENERA 7; R. Lopatta
-; 
+;
 
 ;
 ; 	PROPAGIERUNG
@@ -20,13 +23,13 @@
 			       (init-option 'initialize)
 			       (consistency-level 'local-consistency)
 			       (number-of-results nil))
-  
-  
+
+
   ;;; Eingabe: 	multiple Wertebelegung der Interfacevariablen,
   ;;;		Option: Variablen und Trace mit Defaultwert
   ;;;			initialisieren
   ;;;		Option: nach Propagierung Konsistenztest
-  ;;;		 	durchfuehren 
+  ;;;		 	durchfuehren
   ;;;           Option: Anzahl der global konsistenten Ergebnisse
   ;;;
   ;;; Ausgabe:  multiple Wertebelegung nach Propagierung,
@@ -40,14 +43,14 @@
     ($send self :result consistency-level number-of-results)))
 
 
-    
+
 (def$method (constraint-net :initialize) (multiple-value-ass init-option)
-  
-  ;;; initialisiert das Netz 
+
+  ;;; initialisiert das Netz
   ;;;
   ;;; falls init-option = 'initialize werden die Variablen mit der
   ;;; Defaultwertmenge belegt und der Default-Trace uebernommen
-  
+
   ($send self :store-state)
   ($send self :filter)
   (if (eq init-option 'initialize)
@@ -58,11 +61,11 @@
 
 
 (def$method (constraint-net :result) (consistency-level number-of-results)
-  
+
   ;;; fuehrt evtl. einen Konsistenztest durch
   ;;;
   ;;; Ergebnis: Belegung der Interface-Variablen
-  
+
   (prog1
     (case consistency-level
       (global-consistency
@@ -76,29 +79,29 @@
 
 
 (def$method (constraint-net :filter) ()
-  
+
   ;;; fuehrt Vorpropagierung durch:
   ;;; alle Constraint-Ausdruecke werden mindestens einmal
   ;;; aktiviert
-  
+
   (cond ((not (agenda-elem-filtered-p agenda))
-	 
-	 (setf (agenda-elem-filtered-p agenda) t)	
+
+	 (setf (agenda-elem-filtered-p agenda) t)
 	 ($send self :total-init-queue)
-	 ($send self :propagate 'local-consistency)	 
+	 ($send self :propagate 'local-consistency)
 	 ($send self :freeze-state))))
 
 
 
 (def$method (constraint-net :propagate) (consistency-level)
-  
+
   ;;; fuehrt lokale Propagierung durch
   ;;; bis Agenda leer ist
-  
+
   (do ()
       ((null (agenda-elem-queue agenda))
        ())
-    
+
     (let* ((constraint-expr (first (agenda-elem-queue agenda)))
 	   (new-value-ass ($send (get-constraint
 				  (get-constr-name constraint-expr))
@@ -106,9 +109,9 @@
 				constraint-expr
 				net-spec
 				consistency-level)))
-      
+
       ($send self :update-variables
-	    new-value-ass)	  
+	    new-value-ass)
       ($send self :update-agenda
 	    constraint-expr
 	    new-value-ass))))
@@ -117,10 +120,10 @@
 
 (def$method (constraint-net :evaluate-expression)
 	    (constraint-expr global-net-spec consistency-level)
-  
+
   ;;; fuehrt Umsetzung globaler in lokale Variablen durch
   ;;; und umgekehrt
-  
+
   (local-to-global-subst
     constraint-expr
     ($send self
@@ -133,13 +136,13 @@
 
 
 (defun adapt-consistency-level (consistency-level)
-  
+
   ;;;	bei Test auf globale Konsistenz wird solange wie
   ;;;	moeglich lokales Propagieren ausgefuehrt;
   ;;;	nur bei eindeutiger Belegung der Interfacevariablen
   ;;;	wird in dem zu aktivierenden teilnetz ein
   ;;;	globaler Konsistenztest durchgefuehrt
-  
+
   (if (eq consistency-level 'global-consistency)
       'global-consistency-if-single-valued
       consistency-level))
@@ -152,10 +155,10 @@
 
 (def$method (constraint-net :consistent-p)
 	    (&optional (number-of-results nil))
-  
+
   ;;; ueberprueft die globale konsistenz des netzwerks
   ;;; mittels backtracking + lokaler propagierung
-  
+
   (case (state-of-net-spec net-spec)
     (inconsistent nil)
     (unconstrained
@@ -173,18 +176,18 @@
 
 (def$method (constraint-net :test-choices)
 	    (variable value-set number-of-results)
-  
+
   ;;; fuer alle Werte w aus value-set wird das aktuelle
   ;;; Constraint-Netz aktiviert mit (variable = w)
   ;;; bis number-of-results Belegungen gefunden sind
   ;;;
   ;;; tritt dies nicht ein, werden die gefundenen Belegungen
   ;;; zurueckgeliefert (nil, falls das Netz inkonsistent ist)
-  
+
   (cond ((null value-set) nil)                ;;; Inkonsistenz
 	((and (not (null number-of-results))
 	      (<= number-of-results 0)) nil)  ;;; hinreichend viele Belegungen gefunden
-	
+
 	(t (let ((list-of-value-ass ($send self :activate
 					   (list (make-value-assoc
 						   variable
@@ -202,20 +205,20 @@
 
 
 (defun compute-new-number-of-results (number-of-results list-of-value-ass)
-  
+
   ;;; berechnet die Anzahl der Belegungen, die noch
   ;;; ermittelt werden muessen
-  
+
   (declare (list list-of-value-ass))
   (if (null number-of-results) nil
       (- number-of-results (the fixnum (length list-of-value-ass)))))
 
 
 (def$method (constraint-net :test-consistency-if-single-valued) ()
-  
+
   ;;;	falls alle Interface-Variablen einen eindeutigen Wert besitzen,
   ;;;	wird zusaetzlich ein konsistenztest durchgefuehrt
-  
+
   (if (eq (state-of-value-ass
 	    ($send self :interface-assignment))
 	  'single-valued)
@@ -239,11 +242,11 @@
 
 
 (def$method (constraint-net :initialize-variables) (multiple-value-ass)
-  
+
   ;;; ergaenzt die Wertebelegung jeder Interface-Variablen
   ;;; in multiple-value-ass um die Wertemenge, die ihr
   ;;; multiple-value-ass zuordnet
-  
+
   (update-net-value-ass multiple-value-ass
 			net-spec))
 
@@ -258,9 +261,9 @@
 
 
 (def$method (constraint-net :interface-assignment) ()
-  
+
   ;;; liefert die Wertebelegung der Interface-Variablen
-  
+
   (mapcar (function
 	    (lambda (interface-var)
 	      (make-value-assoc
@@ -272,9 +275,9 @@
 
 
 (def$method (constraint-net :net-variables) ()
-  
+
   ;;;	liefert eine Liste aller Netzvariablen
-  
+
   (mapcar (function
 	    (lambda (info-assoc)
 	      (get-net-var info-assoc)))
@@ -287,10 +290,10 @@
 
 
 (def$method (constraint-net :initialize-agenda) (multiple-value-ass)
-  
+
   ;;; alle Constraint-Ausdruecke mit Variablen, denen eine Menge ungleich
   ;;; 'unconstrained zugeordnet wurde, werden in die queue gefuegt
-  
+
   (setf (agenda-elem-queue agenda)
 	(select-relevant-constraints
 	  net-spec multiple-value-ass)))
@@ -305,7 +308,7 @@
 
 
 (def$method (constraint-net :update-agenda) (constraint-expr multiple-value-ass)
-  
+
   ;;;  - fuege  (constraint-expr multiple-value-ass)  auf den Trace
   ;;;
   ;;;  - Bilde die Menge aller Constraint-Ausdruecke, in denen globale
@@ -313,13 +316,13 @@
   ;;;    ungleich 'unconstrained ist
   ;;;
   ;;;  - Aktualisiere die queue mit Hilfe dieser Menge
-  
+
   (setf (agenda-elem-trace agenda)
 	(cons (make-trace-elem
 		constraint-expr
 		multiple-value-ass)
 	      (agenda-elem-trace agenda)))
-  
+
   (setf (agenda-elem-queue agenda)
 	(update-queue
 	  (rest (agenda-elem-queue agenda))
@@ -367,7 +370,7 @@
 
 
 (defun trace-test (associated-trace-element new-value-ass)
-  
+
   (if (null associated-trace-element) t
       (some-new-restrictions-p
 	new-value-ass
@@ -381,9 +384,9 @@
 
 
 (def$method (constraint-net :store-state) ()
-  
+
   ;;; rettet die Variablenbelegung und die Agenda auf den Stack;
-  
+
   (setf stack
 	(cons (make-stack-elem
 		:values (mapcar
@@ -393,17 +396,17 @@
 			       (get-net-var info-assoc)
 			       (get-var-info-values info-assoc))))
 			 net-spec)
-		
+
 		:queue (agenda-elem-queue agenda)
 		:trace (agenda-elem-trace agenda))
 	      stack)))
 
 
 (def$method (constraint-net :restore-state) ()
-  
+
   ;;; stellt Zustand gemaess des obersten Stackelements wieder her
   ;;; und entfernt das oberste Stackelement vom Stack
-  
+
   (cond ((null stack)
 	 (baberror (getentry restore-error constraint-io-table)))
 	(t (modify-net-value-ass (stack-elem-values (first stack))
@@ -431,7 +434,7 @@
 
   (mapc (function freeze-var-info-values)
 	net-spec)
-  
+
   (setf (agenda-elem-init-trace agenda)
         (agenda-elem-trace agenda)))
 
@@ -462,7 +465,7 @@
   (setf (agenda-elem-filtered-p agenda)
 	nil))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 ;;; eof
-
-
-

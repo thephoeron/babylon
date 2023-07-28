@@ -3,14 +3,17 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;
 ;	CONSTRAINT-MIXIN
 ;
 
-(defun choose-special-constraint (constraint-liste)  
-  
+(defun choose-special-constraint (constraint-liste)
+
   "bittet den Benutzer, eines der Constraints in Constraint-Liste auszuwaehlen."
-  
+
   (constraint-input-test
     (send-kb :choose-from-menu
 	     (append
@@ -24,9 +27,9 @@
 
 
 (defun constraint-input-test (expr)
-  
+
   "Abbruch, falls expr gleich nil ist"
-  
+
   (if (null expr)
       (throw 'no-select nil)
       expr))
@@ -52,26 +55,26 @@
 (def$flavor basic-constraint-mixin
 	(constraint-processor)
 	(constraint-base)
-  
+
   :settable-instance-variables
   (:required-instance-variables procs kb-name)
   (:documentation "Anteil des Constraint-Systems am Metaprozessor")
-  )  
+  )
 
 
 (def$method (basic-constraint-mixin :after :init) (&rest plist)
-  
+
   "wird nach dem Erzeugen eines Metaprozessors aufgerufen:
    erzeugt einen zugehoerigen Constraint-Prozessor
    und kettet ihn an den Metaprozessor"
-  
+
   (declare (ignore plist))
   ($send self :generate-constraint-processor)
   (setf procs (cons constraint-processor procs)))
 
 
 (def$method (basic-constraint-mixin :generate-constraint-processor) ()
-	   
+
   "erzeugt einen Constraint-Prozessor"
 
   (setf constraint-processor
@@ -119,9 +122,9 @@
 
 
 (defmacro constraint-type (expression)
-  
+
    "ermittelt den Typ von expression und fuehrt einen Syntaxtest durch"
-  
+
   `(if (atom ,expression) nil
        (case (car ,expression)
 	 (satisfy
@@ -146,7 +149,7 @@
 
 
 (def$method (basic-constraint-mixin :eval-satisfy) (expression &rest ignore)
-  
+
   (declare (ignore ignore))
   ($send constraint-processor
 	 :satisfy
@@ -154,7 +157,7 @@
 
 
 (def$method (basic-constraint-mixin :eval-satisfied-p) (expression &rest ignore)
-  
+
   (declare (ignore ignore))
   ($send constraint-processor
 	:satisfied-p
@@ -171,9 +174,9 @@
 
 
 (defmacro satisfy (&rest expression)
-  
+
   "ermoeglicht Verwendung von Satisfy-Konstrukten in Lisp-Ausdruecken"
-  
+
   `(send-kb :eval
 	    '(satisfy . ,expression)
 	    :lisp
@@ -181,9 +184,9 @@
 
 
 (defmacro satisfied-p (&rest expression)
-  
+
   "ermoeglicht Verwendung von Satisfied-p-Konstrukten in Lisp-Ausdruecken"
-  
+
   `(send-kb :eval
 	    '(satisfied-p . ,expression)
 	    :lisp
@@ -211,7 +214,7 @@
   " Eingabe:  eine Zuordnung von Prolog-Variablen zu
   	      lokalen Constraint-Variablen,
   	      eine Wertebelegung der lokalen Variablen
-  
+
     Ausgabe:  eine Liste von Wertemengen , so dass gilt:
   	      das i-te Element ist die Wertemenge der mit dem
   	      i-ten Prolog-Term assoziierten Variable"
@@ -247,7 +250,7 @@
 
 
 (def$method (basic-constraint-mixin :display) ()
-  
+
   "ermoeglicht die Auswahl eines Constraints, das daraufhin ausgegeben wird"
 
   (let ((c-assoc ($send self :choose-constraint)))
@@ -305,12 +308,12 @@
 
 
 (def$method (basic-constraint-mixin :read) ()
-  
+
   "liest die Komponenten einer Constraint-Definition aus Pop-Up-Menus"
-  
+
   (let ((c-type ($send self :choose-from-menu
 		       (getentry choose-type-items constraint-io-table)
-		       (getentry choose-type constraint-io-table))))    
+		       (getentry choose-type constraint-io-table))))
     (if (member c-type '(primitive compound))
 	($send self
 	      :new&delete
@@ -323,12 +326,12 @@
 				       constraint-io-table))
 		  (compound (getentry choose-interface
 				      constraint-io-table))))
-	      
+
 	      (case c-type
 		(primitive (choose-relation))
 		(compound (read-expr-from-window
 			    (getentry choose-expressions
-				      constraint-io-table))))			  
+				      constraint-io-table))))
 	      (read-expr-from-window
 		(getentry choose-condition constraint-io-table)
 		)))))
@@ -351,9 +354,9 @@
 
 
 (def$method (basic-constraint-mixin  :activate-interactive) (consistency-level)
-  
+
   "ermoeglicht die Aktivierung eines Constraints"
-  
+
   (let* ((c-assoc ($send self :choose-constraint))
 	 (number-of-results (if (eq consistency-level
 				    'global-consistency)
@@ -361,7 +364,7 @@
 	 (value-ass (choose-value-assignment
 		      ($send (get-object-of-c-assoc c-assoc)
 			     :interface))))
-    
+
     ($send self :print-enter
 	  (get-name-of-c-assoc c-assoc)
 	  value-ass
@@ -419,7 +422,7 @@
 (def$method (basic-constraint-mixin :print-enter)
 	    (c-name value-ass consistency-level number-of-results
 		    &optional (stream nil))
-  
+
   (terpri stream)
   (princ "SATISFY  " stream)
   (princ c-name stream)
@@ -436,7 +439,7 @@
 (def$method (basic-constraint-mixin :print-exit)
 	    (c-name one-or-list-of-value-ass consistency-level
 		    &optional (stream nil))
-  
+
   (declare (ignore c-name))
   (terpri stream)
   (cond ((eq consistency-level 'local-consistency)
@@ -480,19 +483,19 @@
 
 
 (def$method (basic-constraint-mixin :choose-constraint) ()
-  
+
   "bittet den Beutzer, ein Constraint unter den in
    der aktuellen Wissensbasis definierten auszuwaehlen"
-  
+
   (choose-special-constraint
     ($send self :choose-c-type)))
 
 
 (def$method (basic-constraint-mixin :choose-c-type) ()
-  
-  "bittet den Benutzer, einen Constraint-Typ auszuwaehlen  
+
+  "bittet den Benutzer, einen Constraint-Typ auszuwaehlen
    Ergebnis:  Selektor fuer Constraint-Liste"
-  
+
   (constraint-input-test
     ($send
       self
@@ -506,7 +509,7 @@
 		  (getentry choose-type-items constraint-io-table))
 		(getentry choose-type constraint-io-table)))))))
 
-
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

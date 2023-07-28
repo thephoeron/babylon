@@ -3,6 +3,9 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;
 ;	KONSTRUKTOR FUER RESTRICTIONS
 ;
@@ -92,7 +95,7 @@
 
 
 (defun get-slot-refs (expr)
-  
+
   (cond ((generic-expr-p expr)
          (get-slot-refs (get-inst-assignment expr)))
         ((inst-assignment-p expr)
@@ -109,10 +112,10 @@
 
 
 (defun instantiate-restrictions (list-of-restriction)
-  
+
   "	ermittelt Menge aller Restrictions, die durch
   	list-of-restrictions beschrieben werden"
-  
+
   (if (null list-of-restriction) nil
       (union-sets
 	(inst-restriction
@@ -125,7 +128,7 @@
 
   "	ermittelt Menge aller Restrictions, die durch
   	list-of-restrictions beschrieben werden"
-  
+
   (if (generic-expr-p restriction)
       (inst-generic-restriction restriction)
       (inst-simple-restriction restriction)))
@@ -140,12 +143,12 @@
 
 
 (defun inst-generic-restriction (restriction)
-  
+
   "	fuer alle Wertekombinationen der Variablen wird
   	die eingeschlossene uninstantiierte Restriction
   	instantiiert, falls die Variablen die angegebene
   	Bedingung erfuellen"
-  
+
   (mapcar (function
 	    (lambda (simple-alist)
 	      (inst-uninstantiated-restriction
@@ -157,10 +160,10 @@
 
 
 (defun inst-uninstantiated-restriction (restriction simple-alist)
-  
+
   "	ersetzt die Variablen in restriction durch die Instanz,
   	die ihnen simple-alist zuweist"
-  
+
   (make-c-expr
     (get-constr-name restriction)
     (inst-slot-ref-list (get-parameters restriction)
@@ -168,9 +171,9 @@
 
 
 (defun inst-slot-ref-list (slot-ref-list simple-alist)
-  
+
   "	instantiiert alle Slots in slot-ref-list"
-  
+
   (mapcar (function
 	    (lambda (slot-ref)
 	      (inst-slot-ref slot-ref simple-alist)))
@@ -178,10 +181,10 @@
 
 
 (defun inst-slot-ref (slot-ref simple-alist)
-  
+
   "	falls die erste Komponente von slot-ref in simple-alist
   	auftritt, wird sie durch die entsprechende Instanz ersetzt"
-  
+
   (let ((instance-assoc (assoc (get-object-of-slot-ref
 				 slot-ref)
 			       simple-alist :test 'equal)))
@@ -198,11 +201,11 @@
 
 
 (defun get-instance-combinations (restriction)
-  
+
   "	liefert die Menge von Assoziationslisten,
   	fuer die die eingeschlossene restriction
   	instantiiert werden soll"
-  
+
   (select-instance-combinations
     (split-variable-alist
       (purge-instance-alist
@@ -217,7 +220,7 @@
 
   "	baut eine Assoziationsliste fuer die variablen
   	des for-all-Konstrukts"
-  
+
   (if (not (inst-assignment-p inst-ass)) nil
       (cons (make-value-assoc
 	      (get-var-of-inst-ass inst-ass)
@@ -228,10 +231,10 @@
 
 
 (defun purge-instance-alist (alist slot-ref-list)
-  
+
   "	entfernt alle Variablen aus alist, die nicht in
   	slot-ref-list auftreten"
-  
+
   (cond ((null alist) nil)
 	((occurs-in-restriction (get-var (first alist))
 				slot-ref-list)
@@ -244,10 +247,10 @@
 
 
 (defun occurs-in-restriction (variable slot-ref-list)
-  
+
   "	ueberprueft, ob die Variable auch tatsaechlich in
   	slot-ref-list auftritt"
-  
+
   (and slot-ref-list
        (or (equal variable
 		  (get-object-of-slot-ref
@@ -257,10 +260,10 @@
 
 
 (defun select-instance-combinations (list-of-alists condition)
-  
+
   "	waehlt all diejenigen alists aus, die die Bedingung
   	erfuellen"
-  
+
   (cond ((null list-of-alists) nil)
 	((evaluate-condition condition
 			     (first list-of-alists))
@@ -301,7 +304,7 @@
 
 
 (defun instantiate-slots (set-of-slots)
-  
+
   (if (null set-of-slots) nil
       (union-sets
 	(if (generic-expr-p (first set-of-slots))
@@ -311,9 +314,9 @@
 
 
 (defun inst-slot-set (slot-description)
-  
+
   "	instantiiert die eingeschlossenen Slot-Referenzen"
-  
+
   (remove-duplicates
     (mapcan (function
 	      (lambda (simple-alist)
@@ -335,7 +338,7 @@
 (def$flavor restriction-base
 	((restriction-nets nil))
 	()
-  
+
   :settable-instance-variables
   :initable-instance-variables)
 
@@ -376,7 +379,7 @@
 (def$method (restriction-base :delete-restrictions) (name)
 
   "	Loeschen eines Restriction-net"
-  
+
   (let ((c-assoc (assoc name restriction-nets :test 'equal)))
     (if c-assoc
 	(setf restriction-nets
@@ -390,30 +393,30 @@
 
 (def$method (restriction-base :new-restriction)
 	    (name guarded-slots protected-slots restrictions)
-  
+
   "	Definition eines neuen Restriction-Netzes"
-  
+
   (if (or ($send self :get name)
 	  ($send self :get-restrictions name))
       nil
       (let ((new-net
 	      (make-$instance 'restriction-net)))
-	
+
 	($send self :put-restrictions
 	       name new-net)
-	
+
 	($send new-net :store-definition
 	       restrictions
 	       guarded-slots
 	       protected-slots)
-	
+
 	($send new-net :set-net-spec
 	       (create-net-spec
 		 (instantiate-restrictions restrictions)))
-	
+
 	($send new-net :set-interface
 	       ($send new-net :net-variables))
-	
+
 	($send new-net :make-active-values
 	       (determine-slots guarded-slots
 				($send new-net :net-variables))
@@ -423,16 +426,16 @@
 
 
 (def$method (restriction-base :redefine) (name)
-  
+
   (let ((r-net ($send self :get-restrictions name)))
     (if (null r-net) nil
 	($send r-net :redefine-one))))
 
 
 (def$method (restriction-base :redefine-all) ()
-  
+
   "	erzeugt alle Restriction-Netze neu"
-  
+
   (mapc (function
 	  (lambda (constraint-assoc)
 	    ($send (get-object-of-c-assoc
@@ -442,20 +445,20 @@
 
 
 (def$method (restriction-net :redefine-one) ()
-  
+
   "	Erzeugen eines neuen Netzes mit Hilfe der generischen
   	Beschreibung
-  	(noetig bei Aenderung von Wissensbasiskomponenten, 
+  	(noetig bei Aenderung von Wissensbasiskomponenten,
   	die in der Definition des Netzes benutzt werden"
-  
+
   ($send self :set-net-spec
 	(create-net-spec
 	  (instantiate-restrictions
 	    ($send self :restrictions))))
-  
+
   ($send self :set-interface
 	($send self :net-variables))
-  
+
   ($send self :make-active-values
 	(determine-slots
 	  ($send self :guarded)
@@ -463,7 +466,7 @@
 	(determine-slots
 	  ($send self :protected)
 	  ($send self :net-variables)))
-  
+
   ($send self :set-agenda
 	(make-agenda-elem))
   ($send self :set-stack nil))
@@ -471,7 +474,7 @@
 
 (def$method (restriction-base :new&delete-restriction)
 	    (name guarded-slots protected-slots restrictions)
-  
+
   ($send self :delete-restrictions name)
   ($send self :new-restriction
 	 name
@@ -479,7 +482,9 @@
 	 protected-slots
 	 restrictions))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 
 
 ;;; eof
-

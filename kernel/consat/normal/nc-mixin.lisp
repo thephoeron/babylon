@@ -3,27 +3,23 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;
 ;	mini-constraint-mixin
 ;
 
-
 (def$flavor normal-constraint-mixin
 	    ()
   (restriction-base mini-constraint-mixin)
-  
   :settable-instance-variables
   (:required-instance-variables procs kb-name)
 ;  (:required-flavors kb-processor-core)
-  (:documentation "Anteil des Constraint-Systems am Metaprozessor")
-  )
-
-
+  (:documentation "Anteil des Constraint-Systems am Metaprozessor"))
 
 (def$method (normal-constraint-mixin :generate-constraint-processor) ()
-  
   " erzeugt einen Constraint-Prozessor "
-  
   (setf constraint-processor
 	(make-$instance 'normal-constraint-processor
 			:meta-processor self)))
@@ -35,6 +31,7 @@
 
 (assign-typefkt 'constraint-type 'normal-constraint-mixin)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

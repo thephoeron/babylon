@@ -3,38 +3,38 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;
 ;		Verwaltung von Constraints
 ;
 
 ;  3.6. 1987  Anpassung an GENERA 7; R. Lopatta
-; 
-     
+;
+
 (def$flavor constraint-base
 	((constraints nil)
 	 (constraint-nets nil))
 	()
-  
+
   :settable-instance-variables
   :initable-instance-variables)
 
-
 ;
-;      	ZUGRIFF AUF CONSTRAINTS   
+;      	ZUGRIFF AUF CONSTRAINTS
 ;
-
 
 (def$method (constraint-base :get) (c-name)
-  
+
   " ermittelt das primitive oder zusammengesetzte Constraint mit
       dem angegebenen Namen
       (Beachte: ein Netz und ein primitives Constraint duerfen nicht
        		den gleichen Namen besitzen)"
-  
+
   (let ((primitive-c-assoc (assoc c-name constraints))
 	(compound-c-assoc (assoc c-name constraint-nets)))
-    
+
     (cond ((get-object-of-c-assoc primitive-c-assoc))
 	  ((get-object-of-c-assoc compound-c-assoc))
 	  (t nil))))
@@ -58,7 +58,7 @@
 
   (let ((primitive-c-assoc (assoc c-name constraints))
 	(compound-c-assoc (assoc c-name constraint-nets)))
-    
+
     (cond (primitive-c-assoc
 	   ($send self :set-constraints
 		 (remove primitive-c-assoc
@@ -102,13 +102,13 @@
 
 
 (def$method (constraint-base :satisfied-p) (expression)
-  
+
     " T, falls die Wertebelegung konsistent ist;
       NIL, sonst
-     
+
       der Konsistenzlevel und die Anzahl der
       geforderten Ergebnisse werden beruecksichtigt"
-  
+
   (catch 'error
     ($send self :activate-and-adapt-result
 	  (get-constraint (get-constr-name expression))
@@ -135,10 +135,10 @@
 (def$method (constraint-base :activate-and-adapt-result)
 	    (constraint multiple-value-ass consistency-level
 			number-of-results result-type)
-  
+
   " aktiviert den Constraint und passt das Ergebnis
       dem geforderten Typ an"
-  
+
   (case result-type
     (value-assignment ($send constraint
 			     :activate
@@ -159,7 +159,7 @@
 
 (defun value-assignment-to-boolean-value
        (value-assignment consistency-level number-of-results)
-  
+
   " macht aus dem Ergebnis einer Constraint-Aktivierung
     einen boolschen Wert"
 
@@ -183,19 +183,19 @@
 
 
 (defun eval-value-ass (externel-value-ass)
-  
+
   " berechnet die Wertebelegung der Constraint-Variablen
     aus der externen Darstellung der Wertebelegung"
-  
+
   (if (null externel-value-ass) nil
       (cons (eval-first-value-ass externel-value-ass)
 	    (eval-value-ass (rest (rest (rest  externel-value-ass)))))))
 
 
 (defun eval-first-value-ass (external-value-ass)
-  
+
   " berechnet die Wertebelegung der ersten Constraint-Variablen"
-  
+
   (if (eq (second external-value-ass) '=)
       (make-value-assoc (first external-value-ass)
 			(convert-to-consat-value (third external-value-ass)
@@ -205,9 +205,9 @@
 
 (defun convert-to-consat-value
        (expression &optional (mode 'no-eval))
-  
+
   " ueberfuehrt expression in eine Consat-Wertemenge"
-  
+
   (cond ((eq expression 'unconstrained) 'unconstrained)
 	((eq expression '-) 'unconstrained)
 	((atom expression) (list expression))
@@ -222,10 +222,10 @@
 
 
 (defun value-spec-test (expression)
-  
+
    " falls expression keine Consat-Wertemenge
      ist, erfolgt Fehlermeldung"
-  
+
   (if (is-value-spec expression)
       expression
       (baberror (getentry value-spec-error
@@ -234,10 +234,10 @@
 
 
 (defun is-value-spec (expr)
-  
+
   " ueberprueft, ob Consat-Wertemenge vorliegt
     (laesst u.a. keine Dotted-Pairs zu)"
-  
+
   (or (eq expr 'unconstrained)
       (null expr)
       (and (listp expr)
@@ -245,28 +245,28 @@
 
 
 (defun determine-consistency-level (expression)
-  
+
   (cond ((or (null (rest expression))		; Default-Fall
              (eq (second expression) ':with))
-	 'local-consistency)	
+	 'local-consistency)
 	((and (eq (second expression) ':locally)  ; lokale Konsistenz
 	      (or (null (rest (rest expression)))
 		  (eq (third expression) ':with)))
 	 'local-consistency)
-	
+
 	((and (eq (second expression) ':globally)  ; globale Konsistenz
 	      (or (null (rest (rest expression)))
 		  (null (rest (rest (rest expression))))
 		  (eq (third expression) ':with)
 		  (eq (fourth expression) ':with)))
 	 'global-consistency)
-	
+
 	(t (baberror (getentry invalid-consistency-level
 			     constraint-io-table)))))
 
 
 (defun determine-number-of-results (expression)
-  
+
   (if (and (eq (second expression) :globally)
 	   (not (null (rest (rest expression))))
 	   (not (eq (third expression) :with)))
@@ -281,14 +281,14 @@
 
 (def$method (constraint-base :new&delete) (c-type c-name c-variables c-body
 						  &optional (c-condition t))
-  
+
   " Ueberschreiben der alten Definition"
-  
+
   ($send self :delete c-name)
   ($send self
 	 (case c-type
 	   (primitive :new-primitive)
-	   (compound  :new-compound))	
+	   (compound  :new-compound))
 	 c-name
 	 c-variables
 	 c-body
@@ -297,9 +297,9 @@
 
 (def$method (constraint-base :new-primitive) (c-name c-variables c-relation
 						     &optional (c-condition t))
-  
+
   " Definition eines primitiven Constraints"
-  
+
   (catch 'error
     (if ($send self :get c-name)
 	nil
@@ -325,7 +325,7 @@
 
 (def$method (constraint-base :new-compound) (c-name interface c-expressions
                                                     &rest ignore)
-  
+
   " Definition eines Constraint-Netz"
   (declare (ignore ignore))
   (catch 'error
@@ -342,7 +342,7 @@
 ;	KONSTRUKTOR
 ;
 
-  
+
   ;;; benutzerfreundliches Defconstraint
   ;;;
   ;;; Syntax:
@@ -357,9 +357,9 @@
   ;;;   <c-def-elem>		::= (:CONSTRAINT-EXPRESSIONS .
   ;;;					list( <constraint-expressions> ) ) |
   ;;;				    (:INTERFACE . list( <variable> )
-  ;;;   <def-elem>		::= (:TYPE <constraint-typ> ) 
+  ;;;   <def-elem>		::= (:TYPE <constraint-typ> )
   ;;;   <def-name>		::= symbol
-  
+
 
 (defmacro defconstraint (def-name &rest def-body)
   (catch 'error
@@ -387,11 +387,11 @@
 ;
 
 (defun get-def-typ (def-body)
-  
+
   " sucht in def-body einen Ausdruck der Form (:type <constraint-typ>)
- 
+
    	mit  <constraint-typ> ::= primitive | compound"
-  
+
   (let ((typ-pair (assoc ':type def-body)))
     (cond ((null typ-pair)
 	   (baberror (getentry no-type constraint-io-table)))
@@ -430,10 +430,10 @@
 
 
 (defun get-def-condition (def-body)
-  
+
   " sucht in def-body einen Ausdruck der Form
     (:condition <activation-condition>)"
-  
+
   (let ((cond-pair (assoc ':condition def-body)))
     (cond ((null cond-pair) t)
           ((/= (length cond-pair) 2)
@@ -443,10 +443,10 @@
 
 
 (defun get-def-expressions (def-body)
-  
+
   " sucht in def-body einen Ausdruck der Form
     (:constraint-expressions . list( <constraint-expression> )"
-  
+
   (let ((expr-pair (assoc ':constraint-expressions def-body)))
     (if (null expr-pair)
       (baberror (getentry no-expressions constraint-io-table))
@@ -531,6 +531,7 @@
 	((atom liste) nil)
 	((is-liste (cdr liste)))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

@@ -3,13 +3,16 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 ;
 ; 		Constraint-Netz
 ;
 
 ;  3.6. 1987  Anpassung an GENERA 7; R. Lopatta
-; 
+;
 
 ;
 ;	CONSTRAINT-NETZ
@@ -64,7 +67,7 @@
 ;				 mit weiteren Angaben}
 ;		agenda:		list( <agenda-element> )
 ;		stack:		list( <stack-element> )
-;		
+;
 
 (def$flavor constraint-net
 
@@ -73,7 +76,7 @@
 	 (agenda (make-agenda-elem))
 	 (stack nil))
 	()
-  
+
   :gettable-instance-variables
   :settable-instance-variables
   :initable-instance-variables
@@ -81,9 +84,9 @@
 
 
 (def$method (constraint-net :print) (name stream)
-  
+
   ;;;	Ausgabe des Constraint-Netzes
-  
+
   (princ " " stream)
   (terpri stream)
   (babpprint
@@ -103,17 +106,17 @@
 
 
 (defun create-net-spec (c-expressions)
-  
+
   (create-var-info-alist
     (determine-net-variables c-expressions)
     c-expressions))
 
 
 (defun create-var-info-alist (net-vars c-expressions)
-  
+
   ;;; erzeugt eine Assoziationsliste, die fuer jede
   ;;; Netzvariable die noetigen Angaben enthaelt
-  
+
   (mapcar (function
 	    (lambda (net-var)
 	      (make-info-assoc
@@ -145,10 +148,10 @@
 
 
 (defun determine-net-variables (c-expressions)
-  
+
   ;;; ermittelt mit Hilfe der Variablenassoziationen der
   ;;; constraint-expressions die Variablen des Netzes
-  
+
   (if (null c-expressions)
       nil
       (union-sets
@@ -165,11 +168,11 @@
 
 
 (defun update-net-value-ass (new-value-ass net-spec)
-  
+
   ;;; ergaenzt die Wertemengen der Variablen in variables
   ;;; um die neuen Wertemengen aus new-value-ass
   ;;; (Bildung der Schnittmenge)
-  
+
   (mapc (function
 	  (lambda (new-value-assoc)
 	    (add-var-info-values
@@ -203,9 +206,9 @@
 
 
 (defun select-all-constraints (net-spec)
-  
+
   ;;; bestimmt die Menge aller Constraint-Ausdruecke,
-  
+
   (cond ((null net-spec) nil)
 	(t (union-sets
 	     (get-var-info-constraints (first net-spec))
@@ -213,12 +216,12 @@
 
 
 (defun select-relevant-constraints (net-spec value-ass)
-  
+
   ;;; bestimmt die Menge aller Constraint-Ausdruecke,
   ;;; in denen eine globale Variable auftritt,
   ;;; der durch value-ass eine Wertemenge ungleich 'unconstrained
   ;;; zugeordnet wird
-  
+
   (cond ((null value-ass) nil)
 	((eq (get-value-spec (first value-ass))
 	     'unconstrained)
@@ -239,9 +242,9 @@
 
 
 (defun state-of-net-spec (net-spec &optional (state 'single-valued))
-  
+
   ;;; ueberprueft zustand der variablenbelegung
-  
+
   (if (null net-spec) state
       (let ((value-spec (get-var-info-values
                          (first net-spec))))
@@ -259,9 +262,9 @@
 
 
 (defun state-of-value-ass (value-ass &optional (state 'single-valued))
-  
+
   ;;; ueberprueft Zustand der variablenbelegung
-  
+
   (if (null value-ass) state
       (let ((value-spec (get-value-spec (first value-ass))))
         (declare (list value-spec))
@@ -278,10 +281,10 @@
 
 
 (defun select-multiple-valued-variable (net-spec &optional candidate)
-  
+
   ;;; liefert eine Netzvariable (mit Zusatzangaben)
   ;;; mit der kleinsten mehrelementigen Wertemenge
-  
+
   (if (null net-spec) candidate
       (let ((new-length (length (the list (get-var-info-values (first net-spec))))))
         (select-multiple-valued-variable
@@ -289,7 +292,7 @@
          (if (or (<= new-length 1)
                  (and candidate
                       (<= (length (the list (get-var-info-values candidate)))
-                          new-length)))	      
+                          new-length)))
            candidate
            (first net-spec))))))
 
@@ -306,3 +309,6 @@
 	((consistent-value-ass-p (cdr value-ass))
 	 value-ass)
 	(T nil)))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

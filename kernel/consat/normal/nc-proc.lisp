@@ -3,6 +3,9 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 
 
@@ -32,14 +35,14 @@
 
 (def$method (normal-constraint-processor :after :print)
 	    (&optional (stream *standard-output*))
-  
+
   "gibt alle definierten Restrictions in wiedereinlesbarer Form aus."
-  
+
   (print-constraint-list restriction-nets stream))
 
 
 (def$method (normal-constraint-processor :after :kb-inform) (stream)
-  
+
   "gibt die Zahl der Restrictions aus"
 
   (terpri stream)
@@ -66,5 +69,7 @@
 
 #-:FMCS(compile-$flavor-$methods normal-constraint-processor)
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

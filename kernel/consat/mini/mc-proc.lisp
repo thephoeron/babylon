@@ -3,6 +3,8 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 (def$flavor mini-constraint-processor
 	((trace nil))
@@ -13,16 +15,14 @@
   (:required-instance-variables meta-processor)
   (:documentation " Version des Constraint-Prozessors der Trace unterstuetzt"))
 
-
 (def$method (mini-constraint-processor :trace-status) ()
   (if trace
       (format nil (getentry trace-on-fstr  babylon-io-table) "Consat")
       (format nil (getentry trace-off-fstr babylon-io-table) "Consat")))
 
-
-
 #-:FMCS(compile-$flavor-$methods mini-constraint-processor)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

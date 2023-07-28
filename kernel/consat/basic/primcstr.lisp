@@ -3,19 +3,22 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 ;
 ;		Evaluierung primitiver Constraints
 ;
 ;
 ;  3.6. 1987  Anpassung an GENERA 7; R. Lopatta
-; 
+;
 
 ;
 ;	PRIMITIVES CONSTRAINT
 ;
 ;
-;	Flavor mit folgenden Variablen 
+;	Flavor mit folgenden Variablen
 ;		interface:  	list( <variables> )
 ;		relation:	<relation>
 ;		condition:	<lisp-expr>
@@ -27,9 +30,9 @@
 
 
 (defun evaluate-funcall (expression &optional (simple-value-ass nil))
-  
+
   "Zugriff von consat auf andere Prozessoren"
-  
+
   (send-kb :eval
 	   (substitute-constraint-variables
 	     expression
@@ -39,9 +42,9 @@
 
 
 (defun evaluate-condition (expression simple-value-ass)
-  
+
   "Zugriff von consat auf andere Prozessoren"
-  
+
   (or (eq expression 't)
       (send-kb :eval
 	       (substitute-constraint-variables
@@ -82,9 +85,9 @@
 
 
 (defun global-to-local-subst (c-expr net-spec)
-  
+
   ;;; ermittelt Wertebelegung fuer Variablen des Constraints von c-expr
-  
+
   (make-local-value-ass (get-parameters c-expr)
 			($send (get-constraint
 				(get-constr-name c-expr))
@@ -93,10 +96,10 @@
 
 
 (defun local-to-global-subst (c-expr local-value-ass)
-  
+
   ;;; ersetzt in local-value-ass die lokalen durch die in c-expr
   ;;; zugeordneten Variablen
-  
+
   (make-determined-value-ass
     (remove-duplicates (get-parameters c-expr)
 		       :test #'equal)
@@ -108,12 +111,12 @@
 
 
 (defun make-local-value-ass (global-vars local-vars net-spec)
-  
+
   ;;; die i-te Variable in global-vars sei mit der i-ten Variablen
   ;;; in local-vars assoziiert;
   ;;; jede lokale Variable erhaelt die Wertemenge, die der entsprechenden
   ;;; globalen Variablen in net-spec zugeordnet ist
-  
+
   (cond ((null global-vars)
 	 (if (null local-vars) nil
 	     (baberror (getentry length-error constraint-io-table)
@@ -121,7 +124,7 @@
 	((null local-vars)
 	 (baberror (getentry length-error constraint-io-table)
 		 global-vars local-vars))
-	
+
 	(t (cons (make-value-assoc
 		   (first local-vars)
 		   (get-var-info-values
@@ -134,12 +137,12 @@
 
 
 (defun make-global-value-ass (global-vars local-vars local-value-ass)
-  
+
   ;;; die i-te Variable in global-vars sei mit der i-ten Variablen
   ;;; in local-vars assoziiert;
   ;;; jede globale Variable erhaelt die Wertemenge, die der entsprechenden
   ;;; lokalen Variablen in local-value-ass zugeordnet ist
-  
+
   (cond ((null global-vars)
 	 (if (null local-vars) nil
 	     (baberror (getentry length-error constraint-io-table)
@@ -147,7 +150,7 @@
 	((null local-vars)
 	 (baberror (getentry length-error constraint-io-table)
 		 global-vars local-vars))
-	
+
 	(t (let ((val-assoc (assoc (first local-vars) local-value-ass
 				   :test 'equal)))
 	     (if (null val-assoc)
@@ -180,7 +183,7 @@
 
 
 (defun intersect-associated-value-specs (variable value-ass)
-  
+
   (cond ((null value-ass) 'unconstrained)
 	((equal variable (get-var (first value-ass)))
 	 (extended-intersection
@@ -202,7 +205,7 @@
 	 (condition t)
 	 (compiled-condition-flag nil))
 	()
-  
+
   :gettable-instance-variables
   :settable-instance-variables
 ;  :initable-instance-variables
@@ -210,9 +213,9 @@
 
 
 (def$method (constraint :print) (name stream)
-  
+
   ;;;	Ausgabe des Constraints
-  
+
   (princ " " stream)
   (terpri stream)
   (babpprint
@@ -236,7 +239,7 @@
 				     init-option
 				     (consistency-level 'local-consistency)
 				     (number-of-results nil))
-  
+
   ;;; Eingabe:	Zuweisung von Wertemengen an die Constraint-Variablen
   ;;;
   ;;; Ausgabe:  neue Wertemengenzuweisung,
@@ -251,25 +254,25 @@
   ;;;
   ;;; der Parameter init-option ist ohne Bedeutung, muss wegen
   ;;; des Compilers jedoch mindestens einmal benutzt werden:
-  
+
   init-option
-  
+
   (catch 'error
     (let* ((multiple-value-ass (adjust-value-ass
 				 interface
 				 new-value-ass))
 	   (list-of-value-ass (split-variable-alist
 				multiple-value-ass)))
-      
+
       (case consistency-level
-	
-	((local-consistency global-consistency-if-single-valued)	 
+
+	((local-consistency global-consistency-if-single-valued)
 	 (if (activation-p condition list-of-value-ass)
 	     (combine-variable-alists
 	       (multiple-evaluation relation interface list-of-value-ass)
 	       interface)
 	     multiple-value-ass))
-	
+
 	(global-consistency
 	  (select-some-value-ass
 	    (if (activation-p condition list-of-value-ass)
@@ -278,16 +281,16 @@
 		(mapcar #'convert-simple-to-multiple
 			list-of-value-ass))
 	    number-of-results))))))
-	  
+
 
 (def$method (constraint :evaluate-expression)
   (constraint-expr global-net-spec &rest ignore)
-  
+
   ;;; fuehrt Umsetzung globaler in lokale Variablen durch
   ;;; und umgekehrt
   (declare (ignore ignore))
   (local-to-global-subst
-   
+
    constraint-expr
    ($send self
           :activate
@@ -297,7 +300,7 @@
 
 
 (defun multiple-evaluation (relation variables list-of-value-ass)
-  
+
   ;;; falls keine einwertige Variablenbelegung existiert,
   ;;; wird die leere Liste geliefert;
   ;;;
@@ -350,14 +353,14 @@
 
 
 (defun evaluate-relation-element (rel-element variables simple-val-ass)
-  
+
   ;;; Eingabe:	ein Relationenelement,
   ;;;		eine Liste der Variablen,
   ;;;		eine Wertzuweisung
   ;;;
   ;;; Ausgabe:	nil, falls simple-val-ass inkonsistent ist,
   ;;;		oder neue (multiple) Wertezuweisung, sonst
-  
+
   (declare (list rel-element variables))
   (case (get-keyword rel-element)
     (:tuple (evaluate-tupel (get-tupel rel-element)
@@ -465,7 +468,7 @@
 ;
 
 
-;	info association:	
+;	info association:
 ;
 ;		( <variable> . <variable info> )
 ;
@@ -484,7 +487,7 @@
 
   ;;; ermittelt die Constraint-Ausdruecke, die der Variablen in
   ;;; info-assoc zugeordnet sind
-  
+
   (if (null info-assoc)
       nil
       (var-info-constraints
@@ -495,7 +498,7 @@
 
   ;;; ermittelt die Wertemenge, die der Variablen in info-assoc
   ;;; zugeordnet sind
-  
+
   (if (null info-assoc)
       (baberror (getentry net-spec-access constraint-io-table))
       (var-info-values
@@ -552,14 +555,16 @@
 
 
 (defun reset-var-info-values (info-assoc)
-  
+
   ;;; setzt Defaultwert auf 'unconstrained
-  
+
   (if info-assoc
       (setf (var-info-init-values
 	      (get-var-info info-assoc))
 	    'unconstrained)))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 
 ;;; eof
-

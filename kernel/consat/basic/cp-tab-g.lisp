@@ -2,10 +2,13 @@
 
 (in-package "BABYLON")
 
-;;;     TABELLE FUER CONSTRAINT-MELDUNGEN (deutsch)   D. FUCHS 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
+;;;     TABELLE FUER CONSTRAINT-MELDUNGEN (deutsch)   D. FUCHS
 ;;;
 
- 
+
 
 (defbabylon-table constraint-io-table german :size 30)
 
@@ -227,10 +230,12 @@
 	  "ungueltiger 'consistency level'")
 
 
-(defbabylon-entry mark-explain-item  constraint-io-table german 
+(defbabylon-entry mark-explain-item  constraint-io-table german
     '(nil "Mit # markierte Constraints werden protokolliert"))
 
 
 (defbabylon-entry toggle-trace-modes constraint-io-table german
     "Waehle Constraints deren Trace-Modus wechseln soll")
 
+#+sbcl
+(named-readtables:in-readtable :standard)

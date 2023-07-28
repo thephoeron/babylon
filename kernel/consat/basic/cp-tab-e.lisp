@@ -2,10 +2,13 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;;     TABELLE FUER CONSTRAINT-MELDUNGEN (english)
 ;;;
 
- 
+
 
 (defbabylon-table constraint-io-table english :size 30)
 
@@ -234,3 +237,5 @@
 (defbabylon-entry toggle-trace-modes constraint-io-table english
     "select constraints to toggle trace mode")
 
+#+sbcl
+(named-readtables:in-readtable :standard)

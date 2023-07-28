@@ -1,26 +1,23 @@
 ;;; -*- Mode: LISP; Syntax: Common-lisp; Package: BABYLON; Base: 10 -*-
 
-
-
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;
 ;		ABARBEITUNG VON RESTRICTION NETS
 ;
-
-
-
 
 ;
 ;	NACHRICHTEN FUER RESTRICTION-NET
 ;
 
 (defun admissible-net-p (list-of-slots net-spec)
-  
+
   "	liefert t, falls die Wertebelegung der Netzvariablen
   	noch zulaessig ist"
-  
+
   (if (null list-of-slots) t
       (and (admissible-slot-value-p
 	     (first list-of-slots)
@@ -31,11 +28,11 @@
 
 
 (defun admissible-slot-value-p (slot-ref net-spec)
-  
+
   "	liefert t, falls fuer den Slot gilt
-  
+
   	  	{ sv( slot ) } = cv( slot )"
-  
+
   (equal (slot-value-to-value-spec
 	   (get-value-of-referenced-slot
 	     slot-ref))
@@ -44,16 +41,16 @@
 
 
 (defun further-slot-restriction-p (slot-ref net-spec)
-  
+
   "	liefert T, falls der Slotwert im Vergleich zum Wert im
   	Constraint-Netz eine neue Restriction darstellt, also falls gilt
-  
+
   	{ sv( slot) } -= cv( slot) und
-  	sv( slot) -= undetermined "  
-  
+  	sv( slot) -= undetermined "
+
   (let ((slot-value (get-value-of-referenced-slot
 		      slot-ref)))
-    
+
     (and (not (undetermined-slot-value-p slot-value))
 	 (not (equal (slot-value-to-value-spec
 		       slot-value)
@@ -62,10 +59,10 @@
 
 
 (defun make-value-ass-of-posted-slots (list-of-slots net-spec)
-  
+
   "	liefert Wertebelegung derjenigen Slots, die seit dem
   	letzten stabilen Zustand staerker eingeschraenkt wurden"
-  
+
   (cond ((null list-of-slots) nil)
 	((further-slot-restriction-p
 	   (first list-of-slots)
@@ -89,42 +86,42 @@
 
 
 (defun copy-slot-value (slot-ref)
-  
+
   "	liest einen Slotwert und passt seine Repraesentation an"
-  
+
   (slot-value-to-value-spec
     ($send ($send (get-instance
 		  (get-object-of-slot-ref slot-ref))
-		:get-value-only 
+		:get-value-only
 		(get-slot-of-slot-ref slot-ref))
 	  :get)))
 
 
 
 (defun copy-possible-values (slot-ref)
-  
+
   "	liest die Possible-Values des Slots und
         transformiert die Repraesentation"
-  
+
   (possible-values-to-value-spec
     ($send (get-instance
 	    (get-object-of-slot-ref slot-ref))
-	  :get 
+	  :get
 	  (get-slot-of-slot-ref slot-ref)
 	  :possible-values)))
 
 
 
 (defun replace-slot-value (slot-ref value-spec)
-  
+
   "	fuehrt einen Schreibversuch auf den Slot durch,
   	falls value-spec einelementig ist"
-  
+
   (if (and (not (eq value-spec 'unconstrained))
 	   (= (length value-spec) 1))
       ($send ($send (get-instance
 		    (get-object-of-slot-ref slot-ref))
-		  :get-value-only 
+		  :get-value-only
 		  (get-slot-of-slot-ref slot-ref))
 	    :try-put
 	    (first value-spec))))
@@ -132,14 +129,14 @@
 
 
 (defun replace-possible-values (slot-ref value-spec)
-  
+
   "	ersetzt possible-values, falls value-spec ungleich
   	unconstrained ist"
-  
+
   (if (not (eq value-spec 'unconstrained))
       ($send (get-instance
 	      (get-object-of-slot-ref slot-ref))
-	    :put	    
+	    :put
 	    (get-slot-of-slot-ref slot-ref)
 	    (cons :one-of value-spec)
 	    :possible-values)))
@@ -147,10 +144,10 @@
 
 
 (defun possible-values-to-value-spec (possible-values)
-  
+
   "	ueberfuehrt die Possible-Values-Beschreibung in eine
   	Consat-Wertemenge"
-  
+
   (cond ((null possible-values) 'unconstrained)
 	((atom possible-values)
 	 (case possible-values
@@ -160,16 +157,16 @@
 	   (:list 'unconstrained)
 	   (:string 'unconstrained)
 	   (:boolean '(t nil))))
-	
+
 	(t (case (first possible-values)
-	     
+
 	     (:interval 'unconstrained)
 	     (:instance-of 'unconstrained)
 	     (:not 'unconstrained)
-	     
+
 	     (:one-of (rest possible-values))
-	     
-	     (otherwise 
+
+	     (otherwise
 	       (baberror "keine multiple-values erlaubt"))))))
 
 
@@ -185,15 +182,15 @@
 ;;;
 
 (def$method (restriction-net :test-values) ()
-  
+
   "	ueberprueft die aktuellen Slotwerte auf Konsistenz"
-  
+
   ($send self :get-stable-state)
   ($send self :consistent-p))
 
 
 (def$method (restriction-net :modify-values) ()
-  
+
   "	ueberprueft die Konsistenz der aktuellen Slotwerte;
   	evtl. erhalten Slots ohne Wert einen Wert zugewiesen"
 
@@ -237,7 +234,7 @@
   ($send self :store-state)
   ($send self :initialize-variables value-ass)
   ($send self :initialize-agenda value-ass)
-  
+
   ($send self :propagate 'local-consistency)
 
   (cond (($send self :consistent-p)
@@ -258,47 +255,47 @@
 
 
 (def$method (restriction-net :filter-possible-values) ()
-  
-  "	ueberfuehrt das Netz (falls noch nicht geschehen) vom Anfangszustand 
+
+  "	ueberfuehrt das Netz (falls noch nicht geschehen) vom Anfangszustand
   	in einen Zustand, in dem
-  
+
   	- das Netz gefiltert und die possible-values propagiert wurden
   	- alle Slots in die changed-Liste eingefuegt werden"
-  
+
   (cond ((not (agenda-elem-filtered-p agenda))
 	 ($send self :copy-possible-values)
 	 ($send self :total-init-queue)
 	 (setf (agenda-elem-trace agenda) nil)
-	 
+
 	 ($send self :propagate 'local-consistency)
-	 
+
 	 ($send self :freeze-state)
 	 ($send self :init-slot-state)
-	 
+
 	 (setf (agenda-elem-filtered-p agenda) t))))
 
 
 
 (def$method (restriction-net :get-stable-state) ()
-  
+
   "	ueberfuehrt das Netz in einem Zustand, in dem
-  
+
   	- alle inzwischen durchgefuehrten Slotwertaenderungen propagiert
   	  werden und das Netz somit wieder mit den Slotwerten uebereinstimmt"
-  
+
   ($send self :filter-possible-values)
-  
+
   (cond ((admissible-net-p changed-slots net-spec)
 	 (let ((value-ass (make-value-ass-of-posted-slots
 			    more-restricted-slots
 			    net-spec)))
 	   ($send self :initialize-variables value-ass)
 	   ($send self :initialize-agenda value-ass)))
-	
+
 	(t ($send self :get-initiale-state)
 	   ($send self :copy-values)
 	   ($send self :total-init-queue)))
-  
+
   ($send self :propagate 'local-consistency)
   ($send self :reset-slot-state))
 
@@ -328,12 +325,12 @@
 
 
 (def$method (restriction-net :update-slot-state) (slot-ref old-value)
-  
+
   "	protokolliert Schreibvorgang auf Slot"
-  
+
   (cond ((or (member slot-ref changed-slots :test 'equal)
 	     (member slot-ref more-restricted-slots :test 'equal)))
-	
+
 	((undetermined-slot-value-p old-value)
 	 (setf more-restricted-slots
 	       (cons slot-ref more-restricted-slots)))
@@ -349,9 +346,9 @@
 
 
 (def$method (restriction-net :copy-values) ()
-  
+
   "	kopiere die Werte aller Slots auf die Netzvariablen"
-  
+
   (mapc (function
 	  (lambda (info-assoc)
 	    (add-var-info-values
@@ -360,7 +357,7 @@
 		(get-net-var info-assoc)))))
 	net-spec))
 
-   
+
 (def$method (restriction-net :copy-possible-values) ()
 
   "	kopiere :possible-values auf Netzvariablen"
@@ -375,10 +372,10 @@
 
 
 (def$method (restriction-net :replace-values) ()
-  
+
   ;;;	fuehrt fuer jede Netzvariable mit einelementiger
   ;;;   Wertemenge einen Schreibversuch auf die Slots durch
-  
+
   (mapc (function
 	  (lambda (info-assoc)
 	    (replace-slot-value
@@ -388,11 +385,11 @@
 
 
 (def$method (restriction-net :replace-possible-values) ()
-  
+
   "	ersetzt die :possible-values-Komponente der Slots
   	durch die Wertebelgung der entsprechenden
   	Netzvariablen"
-  
+
   (mapc (function
 	  (lambda (info-assoc)
 	    (replace-possible-values
@@ -400,8 +397,7 @@
 	      (get-var-info-values info-assoc))))
 	net-spec))
 
-
-
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

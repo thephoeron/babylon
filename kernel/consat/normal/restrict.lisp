@@ -3,6 +3,9 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 ;
 ;		HILFSFUNKTIONEN FUER RESTRICTION NETS
@@ -30,9 +33,9 @@
 
 (def$method (restriction-definition :store-definition)
 	    (new-restrictions new-guarded new-protected)
-  
+
   "	speichert generische Beschreibung des Netzes"
-  
+
   (setf restrictions new-restrictions)
   (setf guarded new-guarded)
   (setf protected new-protected))
@@ -44,7 +47,7 @@
 
   (princ " " stream)
   (terpri stream)
-  (babpprint 
+  (babpprint
     `(defrestriction ,name
        (:guarded-slots . ,guarded)
        (:protected-slots . ,protected)
@@ -60,12 +63,12 @@
 
 
 (def$flavor restriction-net
-	    
+
 	    ((changed-slots nil)
 	     (more-restricted-slots nil))
   (restriction-definition
     constraint-net)
-  
+
   :settable-instance-variables
   :initable-instance-variables
   (:documentation "Constraintnetz auf Slots"))
@@ -76,13 +79,13 @@
 ;	MACROS
 ;
 
-     
+
 (defmacro make-slot-ref (object slot)
   `(list ,object ,slot))
 
 
 (defmacro get-object-of-slot-ref (slot-ref)
-  
+
   "  	liefert Instanz oder Variable der Slot-referenz"
 
   `(first ,slot-ref))
@@ -111,9 +114,9 @@
 
 ;
 ;(def$method (restriction-net :trace-on)
-;	   (c-name) 
+;	   (c-name)
 ;          (declare(ignore c-name))
-;  
+;
 ;  ;;;	erzeugt ein Traced-Restriction-Netz, dass mit dem
 ;  ;;;	Empfaenger in allen Komponenten (ausser name) uebereinstimmt
 ;
@@ -124,7 +127,7 @@
 ;    :net-spec net-spec
 ;    :agenda agenda
 ;    :stack stack
-;    :restrictions restrictions 
+;    :restrictions restrictions
 ;    :protected protected
 ;    :guarded guarded
 ;    :changed-slots changed-slots
@@ -146,7 +149,7 @@
 ;
 ;(def$method (traced-restriction-net :trace-off)
 ;	   (c-name)
-;          (declare(ignore c-name))  
+;          (declare(ignore c-name))
 ;  ;;;	erzeugt ein Restriction-Netz, dass mit dem
 ;  ;;;	Empfaenger in allen Komponenten (ausser name) uebereinstimmt
 ;
@@ -156,7 +159,7 @@
 ;    :net-spec net-spec
 ;    :agenda agenda
 ;    :stack stack
-;    :restrictions restrictions 
+;    :restrictions restrictions
 ;    :protected protected
 ;    :guarded guarded
 ;    :changed-slots changed-slots
@@ -170,7 +173,7 @@
 ;
 
 
-(def$flavor restricted-slot	
+(def$flavor restricted-slot
   ((value -)
    (restriction-net nil)
    (protected nil)
@@ -184,8 +187,8 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 
 
 (def$method (restricted-slot :put)
-	    (instance slot new-value &optional (test nil))				
-  
+	    (instance slot new-value &optional (test nil))
+
   ;;;	if the option test isn't equal :test
   ;;;   the specified slot is added to the list of modified slots and
   ;;;   the slot value is set to new-value;
@@ -198,7 +201,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
   ;;;	a call of this method yields
   ;;;		- t, if a write access has been performed
   ;;;		- nil, otherwise
-  
+
   (cond ((not (eq test :test))
 	 ($send restriction-net
 		:update-slot-state
@@ -221,7 +224,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 
 ;(def$method (restricted-slot :put)
 ;	   (instance slot new-value)				;;;  ?????
-;  
+;
 ;  ;;;	falls ein bewachter Slot vorliegt, wird Aktivierung
 ;  ;;;	des Netzes ausgeloest,
 ;  ;;;
@@ -230,7 +233,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 ;  ;;;
 ;  ;;;	Ergebnis:  T, 	falls Schreibvorgang durchgefuehrt
 ;  ;;;		   nil,	falls Wert verweigert wird
-;  
+;
 ;  (cond ((not guarded)
 ;	 ($send restriction-net
 ;	       :update-slot-state
@@ -254,7 +257,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 (def$method (restricted-slot :try-put) (new-value)				;;;  ?????
 
   ;;;	fuehrt Schreibvorgang durch, falls Slot nicht geschuetzt ist
-  
+
   (if (not protected)
       (setf value new-value)))
 
@@ -304,11 +307,11 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 
 
 (def$method (restriction-net :make-slot-restriction) (instance slot)
-  
+
   ;;; erzeugt aktiven Wert fuer diesen Slot
-  
+
   (if ($send self :correct-restriction-net instance slot)
-      
+
       ($send instance
 	    :replace
 	    slot
@@ -316,7 +319,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 	      'restricted-slot
 	      :value ($send instance :get slot)
 	      :restriction-net self))
-      
+
       (baberror (getentry restriction-error constraint-io-table))))
 
 
@@ -344,7 +347,7 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 
 
 (def$method (restriction-net :correct-restriction-net) (instance slot)
-  
+
   ;;; 	falls der Slot bereits einem (noch existierendem !) Netz
   ;;;   zugeordnet ist und dieses mit demjenigen uebereinstimmt,
   ;;;	an das die Nachricht ge$sendet wurde,
@@ -358,8 +361,8 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 	     :is-defined-p ($send value :restriction-net))
 	   (eql ($send value :restriction-net) self))
 	  (t t))))
-  
-  ;;;	($send 
+
+  ;;;	($send
   ;;;	  ($send instance :send-if-handles
   ;;;                     :get-value-only slot)
   ;;;	  :restriction-net))
@@ -369,13 +372,15 @@ Jeder Slot in einem Restriction-Net erhaelt einen solchen."))
 
 
 (defun slot-value-to-value-spec (slot-value)
-  
+
   "	ueberfuehrt slot-value in eine Consat-Wertemenge"
-  
+
   (cond ((undetermined-slot-value-p slot-value)
 	 'unconstrained)
 	(T (list slot-value))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 
 ;;; eof
-
