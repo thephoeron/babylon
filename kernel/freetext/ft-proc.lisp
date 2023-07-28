@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHORS:  Eckehard Gross, Juergen Walther
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 
@@ -55,7 +58,7 @@ Returns nil if already known, fact otherwise."
   "Store the status of a fact.
 Returns the fact in any case."
   (if (not (member fact true-facts :test 'equal))
-      (setf true-facts  (cons fact true-facts))) 
+      (setf true-facts  (cons fact true-facts)))
   fact)
 
 
@@ -74,7 +77,7 @@ Returns the fact in any case."
 	    ("" :no-select t)
 	    ,@(getentry ask-item-list free-text-io-table)))
 	(label (getentry choose-one-of-str free-text-io-table)))
-    ($send meta-processor :babylon-format "~%~A"                 ;;; <- 
+    ($send meta-processor :babylon-format "~%~A"                 ;;; <-
 		  (format-translate-true-or-false fact))
     (do ((answer (normalize-answer
 		   ($send meta-processor :babylon-read (list *help-key*)))
@@ -82,13 +85,13 @@ Returns the fact in any case."
 	 (echo nil t))
 	((member answer '(yes no unknown help *help-key*))
 	 (if echo
-	     ($send meta-processor :babylon-format 
-			   "~(~S~)" (translate-answer answer)))	 
+	     ($send meta-processor :babylon-format
+			   "~(~S~)" (translate-answer answer)))
 	 (cond
 	   ((eq answer 'yes) ($send self :add fact 'true) 'true)
 	   ((eq answer 'no)  ($send self :add fact 'false) 'false)
 	   ((eq answer 'unknown) ($send self  :add fact 'false) 'unknown)
-	   ((eq answer 'help) 'help)	 
+	   ((eq answer 'help) 'help)
 	   ((eql answer *help-key*)
 	    ($send meta-processor :babylon-format "?") 'help))))))
 
@@ -106,18 +109,18 @@ Returns the fact in any case."
 	 (echo nil t))
 	((member answer '(yes no unknown help *help-key*))
 	 (if echo
-	     ($send meta-processor :babylon-format 
+	     ($send meta-processor :babylon-format
 			   "~(~S~)" (translate-answer answer)))
 	 (cond
 	   ((eq answer 'yes) t)
 	   ((eq answer 'no)  nil)
 	   ((eq answer 'unknown) nil)
 	   ((eq answer 'prompt) 'prompt)
-	   ((eq answer 'help) 'help)	 
+	   ((eq answer 'help) 'help)
 	   ((eql answer *help-key*)
 	    ($send meta-processor :babylon-format "?") 'help))))))
 
-(def$method (basic-free-text-processor :get-true-facts-for) 
+(def$method (basic-free-text-processor :get-true-facts-for)
 	   (predicate &optional (test #'(lambda (atom list)
 					  (and (consp list)
 					       (eq atom (first list))))))
@@ -126,3 +129,6 @@ Returns the fact in any case."
     (dolist (a-true-fact true-facts (nreverse facts))
       (if (funcall test predicate a-true-fact)
 	  (setf facts (cons a-true-fact facts))))))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

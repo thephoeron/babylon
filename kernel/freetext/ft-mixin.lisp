@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,7 +11,8 @@
 
 ;; AUTHORS:  Eckehard Gross, Juergen Walther
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 (def$flavor free-text-mixin
         (free-text-processor)
@@ -63,7 +64,7 @@
 
 (def$method (free-text-mixin :eval-free-text) (fact mode)
   (when system-trace
-    ($send self :send-system-trace-window :format 
+    ($send self :send-system-trace-window :format
 	   (getentry meta-free-text-trace-fstr free-text-io-table)
 	   mode fact))
   (setf active-proc free-text-processor)
@@ -93,7 +94,7 @@
 (defun translate-free-texts-into-prolog-facts (facts)
   (mapcar #'list facts))
 
-(defun is-free-text-meta-predicate (x)	
+(defun is-free-text-meta-predicate (x)
   (member x *free-text-meta-predicates*))
 
 
@@ -146,7 +147,7 @@
 					    (equal (first a-fact) (first fact)))
 				   (setf result
 					 (cons `((,(first request) ,a-fact)) result)))))
-			      (t (dolist (a-fact all-facts (nreverse result)) 
+			      (t (dolist (a-fact all-facts (nreverse result))
 				   (when (consp a-fact)
 				     (setf result
 					   (cons `((,(first request) ,a-fact)) result)))))))
@@ -155,6 +156,7 @@
   (t ;; signal error!
     nil)))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

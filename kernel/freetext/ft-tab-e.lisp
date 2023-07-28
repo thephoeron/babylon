@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,16 +13,15 @@
 
 
 
-;;This is the English version of all the strings and menu-item-lists of 
-;;the free-text processor. 
+;;This is the English version of all the strings and menu-item-lists of
+;;the free-text processor.
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 (defbabylon-table free-text-io-table english)
 
-
 ;;; **************** syntax ****************
-
 
 (defbabylon-entry is-it-true-question-fstr free-text-io-table english
   "~5TIs this true: ~{~S ~}")
@@ -58,3 +57,5 @@
 (defbabylon-entry meta-free-text-trace-fstr free-text-io-table english
   " META -> FREE-TEXT ~S  ~S")
 
+#+sbcl
+(named-readtables:in-readtable :standard)
