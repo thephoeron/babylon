@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,21 +13,19 @@
 
 
 ;
-;This is the German version of all the strings and menu-item-lists of 
-;the frame processor. 
+;This is the German version of all the strings and menu-item-lists of
+;the frame processor.
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 (defbabylon-table frame-io-table german :size 100)
-
-
 
 (defbabylon-entry no-delete-permit-error-fstr frame-io-table german
   "~%:VALUE Property kann in Instanzen nicht geloescht werden.~@
            In (~S :DELETE-PROPERTY ~S ~S)")
 
-
-(defbabylon-entry no-update-permit-error-fstr frame-io-table german 
+(defbabylon-entry no-update-permit-error-fstr frame-io-table german
   "~%Sie versuchen  ~S ~S von ~S in ~S zu aendern,~@
      aber Aenderungen sind nicht erlaubt.")
 
@@ -85,30 +83,26 @@
 (defbabylon-entry mode-error-fstr frame-io-table german
   "Inkorrekter Mode in compute-slot-message: ~S.")
 
-(defbabylon-entry expect-relation-fstr frame-io-table german 
+(defbabylon-entry expect-relation-fstr frame-io-table german
   "Relation = wird anstelle von ~S erwartet.")
 
 (defbabylon-entry constraints-spec-error-fstr frame-io-table german
   "~%==> ~S : Inkorrekte Constraints-Spezifikation~@
               in Slot ~S der Instanz ~S von Frame ~S.")
 
-
-(defbabylon-entry constraints-violation-fstr frame-io-table german 
+(defbabylon-entry constraints-violation-fstr frame-io-table german
   "Der Wert ~S verletzt die Constraints ~S ~@[ ~S~] ~@
    fuer  Slot ~S der Instanz  ~S von Frame ~S.")
 
-
-(defbabylon-entry unknown-poss-val-method-fstr frame-io-table german 
+(defbabylon-entry unknown-poss-val-method-fstr frame-io-table german
   "~S unbekannte Possible Value Methode ~@
    im Slot ~S der Instanz ~S von Frame ~S.")
-
 
 (defbabylon-entry other-value-question-str frame-io-table german
   "Moechten Sie einen anderen Wert geben ? (Y or N) ")
 
 (defbabylon-entry new-value-question-fstr  frame-io-table german
   "~%Neuer Wert fuer ~S ~S: ")
-
 
 (defbabylon-entry explain-answers-spec-error-fstr frame-io-table german
   "~S:~%inkorrekte :EXPLAIN-ANSWERS Specification~@
@@ -122,24 +116,22 @@
 (defbabylon-entry whats-the-value-of-fstr frame-io-table german
   "~%~3TWelchen Wert hat ~S ~S ? ")
 
-(defbabylon-entry explain-fstr frame-io-table german    
+(defbabylon-entry explain-fstr frame-io-table german
   "~%Um Erlaeuterungen fuer: ~{~S ~} oder zum Kontext zu erhalten,~@
         geben Sie einen Wert oder help ein ")
-
 
 (defbabylon-entry explain-answers-fstr frame-io-table german
   "~2&Fuer Erlaeuterungen zu moeglichen Antworten ~
    ~:[geben Sie Leertaste ein. ~;geben Sie einen der folgenden Werte ein: ~%  ~{~S ~} ~]")
 
-(defbabylon-entry explain-context-fstr frame-io-table german 
+(defbabylon-entry explain-context-fstr frame-io-table german
   "~%Fuer Erlaeuterungen zum Kontext geben Sie ~:C ein (weiter mit ~:C) : ")
 
-(defbabylon-entry no-explain-answers-fstr  frame-io-table german 
+(defbabylon-entry no-explain-answers-fstr  frame-io-table german
   "~2&Erlaeuterungen zu moeglichen Antworten liegen nicht vor.")
 
-(defbabylon-entry next-value-fstr frame-io-table german 
+(defbabylon-entry next-value-fstr frame-io-table german
   "~%Naechster Wert (weiter mit ~:C) : ")
-
 
 (defbabylon-entry please-enter-fstr  frame-io-table german
   "~%~3TBitte ~S fuer ~S ~S eingeben: ")
@@ -218,7 +210,6 @@
 (defbabylon-entry meta-frame-trace-one-fstr frame-io-table german
 	  " META -> FRAME ~S")
 
-
 (defbabylon-entry exit-select-item frame-io-table german
   '("-- Ende Auswahl --" :value exit
     #+:lispm :font #+:lispm fonts:cptfontb
@@ -229,17 +220,16 @@
     #+:lispm :font #+:lispm fonts:cptfontb
     ))
 
-
 (defbabylon-entry unknown-frame-while-defining-fstr frame-io-table german
-  "Bei der Definition von ~A ~S:~%~A ist kein bekannter Frame der Wissensbasis ~S")	
-
+  "Bei der Definition von ~A ~S:~%~A ist kein bekannter Frame der Wissensbasis ~S")
 
 (defbabylon-entry ask-slot-prop-fstr  frame-io-table german
   "~%~3TWelchen Wert hat ~S fuer ~S von ~S: ")
 
-(defbabylon-entry ask-slot-fstr  frame-io-table german 
+(defbabylon-entry ask-slot-fstr  frame-io-table german
   "~%~3TWelchen Wert hat ~S von ~S: ")
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

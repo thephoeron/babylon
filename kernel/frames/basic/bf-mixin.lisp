@@ -4,7 +4,7 @@
 
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -15,10 +15,13 @@
 
 ;; This file depends on:  common>*
 ;;                        frames>basic>frames
-;;                        
+;;
 
 ;; contents: a mixin making the facilities of basic-frame-processor available
 ;;           for a knowledge base.
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;--------------------------------------------------------------------------
 ;;                   FLAVOR BASIC-FRAME-MIXIN
@@ -39,7 +42,7 @@
 
 (def$method (basic-frame-mixin :after :init) (&rest plist)
   (declare (ignore plist))
-  ($send self :set-up-prefix)  
+  ($send self :set-up-prefix)
   ($send self :generate-frame-processor)
   (setf procs (cons frame-processor procs)))
 
@@ -68,7 +71,7 @@
   #+:FMCS (setf *redefine-warnings* ($send frame-processor :toggle-frcheck)))
 
 ;;--------------------------------------------------------------------------
-;;                  METHODS FOR FRAME OR INSTANCE CONSTRUCTION 
+;;                  METHODS FOR FRAME OR INSTANCE CONSTRUCTION
 ;;--------------------------------------------------------------------------
 
 
@@ -103,7 +106,7 @@
   (declare (ignore of))
   `(let ()
      (declare (special ,instance-name))
-     (and (current-kb-typep 'basic-frame-mixin) 
+     (and (current-kb-typep 'basic-frame-mixin)
 	  ($send (send-kb :frame-processor) :new-instance
 	         ',instance-name ',frame-name ',body))))
 
@@ -112,7 +115,7 @@
 
 (defmacro create-unnamed-instance
 	  (instance-name frame-name &optional with-specification)
-  (and (current-kb-typep 'basic-frame-mixin) 
+  (and (current-kb-typep 'basic-frame-mixin)
        ($send (send-kb :frame-processor) :new-unnamed-instance
 	     instance-name frame-name with-specification)))
 
@@ -125,26 +128,26 @@
    frame-name muss der name eines Frames sein (wird evaluiert)
    with-specification (wird evaluiert) und ermoeglicht eine Initialisierung
    mit der gleichen Syntax und Semantik wie DEFINSTANCE."
-  (and (current-kb-typep 'basic-frame-mixin) 
+  (and (current-kb-typep 'basic-frame-mixin)
        ($send (send-kb :frame-processor) :new-unnamed-instance
 	     (gensym) frame-name with-specification)))
 
 
 ;;--------------------------------------------------------------------------
-;;                  METHODS FOR REQUEST EVALUATION 
+;;                  METHODS FOR REQUEST EVALUATION
 ;;--------------------------------------------------------------------------
 
 
 (defun %is-frame-name (name prefix)
   ;returns nil if x is not a symbol
   (let ((object-internal-name (%get-object-name name prefix)))
-    (if object-internal-name 
+    (if object-internal-name
 	(frame-definition object-internal-name))))
 
 
 (defun %is-instance-name (name prefix)
   (let ((instance-internal-name (%get-object-name name prefix)))
-    (if instance-internal-name 
+    (if instance-internal-name
 	(instance-definition instance-internal-name))))
 
 
@@ -158,7 +161,7 @@
 
 
 
-#+:SABN(defmacro frame-type (request)		
+#+:SABN(defmacro frame-type (request)
         `(if (is-true-list ,request)
            (cond ((%is-instance-name (first ,request) pkg)
                   'frame-reference)
@@ -176,7 +179,7 @@
                        (%is-behavior (first ,request) (second ,request) pkg))
                   'behavior-reference))))
 
-#-:SABN(defmacro frame-type (request)		
+#-:SABN(defmacro frame-type (request)
         `(if (is-true-list ,request)
            (cond ((%is-instance-name (first ,request) ($slot 'pkg))
                   'frame-reference)
@@ -192,7 +195,7 @@
                   'frame-predicate-reference)
                  ((and (%is-instance-name (second ,request) ($slot 'pkg))
                        (%is-behavior (first ,request) (second ,request) ($slot 'pkg)))
-                  'behavior-reference))))	   
+                  'behavior-reference))))
 
 (assign-typefkt 'frame-type 'basic-frame-mixin)
 
@@ -235,7 +238,7 @@
 	   (frame-reference mode &optional (negation-flag nil))
   "evaluates a frame reference after asking the user."
   (when system-trace
-    ($send self :send-system-trace-window :format 
+    ($send self :send-system-trace-window :format
 		  (getentry meta-frame-trace-fstr frame-io-table) mode frame-reference))
   (setf active-proc frame-processor)
   (let ((answer ($send self :ask-with-help frame-reference negation-flag)))
@@ -252,7 +255,7 @@
 (def$method (basic-frame-mixin :eval-prolog-frame-reference) (frame-reference mode)
   "evaluates frame references used in prolog clauses."
   (when system-trace
-    ($send self :send-system-trace-window :format 
+    ($send self :send-system-trace-window :format
 		  (getentry meta-frame-trace-fstr frame-io-table) mode frame-reference))
   (setf active-proc frame-processor)
   (prog (answer)
@@ -276,7 +279,7 @@
 
 ;(defvar *frame-meta-predicates* '(and or))
 
-(defun is-frame-meta-predicate (x)	
+(defun is-frame-meta-predicate (x)
   (member x *frame-meta-predicates*))
 
 
@@ -284,7 +287,7 @@
   "evaluates references of a special type used in prolog.
 goal := (<meta-predicate> . <args>)"
   (when system-trace
-    ($send self :send-system-trace-window :format 
+    ($send self :send-system-trace-window :format
 		  (getentry meta-frame-trace-fstr frame-io-table) mode goal))
   (setf active-proc frame-processor)
   (let ((result nil))
@@ -326,7 +329,7 @@ goal := (<meta-predicate> . <args>)"
       ((HAS-SLOT SLOT)
        (if (IS-VARIABLE (second goal))
 	   nil
-	   (let ((slots ($send (get-instance (second goal)) :slots))) 
+	   (let ((slots ($send (get-instance (second goal)) :slots)))
 	     (if (IS-VARIABLE (third goal))
 		 (dolist (a-slot slots (nreverse result))
 		   (setf result (cons `((,(first goal) ,(second goal) ,a-slot)) result)))
@@ -348,7 +351,7 @@ goal := (<meta-predicate> . <args>)"
 			   (cons `((,(first goal) ,slot-name ,instance-name ,a-prop-name))
 				 result)))
 		   (if (member desired-value prop-names) t nil))))))
-      
+
       (t ;; signal error !!
 	nil))))
 
@@ -404,7 +407,7 @@ goal = (<frame-name> <variable>) | (<frame-name> <instance-name>)"
 		   ($send self :prolog-why))	;indirect prolog-ref
 	       (go A))
 	      (t (return answer)))))
-  
+
 
 (defun make-clauses (pred an-instance-name values &rest prop-name)
   "make clauses according to Prolog syntax."
@@ -424,9 +427,9 @@ goal:= (<slot> <object> <arg3>) | (<prop-name> <slot> <object> <arg3>)"
 	 (slot (second normalized-goal))
 	 (object (third normalized-goal))
 	 (desired-value (fourth normalized-goal)))
-    (cond ((IS-VARIABLE desired-value)	   	   
+    (cond ((IS-VARIABLE desired-value)
 	   (let ((value ($send self :get-ask object slot prop-name)))
-	     (if (eq normalized-goal goal)		 
+	     (if (eq normalized-goal goal)
 		 (make-clauses slot object value prop-name)
 		 (make-clauses slot object value))))
 	  (t (let ((premise `(,object ,slot ,prop-name = ,desired-value)))
@@ -456,10 +459,10 @@ goal:= (<slot> <object> <arg3>) | (<prop-name> <slot> <object> <arg3>)"
 		(lexpr-$send (GET-INSTANCE the-instance) behavior args)))
 	  (if (IS-VARIABLE result) ;; gives a list of clauses as result
 	      `(((,behavior ,the-instance ,@args ,call-result)))
-	      ;; else T or NIL	      
+	      ;; else T or NIL
 	      (equal result call-result))))))
 
-               
+
 ;;--------------------------------------------------------------------------
 ;;              METHODS FOR HANDLING OBJECTS
 ;;--------------------------------------------------------------------------
@@ -472,16 +475,16 @@ if <window> is not specified the dialog-stream is used instead."
 
   (setf window (or window self))
   ($send window :format  "~%Frame: ~S" frame-name)
-  ($send window :format 
+  ($send window :format
 	"~%Slots: ~{~S ~}"
 	(compute-slot-names (get-frame-slots frame-name)))
-  ($send window :format 
+  ($send window :format
 	"~%Supers: ~{~S  ~}"
 	(get-supers frame-name))
-  ($send window :format 
+  ($send window :format
 	"~%Behaviors: ~{~{~* ~S ~^ ~S~} ~}"
 	(get-frame-behavior-specs frame-name))
-  ($send window :format 
+  ($send window :format
 	"~%Instances: ~{~S ~}"
 	(get-instance-list frame-name))
   ($send window :format "~%"))
@@ -535,7 +538,7 @@ if <window> is not specified the dialog-stream is used instead."
   "describes an instance selected via menu on <window>.
 the value of each slot and all its properties are shown unless <all-properties> is nil.
 if <window> is not specified the dialog-stream is used instead."
- 
+
   (do* ((items (append instances `(,(getentry toggle-mode-item frame-io-table)
 				   ,(getentry exit-select-item frame-io-table))))
 	(label (format nil
@@ -562,3 +565,6 @@ if <window> is not specified the dialog-stream is used instead."
 
 (defun send-fp (message &rest args)
   (lexpr-$send (send-kb :frame-processor) message args))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

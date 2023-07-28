@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -14,8 +14,11 @@
 
 ;; This file depends on:  common>*
 ;;                        frames>basic>frames
-;;                        
+;;
 ;; Contents: a frame interpreter
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 (def$flavor frame-interpreter
@@ -31,13 +34,13 @@
 
 (def$method (frame-interpreter :get)
 	   (instance-name slot-name &optional (prop-name :value))
-  "access method for a property of a slot of an instance."  
+  "access method for a property of a slot of an instance."
   ($send (get-instance instance-name) :get slot-name prop-name))
 
 
 (def$method (frame-interpreter :replace)
 	   (instance-name slot-name value &optional (prop-name :value))
-  "basic modification method for a property of a slot of an instance." 
+  "basic modification method for a property of a slot of an instance."
   ($send (get-instance instance-name) :replace slot-name value prop-name))
 
 (def$method (frame-interpreter :set)
@@ -82,7 +85,7 @@
 	(slot-or-method (second frame-reference))
 	(args (rest (rest frame-reference))))
     (cond ((is-user-defined-method slot-or-method)
-           (lexpr-$send (get-instance instance-name) slot-or-method 
+           (lexpr-$send (get-instance instance-name) slot-or-method
                         (eval `(list ,@args ,mode))))  ; to evaluate args
           ((null (rest args))
            ($send (get-instance instance-name) :get
@@ -103,5 +106,7 @@
                  (t (baberror (getentry mode-error-fstr frame-io-table)
                               mode))))))))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

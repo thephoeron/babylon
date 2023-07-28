@@ -3,6 +3,9 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 
 (defbabylon-entry explanation-str frame-io-table english
@@ -10,7 +13,7 @@
 
 (defbabylon-entry explanation-str frame-io-table german
 	  " Gib Erlaeuterungen fuer ")
- 
+
 (defun build-mult-choose-item-list (list)
   (mapcar #'(lambda (element)
 	      `(,element  ,(format nil " ~S" element) (t)))
@@ -54,7 +57,7 @@
 (defbabylon-entry choose-one-of-header-str  frame-io-table english
   " Choose one of: ")
 
-(defbabylon-entry choose-one-of-header-str  frame-io-table german 
+(defbabylon-entry choose-one-of-header-str  frame-io-table german
   " Waehle einen Eintrag aus ")
 
 
@@ -104,7 +107,7 @@
 (defbabylon-entry choose-some-fstr  frame-io-table english
   " Choose some of: ")
 
-(defbabylon-entry choose-some-fstr  frame-io-table german 
+(defbabylon-entry choose-some-fstr  frame-io-table german
   " Waehle einige Eintraege ")
 
 
@@ -132,7 +135,7 @@
     (do ((result (send-kb :mult-choose-from-menu items header)
 		 (send-kb :mult-choose-from-menu items header)))
 	((not (member 'explain  result))
-	 (setf result 
+	 (setf result
 	       (cond ((member 'help result) 'help)
 		     ((null result)
 		      ($send self :get-value-only slot))
@@ -146,7 +149,7 @@
 	     (send-kb :babylon-format "~:C" *help-key*)
 	     (return 'help))
 	    (t ($send self :prompt-for-value slot))))))
-	    
+
 
 (setf (get :some-of :supp-method) :some-of-read-method)
 
@@ -184,7 +187,7 @@
 			     slot desired-value negation-flag standard-option))))
 	    (t (let ((check-result ($send self :check-value slot result)))
 		 (if check-result
-		     (get-check-result check-result)		     
+		     (get-check-result check-result)
 		     ($send self :any-read-method
 			    slot
 			    desired-value
@@ -200,7 +203,7 @@
   "method presenting a menu to select an instance for a slot of type :instance-of."
   (let* ((possible-value-args
           (get-poss-val-args ($send self :get slot :possible-values)))
-         (frame-name 
+         (frame-name
           (get-frame-name-with-check (first possible-value-args)))
        	 (items (append `((" EXPLAIN " :value :explain))
 			(or (menu-choose-translate desired-value negation-flag)
@@ -222,8 +225,8 @@
 
 (setf (get :instance-of :supp-method) :instance-of-read-method)
 
+#+sbcl
+(named-readtables:in-readtable :standard)
+
 
 ;;; eof
-
-
-

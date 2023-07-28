@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,21 +13,21 @@
 ;; AUTHORS:  Franco di Primio, Eckehard Gross
 
 ;; This file depends on:  common>*
-;;                        
+;;
 ;; Contents: a handler to mantain frames, behaviors and instances
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;--------------------------------------------------------------------
 ;;                   COMMON FUNCTIONS AND MACROS
 ;;--------------------------------------------------------------------
 
-
 (defmacro is-facet (x)
   `(keywordp ,x))
 
 (defmacro is-path (x)
-  `(and (consp ,x)    
+  `(and (consp ,x)
 	(every #'keywordp ,x)))
 
 ;; (is-facet :possible-values) ==> T
@@ -80,7 +80,7 @@
 	 (frames-list nil)
 	 (frame-type 'frame-core)
 	 (frcheck nil))
-	(processor-core) 
+	(processor-core)
   :settable-instance-variables
   (:documentation "frame-base creates frames, behaviors and instances."))
 
@@ -92,7 +92,7 @@
 
 
 ;;--------------------------------------------------------------------
-;;                      FRAMES 
+;;                      FRAMES
 ;;--------------------------------------------------------------------
 
 ;; (DEFFRAME <frame-name>
@@ -121,7 +121,7 @@
   (let ((frame-internal-name (%get-object-name frame-name)))
     (if (and frame-internal-name
 	     (%is-frame frame-internal-name))
-	frame-internal-name 
+	frame-internal-name
 	(baberror (getentry unknown-frame-error-fstr frame-io-table)
 	       frame-name
 	       (send-kb :kb-name)))))
@@ -132,7 +132,7 @@
     (baberror (getentry unknown-frame-while-defining-fstr frame-io-table)
 	      when
 	      spez
-	      frame-name 
+	      frame-name
 	      (send-kb :kb-name))))
 
 
@@ -153,7 +153,7 @@
 (defun is-frame (name)
   ;returns nil if x is not a symbol
   (let ((object-internal-name (%get-object-name name)))
-    (if object-internal-name 
+    (if object-internal-name
 	(not (null (frame-definition object-internal-name))))))
 
 ;;--------------------------------------------------------------------
@@ -178,7 +178,7 @@
   (compute-slot-names (get-frame-slots frame-name)))
 
 ;;--------------------------------------------------------------------
-;;                      HANDLING SUBCLASSES 
+;;                      HANDLING SUBCLASSES
 ;;--------------------------------------------------------------------
 
 
@@ -211,7 +211,7 @@
 	       (setq open (append (get-subframes a-frame-name) open)))))))
 
 ;;--------------------------------------------------------------------
-;;                      HANDLING SUPERCLASSES 
+;;                      HANDLING SUPERCLASSES
 ;;--------------------------------------------------------------------
 
 
@@ -221,7 +221,7 @@
 (defun get-supers (frame-name)
   (let ((supers-specification
 	  (frame-supers (cddr (get-frame-def frame-name)))))
-    (if supers-specification 
+    (if supers-specification
 	(rest supers-specification))))
 
 (defun get-all-supers (frame-name)
@@ -234,7 +234,7 @@
 	       (setq open (append (get-supers a-frame-name) open)))))))
 
 ;;--------------------------------------------------------------------
-;;                CHECKING IF FRAME DEFINITION IS CORRECT 
+;;                CHECKING IF FRAME DEFINITION IS CORRECT
 ;;--------------------------------------------------------------------
 
 
@@ -252,7 +252,7 @@
   (format nil (getentry supers-spec-example-str frame-io-table)))
 
 
-(defun check-frame-definition (frame-name body)  
+(defun check-frame-definition (frame-name body)
   (if (not (every #'listp body))
       (baberror (getentry frame-spec-error-fstr frame-io-table)
 	     frame-name
@@ -280,11 +280,11 @@
 	(baberror (getentry frame-spec-error-fstr frame-io-table)
 	       frame-name
 	       (make-frame-definition-example)))))
- 
+
 
 
 ;;--------------------------------------------------------------------
-;;                      THE FRAME CONSTRUCTOR 
+;;                      THE FRAME CONSTRUCTOR
 ;;--------------------------------------------------------------------
 
 
@@ -312,11 +312,11 @@
       (check-frame-definition frame-name body))
   (let ((frame-internal-name (make-frame-name frame-name))
 	(frame-internal-supers
-	  (mapcar #'get-frame-name (rest (frame-supers body)))))   
+	  (mapcar #'get-frame-name (rest (frame-supers body)))))
     `(progn
        (dolist (a-super ',(rest (frame-supers body)))
 	 (signal-unknown-frame a-super "FRAME" ',frame-name))
-       (def$frame ,frame-internal-name 
+       (def$frame ,frame-internal-name
 		   ,(compute-slots (rest (frame-slots body)))
 	 ,(or frame-internal-supers (list frame-type))
 	 :initable-instance-variables
@@ -329,7 +329,7 @@
 
 
 ;;--------------------------------------------------------------------
-;;                      BEHAVIOR DEFINITION 
+;;                      BEHAVIOR DEFINITION
 ;;--------------------------------------------------------------------
 
 ;; (DEFBEHAVIOR (<frame-name> {<type>} <selector-keyword>)
@@ -372,7 +372,7 @@
 	 (previous-def (assoc behavior-specification behaviors-so-far :test #'equal)))
     (if previous-def
 	(setf (rest previous-def) (rest behavior-def))
-	(setf (frame-behaviors frame-internal-name) 
+	(setf (frame-behaviors frame-internal-name)
 	      `(,@behaviors-so-far ,behavior-def)))))
 
 (defun get-frame-name-or-signal-error
@@ -387,7 +387,7 @@
 	frame-name)))
 
 ;;--------------------------------------------------------------------
-;;                      BEHAVIOR CONSTRUCTOR 
+;;                      BEHAVIOR CONSTRUCTOR
 ;;--------------------------------------------------------------------
 
 ;;;;;; die substitution von $value eruebgrigt macro-expansion
@@ -404,20 +404,20 @@
 		behavior-specification))
   (let ((frame-name (first behavior-specification)))
     `(progn
-       (signal-unknown-frame ',frame-name 
+       (signal-unknown-frame ',frame-name
 			     "BEHAVIOR"
 			     ',behavior-specification)
        (def$behavior (,(get-frame-name frame-name) ,@(rest behavior-specification))
 		     ,lambda-list
 	 ,@behavior-body)
-       (add-to-behaviors ',frame-name 
+       (add-to-behaviors ',frame-name
 			 '(,behavior-specification ,lambda-list ,@behavior-body))
        ',behavior-specification)))
 
 
 
 ;;--------------------------------------------------------------------
-;;                      INSTANCES OF FRAMES 
+;;                      INSTANCES OF FRAMES
 ;;--------------------------------------------------------------------
 
 (defun make-instance-name (instance-name)
@@ -425,16 +425,16 @@
 
 (defun get-instance-name (instance-name)
   (let ((instance-internal-name (%get-object-name instance-name)))
-    (or instance-internal-name 
+    (or instance-internal-name
 	(baberror (getentry unknown-instance-error-fstr frame-io-table)
 	       instance-name
 	       (send-kb :kb-name)))))
 
 (defun get-instance-name-with-check (instance-name)
   (let ((instance-internal-name (%get-object-name instance-name)))
-    (if (and instance-internal-name 
+    (if (and instance-internal-name
 	     (%is-instance instance-internal-name))
-	instance-internal-name 
+	instance-internal-name
 	(baberror (getentry unknown-instance-error-fstr frame-io-table)
 	       instance-name
 	       (send-kb :kb-name)))))
@@ -452,7 +452,7 @@
 
 (defun is-instance (name)
   (let ((instance-internal-name (%get-object-name name)))
-    (if instance-internal-name 
+    (if instance-internal-name
 	(not (null (instance-definition instance-internal-name))))))
 
 
@@ -482,7 +482,7 @@
 	      `(,@instances-so-far ,instance-name)))))
 
 ;;--------------------------------------------------------------------
-;;                      INITIALIZING SLOTS 
+;;                      INITIALIZING SLOTS
 ;;--------------------------------------------------------------------
 
 ;; Actually merging of default and explicit slot specification is only made
@@ -521,7 +521,7 @@
 			 (or (atom (third b))
 			     (is-true-list (third b)))))
 	       (baberror (getentry slot-initialization-error-fstr frame-io-table)
-		      (first b) 
+		      (first b)
 		      (format nil
 			      (getentry definstance-spec-fstr frame-io-table)
 			      instance-name of frame-name)
@@ -531,7 +531,7 @@
 		  (make-definstance-example)))))
 
 ;;--------------------------------------------------------------------
-;;                      INSTANCE CONSTRUCTOR 
+;;                      INSTANCE CONSTRUCTOR
 ;;--------------------------------------------------------------------
 
 
@@ -558,7 +558,7 @@
     (setf (symbol-value instance-name) instance-name)))
 
 
-;; create-unnamed-instance wird benoetigt fuer create-instance-of 
+;; create-unnamed-instance wird benoetigt fuer create-instance-of
 ;; added: Franco 23.10.
 
 (def$method (frame-base :new-unnamed-instance)
@@ -576,7 +576,7 @@
 
 
 ;;--------------------------------------------------------------------
-;;                      GETTING INSTANCES 
+;;                      GETTING INSTANCES
 ;;--------------------------------------------------------------------
 
 
@@ -613,7 +613,7 @@
 
 
 ;;--------------------------------------------------------------------
-;;                      RESETTING  INSTANCES 
+;;                      RESETTING  INSTANCES
 ;;--------------------------------------------------------------------
 
 
@@ -634,7 +634,7 @@
 
 
 ;;-------------------------------------------------------------------------
-;;   SIMPLE PRINTING FUNCTIONS FOR FRAMES, BEHAVIORS, INSTANCES 
+;;   SIMPLE PRINTING FUNCTIONS FOR FRAMES, BEHAVIORS, INSTANCES
 ;;-------------------------------------------------------------------------
 
 (defun print-frame-definition (frame-name &optional (stream *standard-output*))
@@ -677,31 +677,34 @@
 
 (def$method (frame-base :inspect-frame)
 	   (frame-name &optional (stream *standard-output*))
-  "describes frame named <frame-name> on <stream>."  
+  "describes frame named <frame-name> on <stream>."
   (format stream "~%Frame: ~S" frame-name)
-  (format stream 
+  (format stream
 	"~%Slots: ~{~S ~}"
 	(compute-slot-names (get-frame-slots frame-name)))
-  (format stream 
+  (format stream
 	"~%Supers: ~{~S  ~}"
 	(get-supers frame-name))
-  (format stream 
+  (format stream
 	"~%Behaviors: ~{~{~* ~S ~^ ~S~} ~}"
 	(get-frame-behavior-specs frame-name))
-  (format stream 
+  (format stream
 	"~%Instances: ~{~S ~} ~%"
 	(get-instance-list frame-name)))
 
 (def$method (frame-base :inspect-instance)
 	   (instance-name &optional (stream *standard-output*))
-  "describes instance named <instance-name> on <stream>." 
+  "describes instance named <instance-name> on <stream>."
   (let ((instance (get-instance instance-name)))
     (format stream  "~%Instance: ~S" instance-name)
     (mapc #'(lambda (a-slot)
-	      (format stream 
+	      (format stream
 		    "~%Slot: ~S  Value: ~S   Properties: ~{~S ~}"
 		    a-slot
 		    ($send instance :get a-slot)
 		    (rest ($send instance :get-properties a-slot))))
 	  ($send instance :slots))
     (format stream  "~%")))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1987, 1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -14,34 +14,33 @@
 
 ;; This file depends on:  common>*
 ;;                        frames>basic>*
-;;                        
+;;
 ;; Contents: a mixin which allows to specify possible values for the
 ;;           :value property of a slot.
 ;;           a possible value specification has the form:
 ;;
-;;           :possible-values := <method-name>     
+;;           :possible-values := <method-name>
 ;;                               | (:interval <number1> <number2>)
 ;;                               | (:one-of <value1> ... <valuen>)
 ;;                               | (:some-of <value1> ... <valuen>)
 ;;
 ;;           <method-name> := :NUMBER | :STRING | :LIST ...
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;-------------------------------------------------------------------------------
 ;;                  POSSIBLE VALUE MIXIN
 ;;-------------------------------------------------------------------------------
-
 
 (def$flavor poss-val-mixin
 	()()
   (:required-instance-variables slots object-name)
   (:documentation "mixin providing means to introduce possible values for slots."))
 
-
 ;;-------------------------------------------------------------------------------
 ;;              CONSTRUCTOR FOR POSSIBLE VALUES METHODS
 ;;-------------------------------------------------------------------------------
-
 
 (defmacro define-possible-values-method
 	  ((flavor-name method-name) lambda-list form)
@@ -61,18 +60,15 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 ;; Das ist fuer den Benutzer:
 
 (defmacro define-possible-values-behavior
-	  ((frame-name method-name) lambda-list form)  
+	  ((frame-name method-name) lambda-list form)
   `(define-possible-values-method
      (,(get-frame-name-or-signal-error `(,frame-name ,method-name)) ,method-name)
      ,lambda-list
      ,form))
 
-
 ;;-------------------------------------------------------------------------------
 ;;                 STANDARD POSSIBLE VALUES METHODS
 ;;-------------------------------------------------------------------------------
-
-
 
 (define-possible-values-method (poss-val-mixin :interval) (x interval)
   (and (numberp x)
@@ -111,15 +107,13 @@ lambda-list := (<value-to-check> <possible-values-args>)."
   (or x t))
 
 (define-possible-values-method (poss-val-mixin :instance-of) (instance-name list)
-  ;; das erste element von list ist ein frame-name, 
+  ;; das erste element von list ist ein frame-name,
   ;; der rest koennten angaben ueber slots-belegungen sein
   ;; (das kann spaeter implementiert werden).
   (and (is-instance instance-name)
-       (let ((frame-name (get-frame-name-with-check (first list)))) 
-	 (if frame-name 
+       (let ((frame-name (get-frame-name-with-check (first list))))
+	 (if frame-name
 	     (flavor-typep (get-instance instance-name) frame-name)))))
-
-
 
 (DEFINE-POSSIBLE-VALUES-METHOD  (poss-val-mixin :and)
 				(x list-of-possible-values-specifications)
@@ -157,24 +151,20 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 		($send self poss-val-method x)
 		($send self poss-val-method x poss-val-args))
       (list x))))
-  
 
 ;;-------------------------------------------------------------------------------
-;;                 CHECKING THE FORMAT OF POSSIBLE VALUES 
+;;                 CHECKING THE FORMAT OF POSSIBLE VALUES
 ;;-------------------------------------------------------------------------------
 
-
-(defun get-check-result (check-result) 
+(defun get-check-result (check-result)
   (first check-result))
-
 
 (defun is-method-of (self possible-values-type)
   (and (symbolp possible-values-type)
        (keywordp  possible-values-type)
        ($send self :operation-handled-p possible-values-type)))
 
-
-(defun get-poss-val-type (possible-values) 
+(defun get-poss-val-type (possible-values)
   (if (atom possible-values)
       possible-values
       (first possible-values)))
@@ -183,7 +173,6 @@ lambda-list := (<value-to-check> <possible-values-args>)."
   (if (atom possible-values)
       nil
       (rest possible-values)))
-
 
 (def$method (poss-val-mixin :check-value) (slot value &optional possible-values)
   "checks whether value is a possible value for slot."
@@ -228,8 +217,7 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 				    slot (send-kb :babylon-read)))
 		     (t  '$ABORT$)))))))
 
-
-(def$method (poss-val-mixin :put)      
+(def$method (poss-val-mixin :put)
 	   (slot-name new-value &optional (prop-name :value))
   "sets the value of a slot checking whether the value is a possible value for the slot."
   (if (is-value prop-name) ;; do constraints check
@@ -243,7 +231,6 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 ;;          INITIALIZATION WITH  POSSIBLE VALUES METHODS
 ;;-------------------------------------------------------------------------------
 
-
 (def$method (poss-val-mixin :check-init-value) (slot value)
   "checks whether the default value is a possible value for slot."
   (let ((possible-values ($send self :get slot :possible-values)))
@@ -256,25 +243,23 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 		  (flavor-type-of self)))
 	  (($send self :check-value slot value possible-values))
 	  (t (baberror (getentry constraints-violation-fstr frame-io-table)
-		     value 
+		     value
 		     (get-poss-val-type possible-values)
 		     (get-poss-val-args possible-values)
 		     slot
 		     object-name
 		     (flavor-type-of self))))))
 
-
 (def$method (poss-val-mixin :init-slot) (slot-name slot-spezification check)
-  "initializes a slot with values from slot-spezification."  
+  "initializes a slot with values from slot-spezification."
   ;;reverse bewirkt, dass :possible-values vor :value initialisiert wird
   ;;allerdings sollten :possible-values per frame definition eingefuehrt werden
-  (do ((plist (reverse (normalize-plist slot-spezification))  
+  (do ((plist (reverse (normalize-plist slot-spezification))
 	      (rest (rest plist))))
       ((null plist))
     (if (and check (eq (second plist) :value))
 	($send self :check-init-value slot-name (first plist)))
     ($send self :set slot-name (first plist) (second plist))))
-
 
 (defun explain-answers-choices (answer-explanations)
   (cond ((null answer-explanations) nil)
@@ -285,7 +270,7 @@ lambda-list := (<value-to-check> <possible-values-args>)."
   "checks whether all values for which explanations are provided by the
 :explain-answers property are possible values."
   (let* ((answer-explanations ($send self :get slot :explain-answers))
-	 (choices (explain-answers-choices answer-explanations)))	 
+	 (choices (explain-answers-choices answer-explanations)))
     (cond ((null answer-explanations) t)
 	  ((null choices) t)
 	  (t (mapc #'(lambda (choice)
@@ -299,7 +284,6 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 				   choice)))
 		   choices)))))
 
-
 (def$method (poss-val-mixin :check-your-self) ()
   "checks whether some values of the frame definition are possible values:
 1. default values 2. all values for which explanations are provided by the
@@ -312,14 +296,12 @@ lambda-list := (<value-to-check> <possible-values-args>)."
 	    ($send self :check-format-of-explain-answers a-slot-name))
 	slots))
 
-
 ;;-------------------------------------------------------------------------------
 ;;                 ASKING VOR VALUES
 ;;-------------------------------------------------------------------------------
 
-
 (def$method (poss-val-mixin :provide-local-help)
-	    (slot &optional window)  
+	    (slot &optional window)
   "displays an explanation from the :explain-answers property.
 returns help if no explanation is available."
   (declare (ignore window))
@@ -340,18 +322,16 @@ returns help if no explanation is available."
 	     (send-kb :babylon-format "~:C ~%" *help-key*) (return  'help))
 	    ((and answer-explanations
 		  (eql choice '#\space))
-	     (apply #'send-kb :babylon-format 
+	     (apply #'send-kb :babylon-format
 		    (substitute-o-and-s object-name slot answer-explanations)))
 	    ((member choice choices)
 	     (let ((explanation
 		     (rest (assoc choice answer-explanations :test 'equal))))
-	       (apply #'send-kb :babylon-format 
+	       (apply #'send-kb :babylon-format
 		      (substitute-o-and-s object-name slot explanation)))))
       (send-kb :babylon-format (getentry next-value-fstr frame-io-table) *end-key*))))
 
-
-
-(def$method (poss-val-mixin :ask-for-slot-value)  
+(def$method (poss-val-mixin :ask-for-slot-value)
 	   (slot &optional desired-value negation-flag (standard-option nil))
   "asks the user for the value of a slot providing explanations if asked for.
 invokes a special method on demand to support the user entering a value."
@@ -366,25 +346,23 @@ invokes a special method on demand to support the user entering a value."
 	       ($send self :ask-for-slot-value
 		      slot desired-value negation-flag standard-option)))
 	  (t (let ((check-result ($send self :check-value slot result)))
-	       (if check-result 
+	       (if check-result
 		   ($send self :set slot (get-check-result check-result))
 		   ($send self :ask-guided
 			  slot desired-value negation-flag standard-option)))))))
-
 
 (def$method (poss-val-mixin :ask-guided)
 	   (slot desired-value negation-flag standard-option)
   "asks the user for the value of a slot.
 invokes a special method attached to the :supp-method property
-of the possible value type of the slot (or a default method) 
+of the possible value type of the slot (or a default method)
 to support the user entering a value."
   (let* ((read-method ($send self :get-read-method slot))
 	 ;; read-method is assumed to return a correct value
-	 (result ($send self read-method 
+	 (result ($send self read-method
 			slot desired-value negation-flag standard-option)))
     (cond ((eq result 'help) 'help)
 	  (t ($send self :set slot result)))))
-
 
 (def$method (poss-val-mixin :get-read-method) (slot)
   "fetches the special method to support the user entering a value for slot."
@@ -418,13 +396,14 @@ to support the user entering a value."
 			slot desired-value negation-flag standard-option)))
 	    (t (let ((check-result ($send self :check-value slot result)))
 		 (if check-result
-		     (get-check-result check-result)		     
+		     (get-check-result check-result)
 		     ($send self :default-read-method
 			    slot
 			    desired-value
 			    negation-flag
 			    standard-option))))))))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

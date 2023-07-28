@@ -4,7 +4,7 @@
 
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -12,10 +12,10 @@
 
 ;; AUTHORS:  Franco di Primio, Eckehard Gross, Juergen Walther
 
-
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;;;;;;;; MIXIN FOR POSSIBLE and active VALUES ;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (def$flavor normal-frame-mixin
 	()
@@ -30,3 +30,5 @@ generates a different type of frame processor."))
 
 (assign-typefkt 'frame-type 'normal-frame-mixin)
 
+#+sbcl
+(named-readtables:in-readtable :standard)

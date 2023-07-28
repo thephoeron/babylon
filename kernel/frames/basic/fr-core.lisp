@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,12 +13,15 @@
 ;; AUTHORS:  Franco di Primio, Eckehard Gross
 
 ;; This file depends on:  common>*
-;;                        
+;;
 ;; Contents: a flavor used as base component of each frame.
 ;;           it provides methods common to all frames.
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;--------------------------------------------------------------------
-;;                   BASE FLAVOR OF FRAME 
+;;                   BASE FLAVOR OF FRAME
 ;;--------------------------------------------------------------------
 
 (def$flavor frame-core
@@ -50,7 +53,7 @@ methods common to all frames are implemented as methods of this flavor."))
   (setf object-name x))
 
 ;;--------------------------------------------------------------------
-;;                   BASIC ACCESS METHODS 
+;;                   BASIC ACCESS METHODS
 ;;--------------------------------------------------------------------
 
 
@@ -78,7 +81,7 @@ methods common to all frames are implemented as methods of this flavor."))
 
 (defun set-value-only (slot-plist value prop-name)
   (cond ((is-value prop-name) (setf (first slot-plist) value))
-	((keywordp prop-name)	 
+	((keywordp prop-name)
 	 (setf (getf (rest slot-plist) prop-name) value))))
 
 (def$method (frame-core :get-value-only)
@@ -86,7 +89,7 @@ methods common to all frames are implemented as methods of this flavor."))
   "basic access method to a property of a slot."
   (get-value-only (get-slot-plist slot-name) prop-name))
 
-(def$method (frame-core :get) 
+(def$method (frame-core :get)
 	   (slot-name &optional (prop-name :value))
   "access method to a property of a slot. intended to be specialized."
   (get-value-only (get-slot-plist slot-name) prop-name))
@@ -100,7 +103,7 @@ methods common to all frames are implemented as methods of this flavor."))
        (result (list :VALUE)))
       ((null plist) (nreverse result))
     (setf result (cons (first plist) result))))
- 
+
 
 (def$method (frame-core :set-value-only)
 	   (slot-name value &optional (prop-name :value))
@@ -112,12 +115,12 @@ methods common to all frames are implemented as methods of this flavor."))
   "basic modification method for a property of a slot."
   (set-value-only (get-slot-plist slot-name) value prop-name))
 
-(def$method (frame-core :set) 
+(def$method (frame-core :set)
 	   (slot-name value &optional (prop-name :value))
-  "modification method for a property of a slot. intended to be specialized." 
+  "modification method for a property of a slot. intended to be specialized."
   (set-value-only (get-slot-plist slot-name) value prop-name))
 
-(def$method (frame-core :put) 
+(def$method (frame-core :put)
 	   (slot-name value &optional (prop-name :value))
   "modification method for a property of a slot. intended to be specialized."
   (set-value-only (get-slot-plist slot-name) value prop-name))
@@ -129,7 +132,7 @@ methods common to all frames are implemented as methods of this flavor."))
   "sets all user defined slots to undetermined."
   (mapc #'(lambda (a-slot-name)
 	    (let ((slot-plist (get-slot-plist a-slot-name)))
-	      (set-value-only slot-plist (undetermined) prop-name)))	      
+	      (set-value-only slot-plist (undetermined) prop-name)))
 	slots))
 
 ;;--------------------------------------------------------------------
@@ -153,7 +156,7 @@ methods common to all frames are implemented as methods of this flavor."))
       (%get-frame-name (flavor-type-of self))))
 
 ;;--------------------------------------------------------------------
-;;                   GET-VALUE, PUT-VALUE, $VALUE 
+;;                   GET-VALUE, PUT-VALUE, $VALUE
 ;;--------------------------------------------------------------------
 
 (defmacro GET-VALUE (instance-name slot-name
@@ -175,7 +178,7 @@ methods common to all frames are implemented as methods of this flavor."))
   `(put-value ,object-name ,slot-name ,new-value ,prop-name))
 
 
-(defmacro $VALUE (slot-name &optional (prop-name :value)) 
+(defmacro $VALUE (slot-name &optional (prop-name :value))
   ;; das ist zu gebrauchen innerhalb von Behaviors
   `($send self :GET ,slot-name ,prop-name))
 
@@ -201,7 +204,7 @@ methods common to all frames are implemented as methods of this flavor."))
   "dummy method called on initialization.
 intended to be specialized by the user."
   t)
-  
+
 
 (defun normalize-plist (plist)
   (cond ((null plist) plist)
@@ -226,7 +229,7 @@ intended to be specialized by the user."
 
 
 (def$method (frame-core :initialize) (with-specification)
-  "dummy method. to be used as basic method for user defined daemons." 
+  "dummy method. to be used as basic method for user defined daemons."
   with-specification)
 
 ;;-----------------------------------------------------------------------------
@@ -251,7 +254,7 @@ intended to be specialized by the user."
 			 (setf result (cons (second plist)
 					    (cons (first plist)
 						  result))))))))))
- 
+
 (def$method (frame-core :unparse-instance)
 	   (&optional slot-list (all-properties t) internal-properties)
   (setf internal-properties (or internal-properties
@@ -263,7 +266,7 @@ intended to be specialized by the user."
 		  (or slot-list slots))))
 
 ;;-----------------------------------------------------------------------------
-;;                       ASKING FOR SLOT VALUES 
+;;                       ASKING FOR SLOT VALUES
 ;;-----------------------------------------------------------------------------
 
 
@@ -302,10 +305,10 @@ intended to be specialized by the user."
 		   (format nil (getentry expect-no-restricted-value-fstr frame-io-table)))
 	       (if desired-value
 		   (if negation-flag
-		       (format nil 
+		       (format nil
 			       (getentry expected-value-not-str frame-io-table)
 			       desired-value)
-		       (format nil 
+		       (format nil
 			       (getentry expected-value-str frame-io-table)
 			       desired-value))
 		   "")))
@@ -321,7 +324,7 @@ intended to be specialized by the user."
 		    prop-name slot object-name)
 	   (let ((result (send-kb :babylon-read (list *c-help-key*))))
 	     (cond ((eql result *c-help-key*)
-		    (send-kb :babylon-format 
+		    (send-kb :babylon-format
 			     (format-expectations desired-value negation-flag nil nil))
 		    ($send self :ask-for-slot-property
 			   slot
@@ -338,8 +341,8 @@ intended to be specialized by the user."
 ;(defun format-translate (slot object-name)
 ;  (let ((ask-declaration ($send (get-instance object-name) :get slot :ask)))
 ;    (if ask-declaration ;; (<format-string> . <args>)
-;	;; <args> := O "Der Name des Objektes" 
-;	;; <args> := S "Der Name des Slots" 
+;	;; <args> := O "Der Name des Objektes"
+;	;; <args> := S "Der Name des Slots"
 ;	(apply #'format nil (substitute-o-and-s object-name slot ask-declaration))
 ;	(format nil
 ;		(getentry whats-the-value-of-fstr frame-io-table)
@@ -351,28 +354,28 @@ intended to be specialized by the user."
 	 ;; <args> := O "Der Name des Objektes"
 	 ;; <args> := S "Der Name des Slots"
 	 (prompt (substitute-o-and-s object-name slot ask-declaration)))
-    (if prompt 
+    (if prompt
 	(send-kb :babylon-format "~?" (first prompt) (eval `(list ,@(rest prompt))))
-	(send-kb :babylon-format 
+	(send-kb :babylon-format
 		 (getentry ask-slot-fstr frame-io-table)
 		 slot object-name))))
 
-(def$method (frame-core :ask-for-slot-value)   
+(def$method (frame-core :ask-for-slot-value)
 	   (slot &optional desired-value negation-flag (standard-option nil))
   "asks the user for the value  of <slot>."
   ($send self :prompt-for-value slot)
   (let ((result (send-kb :babylon-read (list *c-help-key*))))
     (cond ((eql result *c-help-key*)
-	   (send-kb :babylon-format 
+	   (send-kb :babylon-format
 		    (format-expectations desired-value negation-flag nil nil))
-	   ($send self :ask-for-slot-value 
+	   ($send self :ask-for-slot-value
 		 slot desired-value negation-flag standard-option))
 	  ((is-help result) 'help)
 	  (t ($send self :set slot result)))))
 
 
 ;;-----------------------------------------------------------------------------
-;;                       HANDLING OF SLOT MESSAGES 
+;;                       HANDLING OF SLOT MESSAGES
 ;;-----------------------------------------------------------------------------
 
 
@@ -414,7 +417,7 @@ intended to be specialized by the user."
                                 ',(internal-relation-name relation)
                                 ',(third normed-args)
                                 ,(first normed-args)))  ; property
-               (:remember 
+               (:remember
                 (if (check-for-equal-relation relation)
                   `($send (get-instance-or-self ,instance-name) ,mode
                           ',slot-or-method
@@ -444,7 +447,7 @@ intended to be specialized by the user."
                           (eval `(list ,@(cddr expr))))
              (lexpr-$send (get-instance first-expr) :get (rest expr))))
           ((member first-expr  '($E $EVAL))
-           (eval (second expr)))	  
+           (eval (second expr)))
           (t expr))))
 
 (def$method (frame-core :slot-message) (slot-name &rest args)
@@ -455,8 +458,8 @@ args := {<facet>} <relation> <expr> {<mode>}"
          (relation (second normed-args))
          (expr (third normed-args))
          (mode (or (fourth normed-args) :recall)))
-    (cond ((null relation)                
-           ($send self :get slot-name prop-name)) 
+    (cond ((null relation)
+           ($send self :get slot-name prop-name))
           ((eq mode :recall)
            ($send self :recall slot-name relation expr prop-name))
           ((eq mode :remember)
@@ -464,7 +467,7 @@ args := {<facet>} <relation> <expr> {<mode>}"
                 ($send self :remember slot-name relation expr prop-name)))
           ((eq mode :store)
            (and (check-for-equal-relation relation)
-                ($send self :store slot-name expr prop-name)))	  
+                ($send self :store slot-name expr prop-name)))
           (t (baberror (getentry mode-error-fstr frame-io-table) mode)))))
 
 (def$method (frame-core :recall) (slot-name relation expr &optional (prop-name :value))
@@ -502,7 +505,7 @@ returns nil, if the specified expr is identical to the old value."
 
 
 ;;-----------------------------------------------------------------------------
-;;                       RELATIONS FOR SLOT MESSAGES 
+;;                       RELATIONS FOR SLOT MESSAGES
 ;;-----------------------------------------------------------------------------
 
 
@@ -594,5 +597,7 @@ returns nil, if the specified expr is identical to the old value."
              ($send self ':=-rel facet-value a-value))
          expr-value))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

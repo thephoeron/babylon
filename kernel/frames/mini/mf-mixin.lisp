@@ -4,7 +4,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -17,13 +17,16 @@
 ;;                        frames>basic>frames
 ;;                        frames>basic>bf-mixin
 ;;                        frames>mini>mf-proc
-;;                        
+;;
 
 ;; contents: a mixin making the facilities of mini-frame-processor available
 ;;           for a knowledge base.
 ;;           mini-frame-processor is a specialization of basic-frame-processor
 ;;           generating frames which allow that possible values are specified
 ;;           for the :value property of their slots.
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;--------------------------------------------------------------------------
 ;;                   FLAVOR MINI-FRAME-MIXIN
@@ -43,3 +46,6 @@ that possible values are specified for the :value property of their slots."))
 				       :meta-processor self)))
 
 (assign-typefkt 'frame-type 'mini-frame-mixin)
+
+#+sbcl
+(named-readtables:in-readtable :standard)
