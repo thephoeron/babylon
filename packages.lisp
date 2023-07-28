@@ -2,14 +2,14 @@
 
 (defpackage babylon
   (:nicknames baby)
-  (:use cl fmcs) 
+  (:use cl fmcs)
   ;;; COMMON-LISP       - /= < <= = > >= AND OR NOT ATOM INTEGER READ FORMAT WRITE
   ;;; CCL               CUT TRUE FALSE
   (:export ;; symbols
            #:yes
            #:no
            #:unknown
-           #:help 
+           #:help
            ;; knowledge base
            #:*babylon-version*
            #:*current-knowledge-base*
@@ -55,16 +55,16 @@
            #:>
            #:>=
            #:<
-           #:<= 
+           #:<=
            #:one-of
            #:all-of
            #:between
            #:is-frame
-           #:is-instance 
+           #:is-instance
            #:get-instance
            #:get-instance-list
            #:get-all-instances
-           #:set-instance-pointer 
+           #:set-instance-pointer
            #:get-supers
            #:get-all-supers
            #:get-subframes
@@ -98,7 +98,7 @@
            #:true
            #:false
            #:call
-           #:callpred 
+           #:callpred
            ;;; AND OR already exported
            #:not
            #:once
@@ -119,7 +119,7 @@
            #:var
            #:atom
            #:integer
-           #:atomic 
+           #:atomic
            #:read
            #:write
            #:format
@@ -128,7 +128,7 @@
            #:form
            #:vars
            #:bound
-           #:status 
+           #:status
            #:frame
            #:frame-def
            #:has-super
@@ -138,7 +138,7 @@
            #:has-property
            #:rule-set
            #:rule-set-def
-           #:has-rule 
+           #:has-rule
            #:free-text
            ;; constraint processor
            #:basic-constraint-mixin

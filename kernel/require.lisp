@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1988    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,6 +11,8 @@
 
 ;; AUTHORS:  J.Walther, E. Gross
 ;; DATE:     April 1994, June 1988
+
+(defvar *bab-host* "")
 
 (defvar *babylon-modules* nil)
 
@@ -20,25 +22,25 @@
 
 (defvar *babylon-patches-search-path* nil)
 
-(defvar *recompile* nil)
+(defvar *recompile* t)
 
 (defvar *trans-path-fkt* nil)
 
 (defmacro defbabylon-translation (name first-tname &optional second-tname)
   `(progn (push ,(if second-tname
 		     `'(,name ,first-tname ,second-tname)
-		     `'(,name ,first-tname)) 
+		     `'(,name ,first-tname))
 		*babylon-translations*)
 	  ,name))
 
 
 (defun find-translation (string type)
-  (let ((desc (assoc string *babylon-translations* :test #'string-equal)))    
+  (let ((desc (assoc string *babylon-translations* :test #'string-equal)))
     (when (not (null desc))
       (case type
 	(source (second desc))
 	(bin    (or (third  desc) (second desc)))))))
- 
+
 
 (defun transform-pathstring1 (pathstring type)
   (let* ((pos (position #\^ pathstring))
@@ -53,7 +55,7 @@
 (defun transform-pathstring (pathstring type)
   (do* ((old-path (or (find-translation (string pathstring) type)
 		      (string pathstring))
-		  new-path) 
+		  new-path)
 	(new-path (transform-pathstring1 old-path type)
 		  (transform-pathstring1 old-path type)))
        ((null new-path)
@@ -73,9 +75,9 @@
 		  (format *terminal-io* "~&Compiling ~A" (namestring source-file))
 		  (compile-file source-file :output-file binary-file)
 		  (values (load binary-file) source-file))
-		 (t (values (load binary-file) source-file))))	  
+		 (t (values (load binary-file) source-file))))
 	  ((probe-file source-file)
-	   (cond (recompile 
+	   (cond (recompile
 		  (format *terminal-io* "~&Compiling ~A" (namestring source-file))
 		  (compile-file source-file :output-file binary-file)
 		  (values (load binary-file) source-file))
@@ -85,7 +87,7 @@
 		     (error "neither ~A nor ~A found"
 			    (namestring binary-file) (namestring source-file)))))))
 
-(defun search-cc-load (module-name pathlist)  
+(defun search-cc-load (module-name pathlist)
   (catch 'found
     (dolist (path-name pathlist)
       (when (cc-load
@@ -115,4 +117,3 @@
 
 
 ;;; eof
-

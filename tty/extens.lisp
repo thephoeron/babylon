@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1989    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,13 +13,7 @@
 ;;  AUTHOR:  E. Gross
 ;;  DATE:    January 1989
 
-;; Some crap from make-sun.lisp
-
-(defvar *bab-host* "")
-
-(setf *recompile* t)
-
-;;------------------------------------------------------------------------ 
+;;------------------------------------------------------------------------
 
 (defun make-local-pathname (bab-path host type)
   (declare (ignore host))
@@ -86,4 +80,3 @@
   *standard-output*)
 
 ;;; eof
-
