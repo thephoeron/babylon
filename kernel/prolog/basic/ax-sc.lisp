@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -14,6 +14,9 @@
 ;; This file depends on:  common>*
 ;;                        prolog>basic>axioms
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;---------------------------------------------------------------------------
 
 (def$flavor proc-sc-mixin
@@ -23,7 +26,7 @@
 	 maxvar
 	 env
 	 env-depth
-	 reset-ops)			
+	 reset-ops)
 	()
   (:required-instance-variables meta-processor axioms status)
   :settable-instance-variables
@@ -31,7 +34,7 @@
 according to the structure copying approach clauses are copied before unification,
 their prolog variables beeing replaced by newly generated variables internally
 represented by arrays called varcells.
-varcells getting instantiated by unification are stacked on the instance variable 
+varcells getting instantiated by unification are stacked on the instance variable
 env to allow backtracking. the depth of that stack is stored in env-depth.
 reset-ops is a stack for those goals, that caused backtrackable side effects.
 the goals provided by the user are copied and stored in topgoal.
@@ -41,7 +44,7 @@ the instance variable format-option controlls the display format of results."))
 
 
 ;;---------------------------------------------------------------------------
-;;               INTERNAL REPRESENTATION OF CLAUSES 
+;;               INTERNAL REPRESENTATION OF CLAUSES
 ;;---------------------------------------------------------------------------
 
 
@@ -67,7 +70,7 @@ the instance variable format-option controlls the display format of results."))
 		    :named
 		    (:conc-name nil))
   ;;internal representation of a prolog variable
-  varname	;prolog variable varcell is substituted for				    
+  varname	;prolog variable varcell is substituted for
   varnr		;internal number of varcell
   envnr         ;position in stack env
   varvalue      ;value of varcell
@@ -132,7 +135,7 @@ name or by itself according to the values normal ext int of mode."
 		    (normal (intern (format nil "_~S" (varnr term))))
 		    (ext    (varname term))
 		    (int     term)))))
-	((atom term) term)		  
+	((atom term) term)
 	((consp term)
 	 (cons (subst-prolog-vars (first term) mode)
 	       (subst-prolog-vars (rest term) mode)))))
@@ -151,12 +154,12 @@ external name or by itself according to the value normal ext int of mode."
 		    (int    term)))))
 	((atom term) term)
 	((consp term)
-	 (cons (rest-subst-prolog-vars (first term) mode nr)	       
+	 (cons (rest-subst-prolog-vars (first term) mode nr)
 	       (rest-subst-prolog-vars (rest term) mode nr)))))
 
 
 ;;---------------------------------------------------------------------------
-;;               SET GOALS & PROVIDE RESULTS 
+;;               SET GOALS & PROVIDE RESULTS
 ;;---------------------------------------------------------------------------
 
 
@@ -167,9 +170,9 @@ external name or by itself according to the value normal ext int of mode."
     (setq *maxvar* 0)
     (setf topgoal (trans-clause1 goals))
     (setf top-varcells (mapcar #'symbol-value (nreverse *vars)))
-    (setf env nil)			
-    (setf env-depth 0)			
-    (setf reset-ops nil)))   
+    (setf env nil)
+    (setf env-depth 0)
+    (setf reset-ops nil)))
 
 
 (def$method (proc-sc-mixin :return-form) ()
@@ -225,7 +228,7 @@ if variables are missing, YES is returned instead."
 
 
 ;;---------------------------------------------------------------------------
-;;               GET RELEVANT CLAUSES 
+;;               GET RELEVANT CLAUSES
 ;;---------------------------------------------------------------------------
 
 
@@ -252,7 +255,7 @@ if there aren't any clauses the meta-processor is asked."
 
 
 ;;---------------------------------------------------------------------------
-;;               UNIFICATION & BACKTRACKING 
+;;               UNIFICATION & BACKTRACKING
 ;;---------------------------------------------------------------------------
 
 
@@ -266,7 +269,7 @@ if there aren't any clauses the meta-processor is asked."
 (defun unify (term1 term2)
   "tries to unify term1 term2.
 instantiated varcells are stacked in *tenv."
-  (cond ((eq term1 term2))	
+  (cond ((eq term1 term2))
 	((varcell-p term1) (setvar term1 term2))
 	((varcell-p term2) (setvar term2 term1))
 	((and (consp term1) (consp term2))        ;; statt lisp !!!!
@@ -275,7 +278,7 @@ instantiated varcells are stacked in *tenv."
 	((equal term1 term2))))
 
 (def$method (proc-sc-mixin :unify) (goal clause)	;patch 4.6
-  "tries to unify clause with goal. 
+  "tries to unify clause with goal.
 returns t if successfull and nil otherwise. instantiated varcells are
 stacked on env."
   (let ((*tenv nil)
@@ -294,7 +297,7 @@ returns the transformed clause if successfull and nil otherwise.
 instantiated varcells are stacked on env."
   (let ((*tenv nil)
 	(*tenv-depth env-depth)
-	(nclause (trans-clause clause)))    
+	(nclause (trans-clause clause)))
     (cond ((unify goal (head nclause))
 	   (setf env (nconc *tenv env))
 	   (setf env-depth *tenv-depth)
@@ -331,7 +334,7 @@ instantiated varcells are stacked on env."
 
 
 ;;---------------------------------------------------------------------------
-;;               RESETTING BACKTRACKABLE SIDE EFFECTS 
+;;               RESETTING BACKTRACKABLE SIDE EFFECTS
 ;;---------------------------------------------------------------------------
 
 
@@ -362,7 +365,7 @@ instantiated varcells are stacked on env."
 
 
 ;;---------------------------------------------------------------------------
-;;               MIXIN FOR GOALBOX-BASIC 
+;;               MIXIN FOR GOALBOX-BASIC
 ;;---------------------------------------------------------------------------
 
 
@@ -376,14 +379,14 @@ instantiated varcells are stacked on env."
   (:documentation "Mixin for goalbox-basic corresponding to proc-sc-mixin.
 goalbox-basic represents a single (sub)goal emerging during the proof of
 a user provided goal. clauses contains all relevant clauses not yet tried
-to proof goal and the currently used clause. 
+to proof goal and the currently used clause.
 to be able to reset instantiations on backtracking init-env-depth
 remembers the depth of the instantiations stack at the beginning of
 a proof of goal."))
 
 
 ;;---------------------------------------------------------------------------
-;;               MACROS FOR RESETTING 
+;;               MACROS FOR RESETTING
 ;;---------------------------------------------------------------------------
 
 #+:SABN(defmacro prepare-reset ()
@@ -437,8 +440,7 @@ a proof of goal."))
   "resets a goal causing backtrackable side effects."
   `($send ($slot 'prolog-processor) :side-reset ($slot 'init-env-depth)))
 
-
-
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-

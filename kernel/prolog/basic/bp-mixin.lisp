@@ -3,14 +3,14 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1987, 1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; DATE:     uralt
-;; AUTHORS:  Eckehard Gross 
+;; AUTHORS:  Eckehard Gross
 
 ;; This file depends on:  common>*
 ;;                        meta>kb-stub
@@ -22,9 +22,12 @@
 ;; contents: a mixin making the facilities of basic-prolog-processor available
 ;;           for a knowledge base.
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 ;;--------------------------------------------------------------------------
-;;                  FLAVOR BASIC-PROLOG-MIXIN 
+;;                  FLAVOR BASIC-PROLOG-MIXIN
 ;;--------------------------------------------------------------------------
 
 
@@ -43,10 +46,10 @@
   ($send self :generate-prolog-processor)
   (setf procs (cons prolog-processor procs))
   ($send self :init-kbaxset))
- 
+
 (def$method (basic-prolog-mixin :generate-prolog-processor) ()
   "generates an instance of basic-prolog-processor associated with the kb."
-  (setf prolog-processor (make-$instance 'basic-prolog-processor 
+  (setf prolog-processor (make-$instance 'basic-prolog-processor
 					:meta-processor self
 					:alternate-meta-processor
 					(make-$instance 'kb-stub
@@ -83,7 +86,7 @@
   (current-kb-typep 'basic-prolog-mixin (getentry no-prolog-fstr prolog-io-table)))
 
 ;;---------------------------------------------------------------------------
-;;               CONSTRUCTION OF KB AXIOM SETS 
+;;               CONSTRUCTION OF KB AXIOM SETS
 ;;---------------------------------------------------------------------------
 
 
@@ -114,7 +117,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS FOR GOAL EVALUATION 
+;;               METHODS FOR GOAL EVALUATION
 ;;---------------------------------------------------------------------------
 
 
@@ -183,14 +186,14 @@
     (if (null current-axioms)
 	($send self :babylon-format
 		      (getentry no-ax-fstr prolog-io-table))
-	($send self :babylon-format 
+	($send self :babylon-format
 		      (getentry list-ax-fstr prolog-io-table)
 		      current-axioms))))
 
 
 (def$method (basic-prolog-mixin :show-status) ()
   "displays the names of all axiom sets currently available.
-intended to be overwritten by specializations of basic-prolog-mixin." 
+intended to be overwritten by specializations of basic-prolog-mixin."
   ($send self :show-axioms))
 
 
@@ -231,10 +234,10 @@ pops up a menu to select one or more axiom sets out of the known axiom sets."
 (def$method (basic-prolog-mixin :add-axiom-set)
 	    (axset-name &optional (mode 'first) (before-set nil) (check t))
   "adds the axiom set named <axset-name> to the currently available axiom sets.
-if <mode> is first or last, the axiom-set becomes the first or last axiom set, 
+if <mode> is first or last, the axiom-set becomes the first or last axiom set,
 if <mode> is before and <before-set> is specified, the axiom-set is added immediately
 before it. if <check> is not nil, it is checked whether <axset-name> is known."
-  
+
   ($send prolog-processor :addax axset-name mode before-set check))
 
 
@@ -275,7 +278,7 @@ if <window> is omitted, the dialog-stream is used."
 
 (def$method (axset-basic :display-predicate)
 	   (predicate axset-name)
-  "prints a predicate from an axiom set to the dialog-stream."  
+  "prints a predicate from an axiom set to the dialog-stream."
   ($send self :list-predicate predicate axset-name))
 
 
@@ -284,7 +287,7 @@ if <window> is omitted, the dialog-stream is used."
 	   (axset-name &optional window)
   "prints the axiom set named <axset-name> to <window>.
 if <window> is omitted the dialog-stream is used."
- 
+
   (setf window (or window self))
   ($send window :format
 		"~% ------- ~S ------- " axset-name)
@@ -347,10 +350,10 @@ only predicates from the currently available axiom sets are selectable."
 
 
 ;;---------------------------------------------------------------------------
-;;               READ GOALS & PROVIDE RESULTS 
+;;               READ GOALS & PROVIDE RESULTS
 ;;---------------------------------------------------------------------------
 
-  
+
 (def$method (basic-prolog-mixin :ask-set-goal) ()
   "prompts for a goal and initializes it."
 
@@ -362,7 +365,7 @@ only predicates from the currently available axiom sets are selectable."
       ((member answer (list *help-key* *c-help-key* 'help '?))
        (unless (member answer '(help ?))
 	 ($send self :babylon-format "help"))
-       ($send self :babylon-format 
+       ($send self :babylon-format
 	     (getentry explain-goal-format-fstr prolog-io-table))
        ($send self :ask-set-goal))
       ((eq answer 'end)  ($send self :babylon-format "~%") nil)
@@ -394,9 +397,9 @@ if the last proof succeded and a NO otherwise."
 			  (getentry result-fstr prolog-io-table)
 			  (subst-prolog-vars topgoal 'ext))
 	    t)
-      ((fail cfail) ($send self :babylon-format 
+      ((fail cfail) ($send self :babylon-format
 				  (getentry no-fstr prolog-io-table)))
-      (t ($send self :babylon-format 
+      (t ($send self :babylon-format
 		       (getentry status-fstr prolog-io-table) status)))))
 
 
@@ -414,18 +417,18 @@ if there are no variables, YES is displayed instead."
     (case status
       (succ (let ((tlist (gen-var-value-list top-varcells type)))
 	      (if (null tlist)
-		  ($send self :babylon-format 
+		  ($send self :babylon-format
 				(getentry yes-fstr prolog-io-table))
 		  (mapc #'(lambda (var-value)
-			    ($send self :babylon-format 
+			    ($send self :babylon-format
 					  "~%~S = ~S"
 					  (car var-value)
 					  (cdr var-value)))
 			tlist))
 	      t))
-      ((fail cfail) ($send self :babylon-format 
+      ((fail cfail) ($send self :babylon-format
 				  (getentry no-fstr prolog-io-table)))
-      (t ($send self :babylon-format 
+      (t ($send self :babylon-format
 		       (getentry status-fstr prolog-io-table)
 		       status)))))
 
@@ -437,26 +440,26 @@ vars:  all nonanonymous variables are displayed together with their values,
 if the last proof succeded, and a NO otherwise.
 bound: like vars but variables whose values are variables are omitted,
 status: a status message like succ, fail, error is displayed,
-no: like status, if <redisplay> is not nil, otherwise nothing is displayed."  
+no: like status, if <redisplay> is not nil, otherwise nothing is displayed."
 
   (let ((status ($send prolog-processor :status))
 	(format-option (or dispform
 			   ($send prolog-processor :format-option))))
     (case format-option
       (no     (if redisplay
-		  ($send self :babylon-format 
+		  ($send self :babylon-format
 				(getentry status-fstr prolog-io-table) status)))
       (form   ($send self :show-form))
       (bound  ($send self :show-vars 'bound))
       (vars   ($send self :show-vars 'all))
-      (status ($send self :babylon-format 
+      (status ($send self :babylon-format
 			    (getentry status-fstr prolog-io-table) status)))
     status))
 
 
 
 ;;---------------------------------------------------------------------------
-;;               EVALUATION METHODS 
+;;               EVALUATION METHODS
 ;;---------------------------------------------------------------------------
 
 
@@ -529,7 +532,7 @@ if variables are missing, YES is returned instead."
 
 (def$method (basic-prolog-mixin :prolog-mult-prove)
 	   (goal &optional (number 'all) (disp-format 'vars))
-    "provides at most <nr> or all proofs of <goals>. 
+    "provides at most <nr> or all proofs of <goals>.
 the results of each proof are collected in a list.
 <dispform> determines the representation of the results,
 possible values and effects are those described for :prove-return
@@ -538,5 +541,7 @@ and <dispform> is VARS or BOUND."
     (unless (numberp number) (setf number -1))
     ($send prolog-processor :some-answers goal number disp-format))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

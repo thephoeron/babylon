@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           COPYRIGHT   1984, 1985, 1986    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -13,11 +13,14 @@
 
 ;;    provisorisch   rest in np-expl-rest
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 
 ;;;;;;;;;;;;;;;;; MIXIN PROVIDING EXPLANATION FACILITIES ;;;;;;;;;;;;;;;
 
 (def$flavor proc-explain-mixin
-	   ()()	
+	   ()()
   :settable-instance-variables
   (:required-instance-variables meta-processor root)
   (:documentation "mixin for prolog-processor providing explanation facilities."))
@@ -50,10 +53,10 @@
 	($send meta-processor :send-explanation-window :format
 		      (getentry subgoals-fstr prolog-io-table)
 		      (subst-prolog-vars ($send current-goal :goal) 'normal))
-	
+
      A  (setq current-goal ($send current-goal :parent-goal))
 	(cond ((equal ($send current-goal :goal) '(%top))
-	       ($send meta-processor :send-explanation-window :format 
+	       ($send meta-processor :send-explanation-window :format
 			     (getentry topgoal-reached-fstr prolog-io-table))
 	       (return 'done)   ;; zuvor: (go B)
 	       ))
@@ -64,9 +67,9 @@
 				   (getentry why-item-list prolog-io-table)
 				   (getentry further-explanation-str prolog-io-table)))
 	       (case choice
-		 (why-goal (go A))		 
+		 (why-goal (go A))
 		 (why-path (setq ask nil)(go A))
-		 (exit (return 'done)  
+		 (exit (return 'done)
 		       )))
 	      (t (go A)))))
 
@@ -87,3 +90,6 @@
 (def$method (basic-goalbox :clause-used) ()
   (unless (member (first goal)  *prolog-syspreds*)
     (first clauses)))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

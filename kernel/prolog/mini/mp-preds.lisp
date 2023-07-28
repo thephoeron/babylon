@@ -3,19 +3,19 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; DATE:     uralt
-;; AUTHORS:  Eckehard Gross 
+;; AUTHORS:  Eckehard Gross
 
 ;; This file depends on:  common>*
 ;;                        prolog>basic>*
 
-;; contents: a mixin for the flavor goalbox-core offering trace facilities. 
+;; contents: a mixin for the flavor goalbox-core offering trace facilities.
 ;;           it provides an encapsulated version of each proof method
 ;;           of goalbox-core which produces trace information in addition.
 ;;           the selector of this method is held on the property list
@@ -23,6 +23,9 @@
 ;;           the selector of the method to be used in course of a proof
 ;;           i.e. the plain or the encapsulated version is held on the
 ;;           same property list using the indicator CURR-PROLOG-METHOD.
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;--------------------------------------------------------------------------
 ;;                  FLAVOR GOALBOX-TRACE-MIXIN
@@ -81,7 +84,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE GOALS WITH USER DEFINED PREDICATES 
+;;               METHODS TO TRACE GOALS WITH USER DEFINED PREDICATES
 ;;---------------------------------------------------------------------------
 
 
@@ -130,7 +133,7 @@
 (defprolog-trace-methods %top :trace-top-before :trace-top-after)
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SOME BASIC SYSTEM PREDICATES 
+;;               METHODS TO TRACE SOME BASIC SYSTEM PREDICATES
 ;;---------------------------------------------------------------------------
 
 (def$method (goalbox-trace-mixin :trace-cut) (mode res)
@@ -196,7 +199,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SYSTEM PREDICATES AND/OR ET AL 
+;;               METHODS TO TRACE SYSTEM PREDICATES AND/OR ET AL
 ;;---------------------------------------------------------------------------
 
 
@@ -221,7 +224,7 @@
   (declare (ignore mode res))
   ($send prolog-processor :format-trace
 	0
-	(getentry repeat-fstr prolog-io-table) 
+	(getentry repeat-fstr prolog-io-table)
 	clauses))
 
 
@@ -241,7 +244,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SYSTEM PREDICATES FOR COMPARING 
+;;               METHODS TO TRACE SYSTEM PREDICATES FOR COMPARING
 ;;---------------------------------------------------------------------------
 
 
@@ -291,7 +294,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SYSTEM PREDICATES FOR READ/WRITE 
+;;               METHODS TO TRACE SYSTEM PREDICATES FOR READ/WRITE
 ;;---------------------------------------------------------------------------
 
 
@@ -331,7 +334,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SYSTEM PREDICATES FOR TYPE CHECKING 
+;;               METHODS TO TRACE SYSTEM PREDICATES FOR TYPE CHECKING
 ;;---------------------------------------------------------------------------
 
 
@@ -356,7 +359,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;               METHODS TO TRACE SYSTEM PREDICATES FOR CLAUSE MANAGEMENT 
+;;               METHODS TO TRACE SYSTEM PREDICATES FOR CLAUSE MANAGEMENT
 ;;---------------------------------------------------------------------------
 
 (def$method (goalbox-trace-mixin :trace-assert) (mode res)
@@ -409,4 +412,5 @@
 
 (defprolog-trace-methods clause :trace-normal-before :trace-ext-after)
 
-
+#+sbcl
+(named-readtables:in-readtable :standard)

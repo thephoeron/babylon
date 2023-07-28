@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,7 +11,10 @@
 
 ;; AUTHOR:   Eckehard Gross
 
-  
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
+
 
 (def$flavor normal-prolog-mixin
         ((explanation-window nil)
@@ -21,7 +24,7 @@
   (:required-instance-variables procs system-trace kb-name)
   (:documentation "A basic prolog processor mixin for the knowledge base flavor."))
 
- 
+
 (def$method (normal-prolog-mixin :generate-prolog-processor) ()
   "generates a prolog-processor binding it to the instance variable prolog-processor."
   (setf prolog-processor (make-$instance 'normal-prolog-processor
@@ -56,3 +59,5 @@
   (and (warn-if-no-prolog)
        (send-current-knowledge-base :display-prooftree)))
 
+#+sbcl
+(named-readtables:in-readtable :standard)

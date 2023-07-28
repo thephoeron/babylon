@@ -1,9 +1,9 @@
 ;;  -*- Mode: Lisp; Syntax: Common-Lisp; Package: BABYLON; Base: 10. -*-
 
-(in-package "BABYLON") 
+(in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -21,10 +21,13 @@
 ;;           list the predicate name using the axioms set name as indicator.
 ;;           axiom sets are free or associated with a kb. in the latter case
 ;;           the kb name is stored as KB-NAME property of the axiom set name.
-;;           
+;;
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;---------------------------------------------------------------------------
-;;               FLAVOR FOR CLAUSE MANAGEMENT 
+;;               FLAVOR FOR CLAUSE MANAGEMENT
 ;;---------------------------------------------------------------------------
 
 
@@ -37,7 +40,7 @@ axiom sets currently available are bound to axioms."))
 
 
 ;;---------------------------------------------------------------------------
-;;           GENERATING INTERNAL REPRESENTATIONS OF AXIOM SETS 
+;;           GENERATING INTERNAL REPRESENTATIONS OF AXIOM SETS
 ;;---------------------------------------------------------------------------
 
 
@@ -77,7 +80,7 @@ axiom sets currently available are bound to axioms."))
 (defmacro head (rule)
   `(car ,rule))
 
-(defmacro body (rule) 
+(defmacro body (rule)
   `(cdr ,rule))
 
 (defmacro pred (head)
@@ -126,7 +129,7 @@ if no clauses remain."
 	  (rem-pred ,pred ,axiom-set)
 	  ,pred))
 
-(defun remove-all-clauses (axiom-set) 
+(defun remove-all-clauses (axiom-set)
   "removes all clauses in <axiom-set> without deleting <axiom-set>."
   (mapc #'(lambda (pred)
 	    (rem-clauses pred axiom-set))
@@ -152,10 +155,10 @@ if no clauses remain."
 (defun xpush (list x)
   (nconc x list))
 
-(defmacro asserta (clause axiom-set)    
+(defmacro asserta (clause axiom-set)
   `(prolog-assert ',clause ',axiom-set #'xpush))
 
-(defmacro assertz (clause axiom-set)    
+(defmacro assertz (clause axiom-set)
   `(prolog-assert ',clause ',axiom-set #'nconc))
 
 (defun add-axioms (axiom-set clauses)
@@ -235,7 +238,7 @@ are reset."
 <clause> might be NIL producing an empty line.
 if <stream> is NIL, a string is returned that contains the output,
 otherwise an empty string is returned."
- 
+
  (let ((head (first clause))
        (body (rest clause)))
    (or (cond (body (format stream
@@ -267,7 +270,7 @@ that contains the output, otherwise an empty string is returned."
 		 stream))
 
 (defun collect-clauses (axset preds)
-  "provides a list of the defining clauses for the predicates <preds> in <axset>. 
+  "provides a list of the defining clauses for the predicates <preds> in <axset>.
 clauses for different predicates are separated by NIL."
 
   (rest (mapcan #'(lambda (a-pred)
@@ -288,14 +291,14 @@ that contains the output, otherwise an empty string is returned."
   (let ((preds (cdr (get-preds axiom-set))))
     (format stream "~2%(~A ~S"
 	    (if (get axiom-set 'kb-name) "DECLAUSES" "DEFAXIOM-SET")
-	    axiom-set)   
+	    axiom-set)
     (print-preds axiom-set preds "   " stream)
     (format stream  ")")))
 
 
-(def$method (axset-basic :print) (&optional (stream *standard-output*))  
+(def$method (axset-basic :print) (&optional (stream *standard-output*))
   "prints all clauses in the associated kb to <stream>."
- 
+
   (let ((relname ($send meta-processor :relations-name)))
     (when (get relname 'clauses)
       (format stream (getentry relations-fstr prolog-io-table))
@@ -306,24 +309,24 @@ that contains the output, otherwise an empty string is returned."
   (let ((clause-nbr 0))
     (dolist (axiom-set  ($send self :axioms))
       (setf clause-nbr (+ clause-nbr (length (get axiom-set 'clauses)))))
-    (format stream 
+    (format stream
 	    (getentry number-of-relations-fstr prolog-io-table)
 	    clause-nbr)))
 #|
 
 (def$method (axset-basic :kb-inform) (&optional (stream *standard-output*))
   "displays the number of clauses in the associated kb on <stream>."
-  
-  (let ((kb-clauses (the list 
+
+  (let ((kb-clauses (the list
                          (get ($send meta-processor :relations-name) 'clauses))))
-    (format stream 
+    (format stream
             (getentry number-of-relations-fstr prolog-io-table)
             (length kb-clauses))))
 
 |#
 
 ;;---------------------------------------------------------------------------
-;;               LOCATING CLAUSES 
+;;               LOCATING CLAUSES
 ;;---------------------------------------------------------------------------
 
 
@@ -349,7 +352,7 @@ that contains the output, otherwise an empty string is returned."
   (do ((pred (pred goal))
        (clauses nil)
        (r-axiom-sets axiom-sets (cdr r-axiom-sets)))
-      ((null r-axiom-sets) nil)       
+      ((null r-axiom-sets) nil)
     (setq clauses (get pred (car r-axiom-sets)))
     (if clauses
 	(return clauses))))
@@ -372,7 +375,7 @@ if none contains clauses for <pred>."
 
 
 ;;---------------------------------------------------------------------------
-;;               MAKING AXIOM SETS AVAILABLE 
+;;               MAKING AXIOM SETS AVAILABLE
 ;;---------------------------------------------------------------------------
 
 
@@ -386,9 +389,9 @@ if none contains clauses for <pred>."
   "checks whether <axset-name> is the name of a known axiom set.
 returns <axset-name>, if it is known and NIL otherwise."
   (if (member axset-name (get-known-free-axiom-sets))
-      axset-name 
+      axset-name
       (send-kb :babylon-format
-	       (getentry unknown-axset-fstr prolog-io-table) axset-name)))                    
+	       (getentry unknown-axset-fstr prolog-io-table) axset-name)))
 
 (def$method (axset-basic :use-axiom-sets) (&rest axiom-sets)
   "makes <axiom-sets> currently available in addition to the own axiom set.
@@ -433,5 +436,7 @@ if <check> is not nil, it is checked whether <axiom-set> is known."
 	($send self :set-axioms (cons (first axioms) free-axioms))
 	axiom-set)))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1987, 1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -18,6 +18,9 @@
 ;;                        prolog>basic>bp-inter
 
 ;; Contents: a minimal version of a prolog processor
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;-------------------------------------------------------------------------------
 ;;                   FLAVOR BASIC-PROLOG-PROCESSOR
@@ -42,5 +45,7 @@
 
 #-:FMCS(compile-$flavor-$methods basic-prolog-processor)
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

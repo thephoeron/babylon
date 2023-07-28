@@ -3,14 +3,14 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; DATE:     uralt
-;; AUTHORS:  Eckehard Gross 
+;; AUTHORS:  Eckehard Gross
 
 ;; This file depends on:  common>*
 ;;                        prolog>basic>*
@@ -18,14 +18,17 @@
 ;; contents: a mixin providing trace facilities for the prolog processor.
 ;;           predicates currently to be traced are held on the variable
 ;;           *prolog-preds-traced*
-;;           
+;;
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 ;;--------------------------------------------------------------------------
-;;                  FLAVOR PROLOG-TRACE-MIXIN 
+;;                  FLAVOR PROLOG-TRACE-MIXIN
 ;;--------------------------------------------------------------------------
 
 (def$flavor prolog-trace-mixin
-	((prolog-trace nil)  
+	((prolog-trace nil)
 	 (trace-list nil)
 	 (trace-mode 'normal)
 	 (trace-level nil)
@@ -36,12 +39,12 @@
   (:documentation "this mixin provides tracing facilities for the prolog processor."))
 
 
-;(defvar *prolog-preds-traced* nil) 
+;(defvar *prolog-preds-traced* nil)
 
 ;;; ersetzt
 
 (def$method (prolog-trace-mixin :trace-status) ()
-  (if prolog-trace 
+  (if prolog-trace
       (format nil (getentry trace-on-fstr  babylon-io-table) "Prolog")
       (format nil (getentry trace-off-fstr babylon-io-table) "Prolog")))
 
@@ -79,7 +82,7 @@
 	       ((eq *prolog-preds-traced* 'all)
 		(mapc #'unmark-pred *prolog-syspreds*))
 	       (t (mapc #'unmark-pred *prolog-preds-traced*)))
-	 (setf *prolog-preds-traced* nil))	
+	 (setf *prolog-preds-traced* nil))
 	((eq *prolog-preds-traced* trace-list))
 	(t (cond ((null *prolog-preds-traced*))
 		 ((eq *prolog-preds-traced* 'all)
@@ -96,7 +99,7 @@
 
 (def$method (prolog-trace-mixin :after :set-axioms) (axsets)
   (declare (ignore axsets))
-  (setf trace-list 
+  (setf trace-list
 	(if (or (eq trace-list 'all)
 		(equal trace-list '(%top)))
 	    trace-list
@@ -109,7 +112,7 @@
 (def$method (prolog-trace-mixin  :before :prove-topgoals) (&rest goals)
   (declare (ignore goals))
   ($send self :synchronize-trace))
-  
+
 ;;;------------------------------------------------------------------------
 
 (def$method (prolog-trace-mixin :after :setgoal) (goals)
@@ -137,7 +140,7 @@
        (eq trace-mode 'full)
        (or (eq trace-list 'all)
 	   (member (first goal) trace-list))
-       ($send meta-processor :send-prolog-trace-window :format 
+       ($send meta-processor :send-prolog-trace-window :format
 	      "~Ausing: ~S"
 	      (normal-indent indent-level)
 	      (ext-rep-clause clause))))
@@ -145,10 +148,12 @@
 (def$method (prolog-trace-mixin :format-trace) (ind-pattern fstring &rest args)
   (if (member ind-pattern '(- -+))
       (setf indent-level (1- indent-level)))
-  (lexpr-$send meta-processor :send-prolog-trace-window :format 
+  (lexpr-$send meta-processor :send-prolog-trace-window :format
 		      fstring (normal-indent indent-level) args)
   (if (member ind-pattern '(+ -+))
       (setf indent-level (1+ indent-level))))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

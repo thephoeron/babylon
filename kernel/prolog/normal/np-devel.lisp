@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -12,6 +12,9 @@
 ;; AUTHOR:   E. G R O S S
 
 ;; provisorisch   rest in np-devel-rest
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 (def$flavor ax-develop-mixin
 	   ()
@@ -35,7 +38,7 @@
     (declare (simple-string head-str))
     `((,(make-string-of-length item-len "-") :no-select t)
       (,(complete-to-n head-str (- item-len (length head-str)))
-       :no-select t)     
+       :no-select t)
       ,@(let ((premises (body clause)))
           (if premises
             (do ((p premises (rest p))
@@ -74,7 +77,7 @@
 	       (return :repeat)))
 	(setq clauses (get-clauses-direct goal axiom-sets))
 	(cond ((not clauses)
-	       ($send meta-processor :notify 
+	       ($send meta-processor :notify
 		     (format nil
 			     (getentry no-clauses-for-pred-fstr prolog-io-table)
 			     (first goal)))
@@ -104,7 +107,7 @@
 		(" EXIT " :value :exit
 		 #+:lispm :font #+:lispm fonts:medfnb)
 		("" :no-select t)))
-	
+
      A  (setq choice ($send meta-processor :choose-from-menu item-list))
 	(cond ((null choice) (go A))
 	      ((eq choice :back) (return :repeat))
@@ -153,5 +156,7 @@ to select a predicate from the selected axiom set."
    of predicate <predicate> in axiom set <axiom-set>"
   ($send self :mom-show-premise (list predicate) (list axiom-set)))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

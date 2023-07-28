@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -11,11 +11,14 @@
 
 ;; AUTHOR:   E. G R O S S
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 (def$flavor normal-prolog-processor
            ()
 	(proc-explain-mixin
 	 ax-develop-mixin
-	 mini-prolog-processor)  
+	 mini-prolog-processor)
   :settable-instance-variables
   (:documentation "Flavor combining the prolog-interpreter with optional components.
 The available mixins include prolog-trace-mixin for tracing, proc-explain-mixin for
@@ -30,5 +33,7 @@ explanations and ax-develop-mixin for development support."))
 
 #-:FMCS(compile-$flavor-$methods normal-prolog-processor)
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

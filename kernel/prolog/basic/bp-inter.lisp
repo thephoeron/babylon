@@ -3,7 +3,7 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -17,6 +17,9 @@
 ;;                        prolog>basic>bp-preds
 
 ;; Contents: a prolog interpreter
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 
@@ -88,13 +91,13 @@ if the last proof succeded and NIL otherwise."
   ($send self :setgoal goals)
   ($send self :prove-return 'try 'form))
 
-(defun is-yes-list (list)		
+(defun is-yes-list (list)
   (and (listp list)
        (member 'yes list)))
 
 (def$method (prolog-interpreter :some-answers)
 	   (goals &optional (nr -1) (dispform 'vars))
-  "provides at most <nr> proofs of <goals>. 
+  "provides at most <nr> proofs of <goals>.
 the results of each proof are collected in a list.
 <dispform> determines the representation of the results,
 possible values and effects are those described for :prove-return
@@ -106,7 +109,7 @@ and <dispform> is VARS or BOUND."
        (i nr (1- i))
        (results nil (cons res results)))
       ((or (null res) (= i 0))
-       (if (is-yes-list results) 
+       (if (is-yes-list results)
          t
          (nreverse results)))))
 
@@ -115,3 +118,6 @@ and <dispform> is VARS or BOUND."
   (or ($send self :send-if-handles :explain-kontext)
       ($send meta-processor :choose-from-menu
 	    `(,(getentry no-explanation-entry prolog-io-table)))))
+
+#+sbcl
+(named-readtables:in-readtable :standard)

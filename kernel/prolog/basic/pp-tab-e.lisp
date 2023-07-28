@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHOR:   Eckehard Gross
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 ;;; generate hash-table ;;;;;;;;;;;;;;;;
@@ -448,7 +451,7 @@
 (defbabylon-entry option-menu-title prolog-io-table english
    "Select Prolog Trace Options")
 
-(defbabylon-entry option-menu-items prolog-io-table english 
+(defbabylon-entry option-menu-items prolog-io-table english
   '(("- Exit -" :value exit)
     ("Full Mode" :value (:set-prolog-trace-mode full)
      :documentation "show all clauses tried to match")
@@ -465,5 +468,7 @@
     ("Show Status" :value :show-trace-status
      :documentation "show options selected.")))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

@@ -3,13 +3,16 @@
 (in-package "BABYLON")
 
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
 
 
 ;; AUTHOR:   Eckehard Gross
+
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
 
 
 ;;; generate hash-table ;;;;;;;;;;;;;;;;;;
@@ -27,10 +30,10 @@
 (defbabylon-entry  sys-trace-fstr prolog-io-table german
   " META -> PROLOG: ~S  ~S")
 
-(defbabylon-entry no-current-kb-fstr prolog-io-table german 
+(defbabylon-entry no-current-kb-fstr prolog-io-table german
   "~%Keine momentane Wissensbasis")
 
-(defbabylon-entry no-prolog-fstr prolog-io-table german 
+(defbabylon-entry no-prolog-fstr prolog-io-table german
   "Momentane Wissensbasis enthaelt kein Prolog")
 
 (defbabylon-entry no-develop-entry prolog-io-table german
@@ -53,10 +56,10 @@
 
 (defbabylon-entry unknown-mode-fstr prolog-io-table german "~%Unbekannter Modus ~S")
 
-(defbabylon-entry relations-fstr prolog-io-table german 
+(defbabylon-entry relations-fstr prolog-io-table german
   "~2%;; ********* K L A U S E L N ************~%")
 
-(defbabylon-entry number-of-relations-fstr prolog-io-table german 
+(defbabylon-entry number-of-relations-fstr prolog-io-table german
   "~%- Anzahl der KLAUSELN: ~38T~d")
 
 
@@ -348,7 +351,7 @@
 (defbabylon-entry needed-to-prove-fstr prolog-io-table german
   "~3Tbenoetigt zum Beweis von: ~S")
 
-(defbabylon-entry by-clause-fstr prolog-io-table german 
+(defbabylon-entry by-clause-fstr prolog-io-table german
   "~3Tmittels Klausel: ~S ~@[~S~] ~{~%~16T~S~}")
 
 (defbabylon-entry clauses-for-pred prolog-io-table german
@@ -389,7 +392,7 @@
   "PROLOG-BEWEISBAUM~D")
 
 (defbabylon-entry explain-mixin-item-list prolog-io-table german
-  '((" Erklaere Ergebnis " :FUNCALL display-prooftree 
+  '((" Erklaere Ergebnis " :FUNCALL display-prooftree
      :documentation "Zeige Beweisbaum an")))
 
 ;;;;;; entries from prolog-processor ;;;;;;;
@@ -416,7 +419,7 @@
 ;;;--------------------------------------------------------------------------------
 
 
-(defbabylon-entry if-toggled-fst prolog-io-table german 
+(defbabylon-entry if-toggled-fst prolog-io-table german
   "~%Falls der Prolog Trace eingeschaltet wird:")
 
 (defbabylon-entry trace-for-preds-fstr prolog-io-table german
@@ -429,28 +432,28 @@
   "  ALLE ")
 
 
-(defbabylon-entry trace-menu-title prolog-io-table german 
+(defbabylon-entry trace-menu-title prolog-io-table german
   "Trace Praedikate der Klauselmenge ")
 
 
-(defbabylon-entry trace-menu-items prolog-io-table german 
+(defbabylon-entry trace-menu-items prolog-io-table german
   '(("Trace alles"    :value trace-all)
     ("Trace nichts"   :value trace-none)
     ("Wechsel Einstellung" :value toggle
      :documentation "Waehle Praedikate aus, deren Auftreten im Trace sich aendern soll")
     ("Exit" :value exit)))
 
-(defbabylon-entry toggle-trace-menu-title prolog-io-table german 
+(defbabylon-entry toggle-trace-menu-title prolog-io-table german
    "Wechsel Einstellung fuer Praedikate aus ")
 
-(defbabylon-entry toggle-trace-menu-item prolog-io-table german 
+(defbabylon-entry toggle-trace-menu-item prolog-io-table german
    '(nil "Mit # markierte Praedikate treten im Trace auf" nil))
 
 
-(defbabylon-entry option-menu-title prolog-io-table german 
+(defbabylon-entry option-menu-title prolog-io-table german
    "Waehle Prolog Trace Optionen")
 
-(defbabylon-entry option-menu-items prolog-io-table german 
+(defbabylon-entry option-menu-items prolog-io-table german
   '(("- Exit -" :value exit)
     ("Erweiterter Modus" :value (:set-prolog-trace-mode full)
      :documentation "Zeige alle Klauseln, fuer die Unifikation versucht wird")
@@ -458,7 +461,7 @@
      :documentation "Zeige keine Klauseln")
     (" " :no-select t)
     ("Trace alles" :value (:trace-preds all)
-     :documentation "Trace alle Praedikate")   
+     :documentation "Trace alle Praedikate")
     ("Selektiere Praedikate" :value (:select-for-trace t)
      :documentation "Waehle Praedikate aus, die im Trace erscheinen sollen.")
     ("Aendere Auswahl" :value :select-for-trace
@@ -467,6 +470,7 @@
     ("Zeige Einstellung" :value :show-trace-status
      :documentation "Zeige ausgewaehlte Optionen an")))
 
+#+sbcl
+(named-readtables:in-readtable :standard)
 
 ;;; eof
-
