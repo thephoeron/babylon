@@ -2,17 +2,18 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 (defvar *babylon-version* (asdf:component-version (asdf:find-system :babylon)))
 
 (defvar *babylon* nil)
-	 
+
 (defvar *current-knowledge-base* nil)
 
 (defvar *language* 'english)
 
-(defvar *known-knowledge-bases* nil)	
-
-
+(defvar *known-knowledge-bases* nil)
 
 (defvar *axiom-sets* nil)			;from prolog-processor
 
@@ -20,48 +21,39 @@
 
 (defvar *prolog-syspreds* nil)
 
-(defvar *prolog-preds-traced* nil) 
+(defvar *prolog-preds-traced* nil)
 
-
-  
 (defvar *font-menu* nil)			;from interface
 						; muss bleiben, da auch im autonomen
-                                          	; tree editor verwendet. er	 
+                                          	; tree editor verwendet. er
 (defvar *first-ped-interface-call* t)
 
 (defvar *current-ted* nil			;from ted-interface
   "the unique current tree editor which can ~@
   be controlled via function calls in a lisp listener.")
 
-
 ;
 ;(defvar *crashing-item* nil)			;from frame-constraints
 ;
 ;(defvar *relations-for-create-rule* nil)	;from frame-processor
 
-
-
 (defvar *meta-preds*
 	'(not call and or))
 
-(defvar *frame-meta-predicates*		
+(defvar *frame-meta-predicates*
 	'(frame frame-def super has-super instance instance-def has-slot slot
 		has-property property))
 
-(defvar *free-text-meta-predicates*	
+(defvar *free-text-meta-predicates*
 	'(free-text))
 
 (defvar *rule-meta-predicates*
 	'(rule-set rule-set-def has-rule rule))
 
-(defvar *prolog-junctor-for-rules*	
+(defvar *prolog-junctor-for-rules*
 	'(and or))
 
-
-
-
 ;;----------------------------------------------------------------------------------------
-
 
 (defvar *default-language* 'english)
 
@@ -74,8 +66,7 @@
 
 (defvar *default-interface* '(mini-interface-mixin))
 
-(defvar *default-kb-configuration* 'mini-frplx-mini) 
-
+(defvar *default-kb-configuration* 'mini-frplx-mini)
 
 (defvar *default-dialog-stream* *terminal-io*)
 
@@ -93,5 +84,7 @@
 
 (defvar *item-width* 50)
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

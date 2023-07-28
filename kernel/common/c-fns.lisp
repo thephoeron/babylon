@@ -2,8 +2,11 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -28,7 +31,7 @@
 
 (defmacro defbabylon-entry (key table lang value)
   `(let ((*language* ',lang))
-     (setf (gethash ',key (get ',table ',lang)) ,value)))  
+     (setf (gethash ',key (get ',table ',lang)) ,value)))
 
 (defmacro getentry (key table)
   `(values (gethash ',key (get ',table *language*))))
@@ -65,7 +68,7 @@
 
 (defun current-kb-typep (flavor-type &optional string)
   (cond ((flavor-typep *current-knowledge-base* flavor-type))
-	(*current-knowledge-base* 
+	(*current-knowledge-base*
 	 (format *terminal-io* "~%=> ~A"
 		 (or string (getentry kb-of-wrong-type-str babylon-io-table))))
 	(t (format *terminal-io* "~%=>~A"
@@ -123,7 +126,7 @@
        (every 'atom l)))
 
 
-(defun is-true-list (x)			
+(defun is-true-list (x)
   (and (not (atom x))
        (null (cdr (last x)))))
 
@@ -175,7 +178,7 @@
   (and (listp x) (eq (first x) :MULTIPLE-VALUE)))
 
 (defun is-multiple-answer (x)
-  (and (listp x) (eq (first x) :MULTIPLE-VALUE))) 
+  (and (listp x) (eq (first x) :MULTIPLE-VALUE)))
 
 ;;-----------------------------------------------------------------
 
@@ -199,7 +202,7 @@
   "initial content of :value facet (localstate)"
   '-)
 
-(defun undetermined-2 () 
+(defun undetermined-2 ()
   "for use in rules"
   '(UNDETERMINED UNBESTIMMT))
 
@@ -208,7 +211,7 @@
   (or (eq x (undetermined))
       (member x (undetermined-2))))
 
-(defun unknown () 
+(defun unknown ()
   "standard possible answer of USER"
   'UNKNOWN)
 
@@ -228,8 +231,8 @@
   (and (symbolp x)
        (char-equal (aref (string x) 0) #\_)))
 
-(defun contains-vars (exp)		
-  "Yields true if <exp> is resp. contains a prolog variable." 
+(defun contains-vars (exp)
+  "Yields true if <exp> is resp. contains a prolog variable."
   (cond ((is-variable exp) t)
 	((atom exp) nil)
 	((contains-vars (car exp)) t)
@@ -238,12 +241,12 @@
 
 ;;--------------------------------------------------------------------------------
 
-(defun say (string &rest args)  
+(defun say (string &rest args)
   (lexpr-$send *current-knowledge-base* :babylon-format string args))
 
 ;;--------------------------------------------------------------------------------
 
-;;  normalize-answer 
+;;  normalize-answer
 ;;  ---------------
 
 (defun normalize-answer (answer)
@@ -254,5 +257,7 @@
   (or (car (rassoc answer (getentry possible-answers babylon-io-table)))
       answer))
 
-;;; eof
+#+sbcl
+(named-readtables:in-readtable :standard)
 
+;;; eof

@@ -2,8 +2,11 @@
 
 (in-package "BABYLON")
 
+#+sbcl
+(named-readtables:in-readtable :fare-quasiquote)
+
 ;;           Copyright   1986, 1985 and 1984    BY
-;;           G M D  
+;;           G M D
 ;;           Postfach 1240
 ;;           D-5205 St. Augustin
 ;;           FRG
@@ -25,3 +28,6 @@ It provides the interface to the meta-processor or meta-processor-stub."))
     (when temp
       (setf alternate-meta-processor meta-processor)
       (setf meta-processor temp))))
+
+#+sbcl
+(named-readtables:in-readtable :standard)
