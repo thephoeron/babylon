@@ -4,65 +4,55 @@ subject: babylon on the macintosh
 title: macdoc
 ---
 
-**Installing and Using the Hybrid Knowledge Representation and Inference
-Environment **  
-**BABYLON **  
-**on the Apple Macintosh**
+# BABYLON AI Workbench v2.3 on the Macintosh
 
-*J&uuml;rgen Walther*
+Installing and Using the Hybrid Knowledge Representation and Inference
+Environment BABYLON on the Apple Macintosh.
 
-*AI Research Division*
-
-*German National Research Center*
-
-*for Computer Science (GMD)*
-
-*P.O.Box 1316*
-
-*53731 Sankt Augustin*
-
-*Germany*
-
+*J&uuml;rgen Walther*<br>
+*AI Research Division*<br>
+*German National Research Center*<br>
+*for Computer Science (GMD)*<br>
+*P.O.Box 1316*<br>
+*53731 Sankt Augustin*<br>
+*Germany*<br>
 *juergen.walther@gmd.de*
 
-This section focusses on the installation and use of BABYLON release 2.3
-on Apple Macintosh. For more information on BABYLON see *The AI
-Workbench BABYLON*; Christaller,T., DiPrimio, F., and Vo&szlig;, A.
-(eds), Academic Press 1992.
+This section focusses on the installation and use of BABYLON release 2.3 on Apple Macintosh. For more information on BABYLON see *The AI Workbench BABYLON*; Christaller, T., DiPrimio, F., and Vo&szlig;, A. (eds), Academic Press 1992.
 
-**1. Hardware and Software Requirements**
+## 1. Hardware and Software Requirements
 
 To run BABYLON on a Macintosh computer you should have at least 6 MB of
 RAM and 5 MB of free disk capacity. On the software side you need
 Macintosh Commaon Lisp 2.0.1 (MCL). This allows you to create an
 application of BABYLON 2.3., called *BABYLON* if you load the file
-called *make.cl*;. All the sources that you need are in the folder
+called <kbd>make.lisp</kbd>. All the sources that you need are in the folder
 BABYLON-2.3.
 
-**2. Getting BABYLON**
+## 2. Getting BABYLON
 
 You can get BABYLON by anonymous ftp from ftp.gmd.de. Change to
-directory gmd/ai-research/Software/Babylon and get the
-Babylon-2.3.sit.hqx file. Decode the file for example with Stuffit
+directory `gmd/ai-research/Software/Babylon` and get the
+`Babylon-2.3.sit.hqx` file. Decode the file for example with Stuffit
 Expander and start the resulting self extracting archive to get the
-Babylon-2.3 folder. You are now ready to generate the Babylon image.
+`Babylon-2.3/` folder. You are now ready to generate the Babylon image.
 
-**3. Creating an Image File **
+## 3. Creating an Image File
 
 If you want to create an image file (or an application) start your Lisp
 and then load*make-cl*. While loading the make file, there will be some
 y-or-n questions in the lisp listener
 
-&bull; Use development options for compiling files?  
+- Use development options for compiling files?
 Aswer y, if you want to record source files, save documentation strings
 and similar development options This cost some space but eases
 development work. Answer n if you do not want to explore the
 implementation.
 
-Load graphic frame browser?  
+Load graphic frame browser?
 Its worth it!
 
-&bull; Is your AntiVirus software temporarily disabled?  
+- Is your AntiVirus software temporarily disabled?
 Lisp will try to install a program on your hard disk. Thus, you have to
 either disable programs like Gatekeeper, or give MCL the Privileges File
 Other.
@@ -88,7 +78,7 @@ After storing the Babylon image MCL will quit and you find an
 application icon named Babylon in the Babylon folder. You can now start
 Babylon by double-clicking this icon.
 
-**4. Menus**
+## 4. Menus
 
 The menu bar of Macintosh Common Lisp is extended by BABYLON menus. At
 present, BABYLON provides five menus. A main menu, which offers general
@@ -128,14 +118,14 @@ be that of the expert system.
 The following subsections will explain the BABYLON menus and their
 operations.
 
-**4.1 The BABYLON Main Menu**
+### 4.1 The BABYLON Main Menu
 
 The BABYLON main menu basically contains general commands to operate
 expert systems.
 
 Fig. 4: The BABYLON main menu.
 
-Start\]
+Start
 
 serves to start the current expert system. This is a confirmation menu
 that informs the programmer about the setting of the trace mode. If this
@@ -175,7 +165,7 @@ to be the current one.
 Load-KB
 
 presents to the user a menu containing files from the folder
-**babylon:samples:kbs**; these files store the external expert systems.
+<kbd>babylon/samples/kbs</kbd>; these files store the external expert systems.
 When the user selects one expert system, it will be loaded, thus
 creating an instance of the referenced configuration and an editor
 window, which will display the source code of the expert system.
@@ -191,7 +181,7 @@ presents to the user a menu containing all loaded expert systems. When
 he/she selects an expert system, this one will be the current expert
 system, which will be reflected in the changed name of the main menu.
 
-*Explore Opts*...
+*Explore Opts* ...
 
 yields a dialog box for the user to adjust a few parameters of the
 exploration options (cf. Figure 4).
@@ -201,18 +191,16 @@ Fig. 6: Specifying the exploration options.
 The text fields of the dialog box can be used to enter patterns by using
 *jokers* or *wild cards*. The following jokers are admitted:
 
-? stands for an arbitrary character
+`?` stands for an arbitrary character
 
-\* stands for a sequence of one or several characters
+`\*` stands for a sequence of one or several characters
 
-The pattern b\*o?, for example, accepts the following character strings
+The pattern `b\*o?`, for example, accepts the following character strings
 (using upper or lower case letters is irrelevant):
 
-&bull; *BOOK*
-
-&bull; *BARITONE*
-
-&bull; and of course *BABYLON*
+- `*BOOK*`
+- `*BARITONE*`
+- and of course `*BABYLON*`
 
 The meaning of the various parameters will be explained in detail, when
 we discuss *Explore* of the *Frame* or *Rule* menu.
@@ -223,7 +211,7 @@ is only available and necessary on computers of the Macintosh SE type.
 This command is used to alternate between the two menu bars. For this
 purpose, the Command-T key can also be used.
 
-**4.2 The Frame Menu**
+### 4.2 The Frame Menu
 
 When the configuration of the current expert system contains a frame
 interpreter, then the *Frame* menu will be activated. It provides
@@ -291,7 +279,9 @@ the construct that is selected in the corresponding selection field. If,
 for example, the programmer clicked on the button next to *Instances* in
 Figure 8, the system would position the editor to the line
 
-(definstance 5th-ave-32nd-st of crossing .......
+```lisp
+(definstance 5th-ave-32nd-st of crossing ...)
+```
 
 *Frame Inheritance Graph*
 
@@ -318,7 +308,7 @@ definition in the editor buffer. If you select a slot this will be the
 frame definition, containing the slot definition. Use option double
 click in the Frame Inheritance window to change the frame explored.
 
-**4.3 The Rule Menu**
+### 4.3 The Rule Menu
 
 When an expert system with a rule interpreter as part of its
 configuration is current , the *Rule* menu from the menu bar can be
@@ -352,7 +342,7 @@ behavior the first three menu entries are used:
 the trace will only appear in the trace window. This is done
 interactively, i.e. during a dialog session with an expert system.
 
-*Background Trace}*
+*Background Trace*
 
 the trace will only be stored in an internal data structure, which can
 be updated after the dialog by using the menu entries *Complete Trace*,
@@ -381,13 +371,10 @@ Figure 11 will appear.
 
 Fig. 11: The menu to mark rule sets.
 
-&bull; ***Show all: ***all rules of the rule set previously selected are
-marked.
-
-&bull; ***Hide all:*** the marks of all rules of the rule set previously
+- ***Show all:*** all rules of the rule set previously selected are marked.
+- ***Hide all:*** the marks of all rules of the rule set previously
 selected are removed.
-
-&bull; ***Toggle mark:*** provides a menu that lists all rules of the
+- ***Toggle mark:*** provides a menu that lists all rules of the
 rule set previously selected (cf. Figure 12).
 
 Fig. 12: Menu to mark rules.
@@ -396,10 +383,9 @@ The menu in Figure 12 can be used to select an arbitrary number of
 rules, whose marks are to be toggled. Rules not marked will be marked
 and those marked will lose theirs.
 
-&bull; ***Exit:*** to leave the menu.
+- ***Exit:*** to leave the menu.
 
-**Note:** When selecting this menu entry all marks will
-**automatically** be removed.
+> **Note:** When selecting this menu entry all marks will *automatically* be removed.
 
 *Modify Selection*
 
@@ -456,39 +442,38 @@ enables a screen-oriented exploration of the rule part about the search
 for terms and elements (cf. Figure 14). Terms in this context correspond
 to conditions in the condition part of a rule. The rule
 
-    	(rule-2
-
-    	 ($and
-
-    	   (holiday-application number-days > (applicant holiday-entitlement)))
-
-    	 ($conclude
-
-    	   (holiday-application status = not-granted)
-
-    	   (holiday-application :add-status 
-
-    	     "~%Days applied for > holiday-entitlement.")))
+```lisp
+(rule-2
+ ($and
+   (holiday-application number-days > (applicant holiday-entitlement)))
+ ($conclude
+   (holiday-application status = not-granted)
+   (holiday-application :add-status
+     "~%Days applied for > holiday-entitlement.")))
+```
 
 for example, contains the three terms
 
-    	   (holiday-application number-days > (applicant holiday-entitlement)))
+```lisp
+(holiday-application number-days > (applicant holiday-entitlement)))
 
-    	   (holiday-application status = not-granted)
+(holiday-application status = not-granted)
 
-    	   (holiday-application :add-status 
-
-    	     "~%Days applied for > holiday-entitlement.")))
+(holiday-application :add-status
+  "~%Days applied for > holiday-entitlement.")
+```
 
 and the elements
 
-    	holiday-application  
+```lisp
+holiday-application
 
-    	number-days  
+number-days
 
-    	status  
+status
 
-    	...
+...
+```
 
 The exploration window has five selection fields, one display field and
 one option switch consisting of three alternatives.
@@ -497,16 +482,16 @@ Fig. 14: The screen during the rule term exploration.
 
 The three options have the following meaning:
 
-&bull; ***all terms:*** All terms within the rule set can be selected by
+- ***all terms:*** All terms within the rule set can be selected by
 the programmer.
 
-&bull; ***first elements:*** All elements that appear in the first
+- ***first elements:*** All elements that appear in the first
 position of a rule term can be selected by the programmer. When one
 element has been selected, a second menu will appear. This menu contains
 the terms, where the element figures in the first position (can be used
 to search for instance names in rule terms).
 
-&bull; ***second elements:*** Like *first elements*, with the only
+- ***second elements:*** Like *first elements*, with the only
 difference being that the second element is considered in this case (can
 be used to search for slot names of instances in rule terms).
 
@@ -584,7 +569,7 @@ condition part, the system will display a menu with rules that contain
 this term in its action part, provided it finds some. Terms from the
 action part will undergo the reverse process.
 
-**4.4 The Prolog Menu**
+### 4.4 The Prolog Menu
 
 When the current expert system contains a Prolog interpreter in its
 configuration, then the menu *Prolog* can be selected from the menu bar.
@@ -631,13 +616,13 @@ will be omitted. Then the menu illustrated in Figure 18 will appear.
 
 Fig. 18: The menu to mark axiom sets.
 
-&bull; ***Trace all:*** All predicates of the axiom set previously
+- ***Trace all:*** All predicates of the axiom set previously
 selected are marked.
 
-&bull; ***Trace none:*** The marks of all predicates of the axiom set
+- ***Trace none:*** The marks of all predicates of the axiom set
 previously selected are removed.
 
-&bull; ***Toggle trace:*** presents a menu that lists all predicates of
+- ***Toggle trace:*** presents a menu that lists all predicates of
 the axiom set previously
 
 selected (cf. Figure 19).
@@ -647,7 +632,7 @@ Fig. 19: The menu to mark predicates.
 This can be used to select predicates: those not marked will be marked,
 and those marked will lose their marks.
 
-&bull; ***Exit:*** to leave the menu.
+- ***Exit:*** to leave the menu.
 
 **Note: **When choosing this menu entry all marks made so far will
 **automatically** be removed.
@@ -710,7 +695,9 @@ following menu entry).
 For example, load and select (*Load*, *Select *) the axiom set *set-ax*
 and verify the hypothesis:
 
-((member \_x (1 2 3 4))(member \_x (3 4 5 6)))
+```lisp
+((member \_x (1 2 3 4)) (member \_x (3 4 5 6)))
+```
 
 But note the Lisp-oriented notation.
 
@@ -718,7 +705,7 @@ But note the Lisp-oriented notation.
 
 yields the next proof of the hypothesis that is being verified.
 
-**4.4 The Consat Menu**
+### 4.4 The Consat Menu
 
 Supposing an expert system with a constraint interpreter as part of its
 configuration is the current one, the menu *Consat* can be selected from
@@ -794,39 +781,34 @@ and specified the maximum number of global solutions that are to be
 computed, he/she will successively be asked to enter its initial values.
 Afterwards, the system will try to find globally consistent solutions.
 
-**5. The Interface Mixin**
+## 5. The Interface Mixin
 
 The user-interface described here is usually based on the
 normal-interface-mixin, which is also available on other computers. In
 the configuration of an expert system it must be specified by the option
 :interface. For example:
 
-    	(def-kb-configuration crossingc 
-
-    	  (:procs normal-frame-mixin 
-
-    	          normal-rule-mixin 
-
-    	          normal-constraint-mixin 
-
-    	          lisp-mixin 
-
-    	          normal-prolog-mixin 
-
-    	          free-text-mixin) 
-
-    	  (:interface normal-interface-mixin)) 
+```lisp
+(def-kb-configuration crossingc
+  (:procs normal-frame-mixin
+          normal-rule-mixin
+          normal-constraint-mixin
+          lisp-mixin
+          normal-prolog-mixin
+          free-text-mixin)
+  (:interface normal-interface-mixin))
+```
 
 The normal-interface-mixin mainly provides menus and windows.
 
-**5.1 Menus**
+### 5.1 Menus
 
 There are two types of menus:
 
-&bull; menus to select **one** node, which is activated by the
+- menus to select **one** node, which is activated by the
 selection.
 
-&bull; menus to select **several** nodes, which are individually
+- menus to select **several** nodes, which are individually
 selected and then activated by clicking on the confirmation field *Do
 It*. When selecting entries the Shift and Command keys play an important
 role:
@@ -843,31 +825,25 @@ provide such entries with a *:no-select* property. The Macintosh pop-up
 menus do not have such a property. Thus, these entries can be selected,
 but yield nil.
 
-**5.2 The Window**
+### 5.2 The Window
 
 The **normal-interface-mixin** creates three windows for any expert
 system:
 
-&bull; a trace window as an instance of the editor window
-(\*fred-window\*), which displays the system, the rule, the Prolog as
-well as the constraint trace.
-
-&bull; an explanation window as an instance of the editor window
-(\*fred-window\*), which displays all explanations.
-
-&bull; and an editor window, which can edit the knowledge base of the
-expert system.
+- a trace window as an instance of the editor window `(*fred-window*)`, which displays the system, the rule, the Prolog as well as the constraint trace.
+- an explanation window as an instance of the editor window `(*fred-window*)`, which displays all explanations.
+- and an editor window, which can edit the knowledge base of the expert system.
 
 The dialog window of all expert systems is mapped to the Top Lisp
 Listener.
 
-**6. Additional Information**
+## 6. Additional Information
 
 You can adjust BABYLON in different ways to meet your requirements. You
 can develop new interpreters or user-interfaces or modify the supplied
 source code. Apart from this rather time-consuming method there are also
 a few global variables, which can be modified in the file
-**babylon:bab-init.cl**.
+**babylon:bab-init.lisp**.
 
 A few crucial variables are the keyboard functions for special actions.
 For example, after an input request you can ask for a context
@@ -880,15 +856,13 @@ In addition, you can vary the maximum length of menu entries (initially
 set to 50) and define the maximum number of menu entries (initially set
 to 20).
 
-    	(setf *help-key* #\? 
-
-    	      *c-help-key* #\escape 
-
-    	      *end-key*    #\return 
-
-    	      *item-width* 50 
-
-    	      *max-menu-entries* 20) 
+```lisp
+(setf *help-key* #\?
+      *c-help-key* #\escape
+      *end-key* #\return
+      *item-width* 50
+      *max-menu-entries* 20)
+```
 
 In order to change other important system parameters refer to the
 documentation in the book or the sources of the implementation.

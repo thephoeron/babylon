@@ -4,25 +4,17 @@ subject: babylon overview
 title: overview
 ---
 
-**The AI-Workbench BABYLON**
+# The AI-Workbench BABYLON: A Short Description
 
-**A Short Description**
-
-*GMD*
-
-*Institute for Applied Information Technology*
-
-*AI Research Division*
-
-*PO Box 1316*
-
-*D-53731 Sankt Augustin*
-
-*Germany*
-
+*GMD*<br>
+*Institute for Applied Information Technology*<br>
+*AI Research Division*<br>
+*PO Box 1316*<br>
+*D-53731 Sankt Augustin*<br>
+*Germany*<br>
 *Juergen.Walther@gmd.de*
 
-**THE AI-WORKBENCH BABYLON ON THE MACINTOSH**
+## THE AI-WORKBENCH BABYLON ON THE MACINTOSH
 
 BABYLON is a modular, configurable, hybrid environment for developing
 expert systems. The following knowledge representation formalisms are
@@ -45,24 +37,24 @@ can adapt BABYLON to his/her special needs.
 System requirements: 4MByte main storage, Macintosh Common Lisp 2.0.1
 (MCL 2.0.1).
 
-**The AI-workbench BABYLON**
+## The AI-workbench BABYLON
 
 BABYLON is a hybrid tool system for implementing and operating expert
 systems. It provides the knowledge engineer with different integrated
 knowledge representation formalisms and different user interfaces.
 
-**BABYLON is configurable:**
+### BABYLON is configurable:
 
 Interpreters and user interfaces are available in different versions,
 configurable in any combination to obtain problem-specific tools.
 
-**BABYLON is an open tool system:**
+### BABYLON is an open tool system:
 
 If the user develops his own knowledge representation formalisms or
 changes existing ones, he can easily integrate them in BABYLON. The
 BABYLON architecture is open for such extensions.
 
-**BABYLON is portable:**
+### BABYLON is portable:
 
 We modularized BABYLON in a strictly functional way, factored out the
 I/O-operations, and extended the implementation language Common Lisp by
@@ -70,49 +62,39 @@ our own, small, efficient and portable object system. Thus BABYLON
 became an easily portable system, as is demonstrated by more than a
 dozen successful portations to seven different Lisp systems.
 
-**Target group:**
+### Target group:
 
 Version 2.3 of BABYLON is primarily designed as a system for research
-and development,
+and development, teaching and training.
 
-teaching and training.
-
-**Knowledge representation in BABYLON:**
+### Knowledge representation in BABYLON:
 
 BABYLON offers the following languages for knowledge representation:
 
-&bull; Prolog
+- Prolog
+- objects
+- production rules
+- constraints
 
-&bull; objects
-
-&bull; production rules
-
-&bull; onstraints
-
-**The BABYLON paradigm:**
+### The BABYLON paradigm:
 
 BABYLON provides an independent specialist for each formalism, i.e. in
 metaphoric terms:
 
-&bull; a logician accustomed to proceed analytically, to decompose goals
+- a logician accustomed to proceed analytically, to decompose goals
 into subgoals and problems into subproblems;
-
-&bull; a stockkeeper possessing information on well-known things
+- a stockkeeper possessing information on well-known things
 (objects), managing this information and thus rousing expectations. Of
 course, the stockkeeper can extend the stock, update old information
 etc.;
-
-&bull; a pragmatist living fully in present-day reality, being
+- a pragmatist living fully in present-day reality, being
 concentrated on the concrete and r ecommending actions to be performed
 in accordance with the specific situation;
-
-&bull; a supervisor controlling the performance of actions, asking for
+- a supervisor controlling the performance of actions, asking for
 future consequences and tracing back the reasons for current situations.
-
 The interaction of the specialists follows the principle of distributed
 problem solving. There is an other specialist for coordination:
-
-&bull; the manager receiving tasks to be accomplished, selecting the
+- the manager receiving tasks to be accomplished, selecting the
 suitable specialist, delegating the task and securing the delivery of
 the result to the correct place.
 
@@ -120,7 +102,7 @@ The very point of this division of labor is that the specialists do not
 know each other. This makes it very easy to omit specialist groups or to
 compose new ones.
 
-**The architectural concept **
+## The architectural concept
 
 The BABYLON architecture is a processing model for the organizational
 structure described above. The specialists are software modules
@@ -172,7 +154,7 @@ viewpoint of the constraints, the frame interpreter is requested via the
 metainterpreter to modify the state of the object in question in
 accordance with the action.
 
-**Architectural characteristics: **
+### Architectural characteristics:
 
 The basic idea, common to all hybrid systems is that the various
 integrated formalisms are not provided alternatively, but in a
@@ -189,7 +171,7 @@ developed separately and can thus be exchanged or added at any time;
 openness in height since additional components can be realized by
 bootstrapping.
 
-**BABYLON expert systems: **
+### BABYLON expert systems:
 
 A BABYLON expert system is divided into a configuration part and a
 knowledge base.
@@ -203,7 +185,7 @@ configuration. For example, the rule part contains rule packages for the
 rule interpreter or the instruction part contains instructions for the
 metainterpreter.
 
-**BABYLON languages: **
+### BABYLON languages:
 
 The following knowledge representation formalisms are available:
 objects, rules, Prolog and constraints. Each of them occupies a specific
@@ -211,7 +193,7 @@ part in the BABYLON knowledge base. The global flow of control is
 defined separately in the instruction part. All formalisms allow to
 access the implementation language Common Lisp.
 
-**Objects: **
+### Objects:
 
 The object part is often the basis for the other parts of the knowledge
 base: the rule, logic and constraint parts. Nevertheless, the frame
@@ -249,7 +231,7 @@ addition to those provided by the system. Furthermore, BABYLON admits
 active values as attribute values. They can be used as demons monitoring
 attribute values.
 
-**Rules: **
+### Rules:
 
 Knowledge representation by means of production rules is one of the
 oldest formalisms used in the construction of expert systems. In the
@@ -266,7 +248,7 @@ to such constructs are forwarded to the metainterpreter for evaluation.
 The rule interpreter itself has no language of its own to represent
 facts and operands.
 
-**Prolog: **
+### Prolog:
 
 BABYLON provides a specific Prolog version for logic-oriented knowledge
 representation. Prolog is a programming language representing knowledge
@@ -295,7 +277,7 @@ current clause sets are used for proving hypotheses.
 BABYLON Prolog uses a Lisp-oriented syntax instead of the standard
 Prolog syntax.
 
-**Constraints:**
+### Constraints:
 
 Constraints can be used to model marginal conditions or constraints,
 such as physical laws or logical contexts. In metaphoric terms, we can
@@ -308,7 +290,7 @@ A+B is equal to C.
 
 The following table demonstrates the various effects of this constraint:
 
-    start values				values filtered by the constraint 
+    start values				values filtered by the constraint
 
     A		B		C		 A		B		C
 
@@ -326,11 +308,9 @@ we can compose constraint networks. If we predefine values or sets of
 possible values for a subset of the variables, a constraint network can
 be used as follows:
 
-&bull; to check the consistency of values and
-
-&bull; to compute values for unknown variables;
-
-&bull; to filter sets of possible values, i.e. to eliminate inconsistent
+- to check the consistency of values and
+- to compute values for unknown variables;
+- to filter sets of possible values, i.e. to eliminate inconsistent
 values.
 
 The constraint interpreter of BABYLON is based on CONSAT, a
@@ -341,7 +321,7 @@ constraint networks can be constructed. Various control strategies are
 provided: apart from local propagation, there is a method combining this
 strategy with backtracking.
 
-**Lisp:**
+### Lisp:
 
 Common Lisp is the implementation language of BABYLON, but it can also
 be used for knowledge representation. In a knowledge base, Lisp can be
@@ -355,20 +335,20 @@ subset
 of Common Lisp. There is an abstract interface to the flavor system and
 a portable inhouse development of flavors.
 
-**Instructions:**
+### Instructions:
 
 Instructions define the global flow of control through the expert
 system. They are Lisp expressions which typically handle rule packages
 according to a specific strategy, make Prolog inquiries, activate
 behaviors or functions directly programmed in Lisp (e.g. input/output).
 
-**Integration of formalisms:**
+### Integration of formalisms:
 
 The following table shows the integration of the knowledge
 representation languages into BABYLON. A formalism X is usable in
 another formalism Y as described in column X and line Y:
 
-**BABYLON configurations:**
+### BABYLON configurations:
 
 Since all parts of a BABYLON knowledge base are optional, the knowledge
 base interpreter needs not always comprise all basic interpreters
@@ -380,72 +360,57 @@ Custom interpreters are also possible. Another component is the user
 interface. The last four interpreters and the user interface are
 available in three versions of different comfort.
 
-**User interface versions: **
+### User interface versions:
 
-&bull; Basic user interface with a TTY-oriented interface.
-
-&bull; Mini user interface extended by a command loop and command menus.
-
-&bull; Normal user interface with more comfortable command menus. This
+- Basic user interface with a TTY-oriented interface.
+- Mini user interface extended by a command loop and command menus.
+- Normal user interface with more comfortable command menus. This
 is the interface to be used by the knowledge engineer normally. Though
 this user interface is within the standard delivery, its realization is
 machine-dependent.
 
-**Frame interpreter versions: **
+### Frame interpreter versions:
 
-&bull; Basic version with frames, behaviors, instances, inheritance and
+- Basic version with frames, behaviors, instances, inheritance and
 annotations.
+- Mini version with additional possible values specification.
+- Normal version with additional active values.
 
-&bull; Mini version with additional possible values specification.
+### Rule interpreter versions:
 
-&bull; Normal version with additional active values.
-
-**Rule interpreter versions:**
-
-&bull; Basic version with forward and backward evaluation, various
+- Basic version with forward and backward evaluation, various
 junctors and action types.
+- Mini version with an additional protocol component.
+- Normal version with an additional explanation component.
 
-&bull; Mini version with an additional protocol component.
+### Prolog interpreter versions:
 
-&bull; Normal version with an additional explanation component .
+- Basic version with clauses, clause sets and system predicates.
+- Mini version with an additional protocol component.
+- Normal version with an additional explanation component.
 
-**Prolog interpreter versions: **
+### Constraint interpreter versions:
 
-&bull; Basic version with clauses, clause sets and system predicates.
-
-&bull; Mini version with an additional protocol component.
-
-&bull; Normal version with an additional explanation component.
-
-**Constraint interpreter versions: **
-
-&bull; Basic version with constraints, constraint networks and various
+- Basic version with constraints, constraint networks and various
 evaluation algorithms.
-
-&bull; Mini version with an additional protocol component.
-
-&bull; Normal version with an additional connection to the frame
+- Mini version with an additional protocol component.
+- Normal version with an additional connection to the frame
 formalism.
 
-**System size: **
+### System size:
 
-    	frame interpreter: 		123 KByte 
+- frame interpreter: 123 KByte
+- rule interpreter: 128 KByte
+- Prolog interpreter: 168 KByte
+- constraint interpreter: 121 KByte
+- total core system: 650 KByte
 
-    	rule interpreter: 		128 KByte 
+for machine-specific user interfaces:
 
-    	Prolog interpreter:	 	168 KByte 
+- Macintosh: 47 KByte
+- Lisp machines: 73 KByte
 
-<u>`	``constraint interpreter:``	``	``121 KByte `</u>
-
-    	total core system: 		650 KByte 
-
-    for machine-specific user interfaces: 
-
-     	Macintosh: 			 47 KByte 
-
-     	Lisp machines: 			 73 KByte 
-
-**References: **
+## References
 
 Christaller, Th., Di Primio, F., Vo&szlig;, A.(eds.), Die KI-Werkbank
 BABYLON, Addison-Wesley, Bonn 1989
