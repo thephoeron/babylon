@@ -251,4 +251,5 @@
   :version (:read-file-form "VERSION")
   :depends-on (babylon)
   :serial t
-  :components ())
+  :components ((:module "_test"
+                :components ((:file "suite")))))
