@@ -7,5 +7,5 @@
 #### BABYLON 2.3
 
 - [Babylon 2.3 README](readme23.md)
-- [Babylon AI Workbench on the Macintosh](macdoc.md)
-- [The AI-Workbench Babylon: A Short Description](overview.md)
+- [Babylon AI Workbench on the Macintosh](macdoc23.md)
+- [The AI-Workbench Babylon: A Short Description](overview23.md)
