@@ -1,6 +1,6 @@
-# BABYLON: Generative AI Workbench
+# BABYLON: AI Workbench
 
-Based on Jürgen Walther's modular, configurable, hybrid knowledge engineering systems framework for Common Lisp, restored from the CMU AI Repository, powered by the Flavors Meta-Class System (FMCS) for Demonic Metaprogramming.
+This is BABYLON, Jürgen Walther's AI Workbench&mdash;a modular, configurable, hybrid knowledge engineering systems framework&mdash;for Common Lisp, restored from the CMU AI Repository, powered by the Flavors Meta-Class System (FMCS) for Demonic Metaprogramming.
 
 ## Supported Platforms
 
