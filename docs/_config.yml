@@ -1,6 +1,6 @@
 remote_theme: pages-themes/minimal@v0.2.0
 plugins:
 - jekyll-remote-theme
-title: BABYLON 3.0
-description: Generative AI Workbench for Common Lisp.
+title: BABYLON 2.4
+description: Jürgen Walther's AI Workbench for Common Lisp, restored from the CMU AI Repository.
 logo: /assets/images/babylon-logo.png

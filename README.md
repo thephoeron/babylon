@@ -8,6 +8,7 @@ BABYLON compiles, loads, and runs on the following platforms:
 
 - LispWorks 8.0.1 (64-bit, macOS)
 - SBCL 2.3.4 (64-bit, macOS)
+
 ## Authors
 
 - "the Phoeron" Colin J.E. Lupton
