@@ -8,8 +8,8 @@
 
 (defsystem babylon
   :description "Jürgen Walther's modular, configurable, hybrid knowledge engineering systems framework for Common Lisp, restored from the CMU AI Repository."
-  :author '("\"the Phoeron\" Colin J.E. Lupton <thephoeron@protonmail.com>"
-            "Jürgen Walther <juergen.walther@gmd.de>")
+  :author ("\"the Phoeron\" Colin J.E. Lupton <thephoeron@protonmail.com>"
+           "Jürgen Walther <juergen.walther@gmd.de>")
   :maintainer "\"the Phoeron\" Colin J.E. Lupton <thephoeron@protonmail.com>"
   :mailto "thephoeron@protonmail.com"
   :homepage "https://thephoeron.github.io/babylon/"
