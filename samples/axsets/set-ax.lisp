@@ -2,6 +2,8 @@
  
 ;;; not all the predicates may be used as generators!
 
+(in-package "BABYLON")
+
 (defaxiom-set set-axioms
 
     ((member _x (_x . _tail)))

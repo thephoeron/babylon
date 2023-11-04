@@ -10,6 +10,13 @@
 
 ;;  ZetaLisp Time Package functions
 
+(defpackage "TIME"
+  (:USE #+:AKCL "LISP" #-:AKCL "COMMON-LISP")
+  (:EXPORT "PRINT-UNIVERSAL-TIME"
+           "PRINT-CURRENT-TIME"
+           "PARSE-UNIVERSAL-TIME"
+           "TIME-DIFFERENCE"))
+
 (in-package "TIME")
 
 (babylon::bab-provide 'time)

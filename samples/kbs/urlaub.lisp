@@ -1,5 +1,6 @@
 ;;;  -*-  Mode: Lisp; Syntax: Common-Lisp; Package: BABYLON; Base: 10. -*-
 
+(in-package "BABYLON")
 
 ;; ******* knowledge-base  declaration ******
 

@@ -2,13 +2,6 @@
 
 (in-package "BABYLON")
 
-(defpackage "TIME"
-  (:USE #+:AKCL "LISP" #-:AKCL "COMMON-LISP")
-  (:EXPORT "PRINT-UNIVERSAL-TIME"
-           "PRINT-CURRENT-TIME"
-           "PARSE-UNIVERSAL-TIME"
-           "TIME-DIFFERENCE"))
-
 (bab-require 'time)
 
 ;;; ------------------------------------------------------------------------------
